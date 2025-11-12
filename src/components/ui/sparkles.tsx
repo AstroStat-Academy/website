@@ -73,7 +73,7 @@ export const SparklesCore = (props: ParticlesProps) => {
             interactivity: {
               events: {
                 onClick: { enable: true, mode: "push" },
-                resize: true,
+                resize: { enable: true },
               },
               modes: { push: { quantity: 4 } },
             },
