@@ -1,0 +1,63 @@
+# DEPENDENCIES
+# node_modules is huge (~200MB+) - always reinstalled from package.json on clone
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ENVIRONMENT VARIABLES
+# .env.local contains sensitive secrets, API keys, database URLs - NEVER commit!
+# Create this file on your server with your actual values
+.env.local
+.env*.local
+
+# BUILD & CACHE
+# .next/ contains compiled code and cache - regenerated on every `npm run build`
+/.next/
+/out/
+/build
+
+# LOGS
+# Build and runtime logs - not needed in version control
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# TESTING
+# Coverage reports - generated during test runs, not needed in repo
+/coverage
+
+# OS & EDITOR FILES
+# System files that differ per machine - don't pollute the repo
+.DS_Store
+*.pem
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE SETTINGS
+# Local IDE configurations - each developer may have different preferences
+.vscode/settings.json
+.idea/
+*.iml
+
+# AI AGENT INSTRUCTIONS
+# Copilot/Cursor instructions are development-only guidance - not needed in deployment
+.github/copilot-instructions.md
+.cursorrules
+.windsurfrules
+
+# VERCEL (if deploying to Vercel)
+.vercel
+
+# TYPESCRIPT
+# Generated TypeScript build info
+*.tsbuildinfo
+next-env.d.ts
