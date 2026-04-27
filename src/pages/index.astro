@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SchoolCard from '../components/schools/SchoolCard.astro';
+import { getCollection } from 'astro:content';
+
+const allSchools = await getCollection('schools');
+const now = new Date();
+
+const upcoming = allSchools
+  .filter((s) => s.data.date >= now)
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+
+const past = allSchools
+  .filter((s) => s.data.date < now)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout
+  title="Home"
+  description="AstroStat Academy — intensive statistics schools and workshops for the astronomical community."
+>
+  <!-- Hero -->
+  <section class="relative py-28 md:py-40 px-4 text-center overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-navy-800 to-navy-900 -z-10" />
+    <!-- Subtle star-like dots via SVG -->
+    <div class="absolute inset-0 opacity-20 -z-10"
+      style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 40px 40px;">
+    </div>
+    <div class="max-w-3xl mx-auto">
+      <p class="text-accent-teal text-sm font-semibold tracking-widest uppercase mb-4">
+        Statistics for the Universe
+      </p>
+      <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6">
+        AstroStat<br />
+        <span class="text-accent-teal">Academy</span>
+      </h1>
+      <p class="text-xl text-slate-300 max-w-xl mx-auto mb-10 leading-relaxed">
+        Intensive schools and workshops teaching modern statistical methods to
+        the astronomical community — from Bayesian inference to machine learning.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="/schools"
+          class="bg-accent-teal text-navy-900 font-semibold px-8 py-3 rounded-lg hover:bg-teal-400 transition-colors"
+        >
+          Browse Schools
+        </a>
+        <a
+          href="/about"
+          class="border border-white/20 text-white font-semibold px-8 py-3 rounded-lg hover:border-white/50 transition-colors"
+        >
+          About Us
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission statement -->
+  <section class="py-16 px-4">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-2xl font-bold mb-4 text-slate-100">Our Mission</h2>
+      <p class="text-slate-300 text-lg leading-relaxed">
+        Astronomy generates petabytes of data. Making sense of it requires rigorous statistical
+        thinking. AstroStat Academy bridges the gap between modern statistics and observational
+        astronomy through hands-on, expert-led schools for PhD students and early-career researchers.
+      </p>
+    </div>
+  </section>
+
+  <!-- Upcoming schools -->
+  {upcoming.length > 0 && (
+    <section class="py-16 px-4">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-baseline justify-between mb-8">
+          <h2 class="text-3xl font-bold">Upcoming Schools</h2>
+          <a href="/schools" class="text-accent-teal text-sm hover:underline">View all →</a>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {upcoming.map((school) => <SchoolCard school={school} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Past schools -->
+  {past.length > 0 && (
+    <section class="py-16 px-4 bg-navy-800/40">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-baseline justify-between mb-8">
+          <h2 class="text-3xl font-bold">Past Schools</h2>
+          <a href="/schools" class="text-accent-teal text-sm hover:underline">View all →</a>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {past.slice(0, 6).map((school) => <SchoolCard school={school} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Future sections teaser -->
+  <section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8 text-center">Coming Soon</h2>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="bg-navy-800 border border-white/10 rounded-xl p-8 flex flex-col gap-3">
+          <span class="text-3xl">🎬</span>
+          <h3 class="text-xl font-bold text-accent-blue">Video Lectures</h3>
+          <p class="text-slate-400 flex-1">
+            On-demand recordings from our schools, freely accessible to the community.
+          </p>
+          <a href="/videos" class="text-accent-blue text-sm hover:underline self-start">
+            Learn more →
+          </a>
+        </div>
+        <div class="bg-navy-800 border border-white/10 rounded-xl p-8 flex flex-col gap-3">
+          <span class="text-3xl">🔭</span>
+          <h3 class="text-xl font-bold text-accent-cyan">Enterprise Consulting</h3>
+          <p class="text-slate-400 flex-1">
+            Tailored statistical consulting for research groups, institutes, and space agencies.
+          </p>
+          <a href="/consulting" class="text-accent-cyan text-sm hover:underline self-start">
+            Learn more →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
