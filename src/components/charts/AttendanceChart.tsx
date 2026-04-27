@@ -20,9 +20,8 @@ export default function AttendanceChart({ schools, highlightTitle }: Props) {
     s.title === highlightTitle ? '#14b8a6' : '#3b82f6'
   );
 
-  // Short labels: year only
   const labels = sorted.map((s) =>
-    new Date(s.date).getFullYear().toString()
+    new Date(s.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
   );
 
   return (
