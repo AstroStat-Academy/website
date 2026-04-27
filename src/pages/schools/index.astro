@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SchoolFilter from '../../components/schools/SchoolFilter';
+import { getCollection } from 'astro:content';
+
+const allSchools = await getCollection('schools');
+
+// Serialize for passing to React island (Dates become strings)
+const schoolData = allSchools.map((s) => ({
+  slug: s.slug,
+  title: s.data.title,
+  date: s.data.date.toISOString(),
+  location: s.data.location,
+  description: s.data.description,
+  topics: s.data.topics,
+  attendees: s.data.attendees,
+  tags: s.data.tags,
+}));
+---
+
+<BaseLayout
+  title="Schools"
+  description="All AstroStat Academy schools and workshops — browse by year or topic."
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+    <h1 class="text-4xl font-bold mb-3">Schools & Workshops</h1>
+    <p class="text-slate-300 text-lg mb-12">
+      Intensive statistical training for the astronomical community.
+    </p>
+    <SchoolFilter schools={schoolData} client:load />
+  </div>
+</BaseLayout>
