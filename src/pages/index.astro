@@ -6,12 +6,14 @@ import { getCollection } from 'astro:content';
 const allSchools = await getCollection('schools');
 const now = new Date();
 
+const schoolEnd = (s: (typeof allSchools)[0]) => s.data.endDate ?? s.data.date;
+
 const upcoming = allSchools
-  .filter((s) => s.data.date >= now)
+  .filter((s) => schoolEnd(s) >= now)
   .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
 
 const past = allSchools
-  .filter((s) => s.data.date < now)
+  .filter((s) => schoolEnd(s) < now)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 

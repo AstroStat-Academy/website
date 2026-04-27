@@ -100,7 +100,7 @@ export default function SchoolFilter({ schools }: Props) {
               <a
                 key={school.slug}
                 href={`/schools/${school.slug}`}
-                className="group flex flex-col bg-navy-800 border border-white/10 rounded-xl p-6 hover:border-teal-400/50 transition-transform hover:-translate-y-0.5"
+                className="group flex flex-col bg-navy-800 border border-white/10 rounded-xl p-6 hover:border-teal-400/50 transition-all hover:-translate-y-0.5"
               >
                 <div className="flex items-center justify-between mb-3">
                   <span

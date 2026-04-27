@@ -29,7 +29,7 @@ export default function ApplicationForm({ schoolTitle }: Props) {
     try {
       // Stub: replace with real endpoint (e.g. Formspree, Netlify Forms, or your own API)
       await new Promise((r) => setTimeout(r, 800));
-      console.log('Interest form submitted', { school: schoolTitle, ...data });
+      // TODO: replace stub with real endpoint (e.g. Formspree, Netlify Forms, or your own API)
       setSubmitted(true);
       reset();
     } catch {
