@@ -1,0 +1,39 @@
+---
+const navLinks = [
+  { href: '/schools', label: 'Schools' },
+  { href: '/about', label: 'About' },
+  { href: '/videos', label: 'Videos' },
+  { href: '/consulting', label: 'Consulting' },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="sticky top-0 z-50 bg-navy-900/95 backdrop-blur-sm border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+    <a href="/" class="text-lg font-bold tracking-tight text-accent-teal hover:text-teal-300 transition-colors">
+      AstroStat Academy
+    </a>
+    <ul class="hidden md:flex items-center gap-6">
+      {navLinks.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class={`text-sm font-medium transition-colors ${
+              currentPath.startsWith(link.href)
+                ? 'text-white'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <!-- Mobile: hamburger placeholder (no JS needed for MVP) -->
+    <div class="md:hidden flex gap-4">
+      {navLinks.map(link => (
+        <a href={link.href} class="text-slate-400 hover:text-white text-xs transition-colors">{link.label}</a>
+      ))}
+    </div>
+  </div>
+</nav>
