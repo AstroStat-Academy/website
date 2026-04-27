@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AttendanceChart from '../../components/charts/AttendanceChart';
+import ApplicationForm from '../../components/forms/ApplicationForm';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const schools = await getCollection('schools');
+  return schools.map((school) => ({
+    params: { slug: school.slug },
+    props: {
+      school,
+      // Pass all schools for the attendance chart context
+      allSchools: schools
+        .filter((s) => s.data.attendees !== undefined)
+        .map((s) => ({
+          title: s.data.title,
+          date: s.data.date.toISOString(),
+          attendees: s.data.attendees as number,
+        })),
+    },
+  }));
+};
+
+const { school, allSchools } = Astro.props;
+const { Content } = await school.render();
+const { title, date, endDate, location, description, lecturers, topics, attendees, applicationUrl } =
+  school.data;
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const dateRange = endDate
+  ? `${formatDate(date)} – ${formatDate(endDate)}`
+  : formatDate(date);
+
+const isPast = (endDate ?? date) < new Date();
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- Page header -->
+  <div class="bg-navy-800/60 border-b border-white/10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+      <a href="/schools" class="text-accent-teal text-sm hover:underline inline-block mb-6">
+        ← All schools
+      </a>
+      <div class="flex items-center gap-3 mb-4">
+        <span
+          class={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+            isPast
+              ? 'bg-slate-700 text-slate-300'
+              : 'bg-teal-900/60 text-accent-teal border border-accent-teal/30'
+          }`}
+        >
+          {isPast ? 'Past' : 'Upcoming'}
+        </span>
+      </div>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">{title}</h1>
+      <div class="flex flex-wrap gap-x-6 gap-y-2 text-slate-300 text-sm">
+        <span>📅 {dateRange}</span>
+        <span>📍 {location}</span>
+        {attendees && <span>👥 {attendees} attendees</span>}
+      </div>
+      {applicationUrl && !isPast && (
+        <a
+          href={applicationUrl}
+          class="mt-6 inline-block bg-accent-teal text-navy-900 font-semibold px-6 py-2.5 rounded-lg hover:bg-teal-400 transition-colors"
+        >
+          Apply Now
+        </a>
+      )}
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-14">
+    <!-- Markdown content -->
+    <section class="prose prose-invert prose-lg max-w-none
+      prose-headings:font-bold prose-a:text-accent-teal prose-strong:text-white">
+      <Content />
+    </section>
+
+    <!-- Lecturers -->
+    {lecturers.length > 0 && (
+      <section>
+        <h2 class="text-2xl font-bold mb-5">Lecturers</h2>
+        <div class="grid gap-3 sm:grid-cols-2">
+          {lecturers.map((l) => (
+            <div class="bg-navy-800 border border-white/10 rounded-lg p-4">
+              {l.url ? (
+                <a href={l.url} class="font-semibold hover:text-accent-teal transition-colors" target="_blank" rel="noopener">
+                  {l.name}
+                </a>
+              ) : (
+                <p class="font-semibold">{l.name}</p>
+              )}
+              {l.affiliation && <p class="text-slate-400 text-sm mt-0.5">{l.affiliation}</p>}
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Topics -->
+    {topics.length > 0 && (
+      <section>
+        <h2 class="text-2xl font-bold mb-5">Topics</h2>
+        <div class="flex flex-wrap gap-2">
+          {topics.map((topic) => (
+            <span class="bg-navy-700 border border-white/10 rounded-full px-4 py-1.5 text-sm text-slate-200">
+              {topic}
+            </span>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Attendance chart (only if data exists) -->
+    {allSchools.length > 0 && (
+      <section>
+        <h2 class="text-2xl font-bold mb-5">Attendance History</h2>
+        <AttendanceChart
+          schools={allSchools}
+          highlightTitle={title}
+          client:only="react"
+        />
+        <p class="text-slate-500 text-sm mt-2">
+          Teal bar = this school. All attendee counts are approximate.
+        </p>
+      </section>
+    )}
+
+    <!-- Interest form -->
+    <section>
+      <h2 class="text-2xl font-bold mb-2">Express Interest</h2>
+      <p class="text-slate-400 mb-5 text-sm">
+        {isPast
+          ? 'Interested in future editions? Leave your details and we\'ll notify you.'
+          : 'Not ready to apply? Leave your contact details and we\'ll keep you posted.'}
+      </p>
+      <ApplicationForm schoolTitle={title} client:load />
+    </section>
+  </div>
+</BaseLayout>
