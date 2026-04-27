@@ -10,6 +10,7 @@ const schoolData = allSchools.map((s) => ({
   slug: s.slug,
   title: s.data.title,
   date: s.data.date.toISOString(),
+  endDate: s.data.endDate?.toISOString(),
   location: s.data.location,
   description: s.data.description,
   topics: s.data.topics,

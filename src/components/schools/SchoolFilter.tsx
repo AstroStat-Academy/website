@@ -3,7 +3,8 @@ import { useState, useMemo } from 'react';
 interface SchoolData {
   slug: string;
   title: string;
-  date: string;      // ISO string
+  date: string;
+  endDate?: string;
   location: string;
   description: string;
   topics: string[];
@@ -51,8 +52,9 @@ export default function SchoolFilter({ schools }: Props) {
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-8">
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-slate-400 uppercase tracking-wider">Year</label>
+          <label htmlFor="year-filter" className="text-xs text-slate-400 uppercase tracking-wider">Year</label>
           <select
+            id="year-filter"
             value={yearFilter}
             onChange={(e) => setYearFilter(e.target.value)}
             className={selectClass}
@@ -65,8 +67,9 @@ export default function SchoolFilter({ schools }: Props) {
           </select>
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-slate-400 uppercase tracking-wider">Topic</label>
+          <label htmlFor="topic-filter" className="text-xs text-slate-400 uppercase tracking-wider">Topic</label>
           <select
+            id="topic-filter"
             value={topicFilter}
             onChange={(e) => setTopicFilter(e.target.value)}
             className={selectClass}
@@ -92,7 +95,7 @@ export default function SchoolFilter({ schools }: Props) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((school) => {
             const date = new Date(school.date);
-            const isPast = date < new Date();
+            const isPast = new Date(school.endDate ?? school.date) < new Date();
             return (
               <a
                 key={school.slug}
