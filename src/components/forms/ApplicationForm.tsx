@@ -61,19 +61,21 @@ export default function ApplicationForm({ schoolTitle }: Props) {
     >
       {/* Full name */}
       <div>
-        <label className={labelClass}>Full name *</label>
+        <label htmlFor="name" className={labelClass}>Full name *</label>
         <input
+          id="name"
           {...register('name', { required: 'Name is required' })}
           placeholder="Jane Smith"
           className={inputClass}
         />
-        {errors.name && <p className={errorClass}>{errors.name.message}</p>}
+        {errors.name && <p className={errorClass} role="alert">{errors.name.message}</p>}
       </div>
 
       {/* Email */}
       <div>
-        <label className={labelClass}>Email address *</label>
+        <label htmlFor="email" className={labelClass}>Email address *</label>
         <input
+          id="email"
           {...register('email', {
             required: 'Email is required',
             pattern: {
@@ -85,13 +87,14 @@ export default function ApplicationForm({ schoolTitle }: Props) {
           placeholder="jane@university.edu"
           className={inputClass}
         />
-        {errors.email && <p className={errorClass}>{errors.email.message}</p>}
+        {errors.email && <p className={errorClass} role="alert">{errors.email.message}</p>}
       </div>
 
       {/* Institution */}
       <div>
-        <label className={labelClass}>Institution</label>
+        <label htmlFor="institution" className={labelClass}>Institution</label>
         <input
+          id="institution"
           {...register('institution')}
           placeholder="University or research institute"
           className={inputClass}
@@ -100,8 +103,9 @@ export default function ApplicationForm({ schoolTitle }: Props) {
 
       {/* Career stage */}
       <div>
-        <label className={labelClass}>Career stage</label>
+        <label htmlFor="career" className={labelClass}>Career stage</label>
         <select
+          id="career"
           {...register('career')}
           className={inputClass}
           defaultValue=""
@@ -117,8 +121,9 @@ export default function ApplicationForm({ schoolTitle }: Props) {
 
       {/* Message */}
       <div>
-        <label className={labelClass}>Message (optional)</label>
+        <label htmlFor="message" className={labelClass}>Message (optional)</label>
         <textarea
+          id="message"
           {...register('message')}
           rows={3}
           placeholder="Any questions or context you'd like to share…"
@@ -127,7 +132,7 @@ export default function ApplicationForm({ schoolTitle }: Props) {
       </div>
 
       {serverError && (
-        <p className="text-red-400 text-sm">{serverError}</p>
+        <p className="text-red-400 text-sm" role="alert">{serverError}</p>
       )}
 
       <button
