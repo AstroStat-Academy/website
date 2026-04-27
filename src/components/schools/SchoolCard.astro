@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  school: CollectionEntry<'schools'>;
+}
+
+const { school } = Astro.props;
+const { title, date, location, description, topics, attendees } = school.data;
+
+const isPast = date < new Date();
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<a
+  href={`/schools/${school.slug}`}
+  class="group flex flex-col bg-navy-800 border border-white/10 rounded-xl p-6 hover:border-accent-teal/50 transition-all hover:-translate-y-0.5"
+>
+  <div class="flex items-center justify-between mb-3">
+    <span
+      class={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+        isPast
+          ? 'bg-slate-700 text-slate-300'
+          : 'bg-teal-900/60 text-accent-teal border border-accent-teal/30'
+      }`}
+    >
+      {isPast ? 'Past' : 'Upcoming'}
+    </span>
+    <span class="text-slate-400 text-xs">{formattedDate}</span>
+  </div>
+
+  <h3 class="text-base font-bold mb-1 group-hover:text-accent-teal transition-colors leading-snug">
+    {title}
+  </h3>
+  <p class="text-slate-400 text-sm mb-3">{location}</p>
+  <p class="text-slate-300 text-sm leading-relaxed line-clamp-3 flex-1">{description}</p>
+
+  <div class="flex flex-wrap gap-1.5 mt-4">
+    {topics.slice(0, 3).map((topic) => (
+      <span class="text-xs bg-navy-700 text-slate-300 px-2 py-0.5 rounded">{topic}</span>
+    ))}
+    {topics.length > 3 && (
+      <span class="text-xs text-slate-500">+{topics.length - 3} more</span>
+    )}
+  </div>
+
+  {attendees && (
+    <p class="text-xs text-slate-500 mt-3">{attendees} attendees</p>
+  )}
+</a>
