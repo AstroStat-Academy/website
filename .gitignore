@@ -32,3 +32,7 @@ pnpm-debug.log*
 # deploy caches
 .netlify/
 .vercel/
+
+# Claude Code
+CLAUDE.md
+.claude/
