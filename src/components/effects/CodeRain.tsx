@@ -43,7 +43,7 @@ export default function CodeRain() {
       if (now - lastTick < FRAME_INTERVAL_MS) return;
       lastTick = now;
 
-      ctx.fillStyle = 'rgba(7, 13, 26, 0.07)';
+      ctx.fillStyle = 'rgba(7, 13, 26, 0.18)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.font = `${FONT_SIZE}px ui-monospace, "JetBrains Mono", monospace`;
