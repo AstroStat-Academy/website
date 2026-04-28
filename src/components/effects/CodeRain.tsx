@@ -15,7 +15,7 @@ export default function CodeRain() {
     if (!ctx) return;
 
     const FONT_SIZE = 16;
-    const FRAME_INTERVAL_MS = 60;
+    const FRAME_INTERVAL_MS = 110;
     let columns = 0;
     let drops: number[] = [];
 
