@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SchoolCard from '../components/schools/SchoolCard.astro';
+import CodeRain from '../components/effects/CodeRain';
 import { getCollection } from 'astro:content';
 
 const allSchools = await getCollection('schools');
@@ -23,11 +24,8 @@ const past = allSchools
 >
   <!-- Hero -->
   <section class="relative py-28 md:py-40 px-4 text-center overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-b from-navy-800 to-navy-900 -z-10" />
-    <!-- Subtle star-like dots via SVG -->
-    <div class="absolute inset-0 opacity-20 -z-10"
-      style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 40px 40px;">
-    </div>
+    <div class="absolute inset-0 bg-gradient-to-b from-navy-800 to-navy-900 -z-20" />
+    <CodeRain client:only="react" />
     <div class="max-w-3xl mx-auto">
       <p class="text-accent-teal text-sm font-semibold tracking-widest uppercase mb-4">
         Statistics for the Universe
