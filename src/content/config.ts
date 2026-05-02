@@ -23,15 +23,6 @@ const schools = defineCollection({
   }),
 });
 
-const videos = defineCollection({
-  type: 'content',
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    description: z.string(),
-  }),
-});
-
 const consulting = defineCollection({
   type: 'content',
   schema: z.object({
@@ -40,4 +31,4 @@ const consulting = defineCollection({
   }),
 });
 
-export const collections = { schools, videos, consulting };
+export const collections = { schools, consulting };
