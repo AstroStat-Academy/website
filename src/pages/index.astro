@@ -1,21 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SchoolCard from '../components/schools/SchoolCard.astro';
 import CodeRain from '../components/effects/CodeRain';
-import { getCollection } from 'astro:content';
-
-const allSchools = await getCollection('schools');
-const now = new Date();
-
-const schoolEnd = (s: (typeof allSchools)[0]) => s.data.endDate ?? s.data.date;
-
-const upcoming = allSchools
-  .filter((s) => schoolEnd(s) >= now)
-  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
-
-const past = allSchools
-  .filter((s) => schoolEnd(s) < now)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
 <BaseLayout
@@ -30,34 +15,42 @@ const past = allSchools
       <p class="text-accent-teal text-sm font-semibold tracking-widest uppercase mb-4">
         Statistics for the Universe
       </p>
-      <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6">
+      <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-12">
         AstroStat<br />
         <span class="text-accent-teal">Academy</span>
       </h1>
-      <p class="text-xl text-slate-300 max-w-xl mx-auto mb-10 leading-relaxed">
-        Intensive schools and workshops teaching modern statistical methods to
-        the astronomical community — from Bayesian inference to machine learning.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <!-- Activity tiles -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
         <a
           href="/schools"
-          class="bg-accent-teal text-navy-900 font-semibold px-8 py-3 rounded-lg hover:bg-teal-400 transition-colors"
+          class="bg-navy-800/80 border border-accent-teal/40 rounded-xl p-6 flex flex-col items-center gap-2 hover:border-accent-teal hover:bg-navy-800 transition-colors group"
         >
-          Browse Schools
+          <span class="text-3xl">🎓</span>
+          <span class="font-semibold text-white group-hover:text-accent-teal transition-colors">Schools</span>
         </a>
         <a
-          href="/about"
-          class="border border-white/20 text-white font-semibold px-8 py-3 rounded-lg hover:border-white/50 transition-colors"
+          href="/hackatons"
+          class="bg-navy-800/80 border border-white/10 rounded-xl p-6 flex flex-col items-center gap-2 hover:border-white/30 hover:bg-navy-800 transition-colors group"
         >
-          About Us
+          <span class="text-3xl">⚡</span>
+          <span class="font-semibold text-slate-400 group-hover:text-white transition-colors">Hackatons</span>
+          <span class="text-xs text-slate-600 uppercase tracking-wider">Coming soon</span>
+        </a>
+        <a
+          href="/consulting"
+          class="bg-navy-800/80 border border-white/10 rounded-xl p-6 flex flex-col items-center gap-2 hover:border-white/30 hover:bg-navy-800 transition-colors group"
+        >
+          <span class="text-3xl">📊</span>
+          <span class="font-semibold text-slate-400 group-hover:text-white transition-colors">Consulting</span>
+          <span class="text-xs text-slate-600 uppercase tracking-wider">Coming soon</span>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- Mission statement -->
+  <!-- Mission -->
   <section class="py-16 px-4">
-    <div class="max-w-3xl mx-auto text-center">
+    <div class="max-w-2xl mx-auto text-center">
       <h2 class="text-2xl font-bold mb-4 text-slate-100">Our Mission</h2>
       <p class="text-slate-300 text-lg leading-relaxed">
         Astronomy generates petabytes of data. Making sense of it requires rigorous statistical
@@ -67,62 +60,27 @@ const past = allSchools
     </div>
   </section>
 
-  <!-- Upcoming schools -->
-  {upcoming.length > 0 && (
-    <section class="py-16 px-4">
-      <div class="max-w-6xl mx-auto">
-        <div class="flex items-baseline justify-between mb-8">
-          <h2 class="text-3xl font-bold">Upcoming Schools</h2>
-          <a href="/schools" class="text-accent-teal text-sm hover:underline">View all →</a>
-        </div>
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {upcoming.map((school) => <SchoolCard school={school} />)}
-        </div>
-      </div>
-    </section>
-  )}
+  <!-- Goals -->
+  <section class="py-16 px-4 bg-navy-800/40">
+    <div class="max-w-2xl mx-auto text-center">
+      <h2 class="text-2xl font-bold mb-4 text-slate-100">Our Goals</h2>
+      <p class="text-slate-300 text-lg leading-relaxed">
+        We aim to raise statistical literacy across the astronomical community — equipping
+        researchers with the modern probabilistic and machine-learning tools they need to
+        extract knowledge from today's large surveys and tomorrow's petabyte telescopes.
+      </p>
+    </div>
+  </section>
 
-  <!-- Past schools -->
-  {past.length > 0 && (
-    <section class="py-16 px-4 bg-navy-800/40">
-      <div class="max-w-6xl mx-auto">
-        <div class="flex items-baseline justify-between mb-8">
-          <h2 class="text-3xl font-bold">Past Schools</h2>
-          <a href="/schools" class="text-accent-teal text-sm hover:underline">View all →</a>
-        </div>
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {past.slice(0, 6).map((school) => <SchoolCard school={school} />)}
-        </div>
-      </div>
-    </section>
-  )}
-
-  <!-- Future sections teaser -->
+  <!-- People CTA -->
   <section class="py-16 px-4">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-3xl font-bold mb-8 text-center">Coming Soon</h2>
-      <div class="grid gap-6 md:grid-cols-2">
-        <div class="bg-navy-800 border border-white/10 rounded-xl p-8 flex flex-col gap-3">
-          <span class="text-3xl">🎬</span>
-          <h3 class="text-xl font-bold text-accent-blue">Video Lectures</h3>
-          <p class="text-slate-400 flex-1">
-            On-demand recordings from our schools, freely accessible to the community.
-          </p>
-          <a href="/videos" class="text-accent-blue text-sm hover:underline self-start">
-            Learn more →
-          </a>
-        </div>
-        <div class="bg-navy-800 border border-white/10 rounded-xl p-8 flex flex-col gap-3">
-          <span class="text-3xl">🔭</span>
-          <h3 class="text-xl font-bold text-accent-cyan">Enterprise Consulting</h3>
-          <p class="text-slate-400 flex-1">
-            Tailored statistical consulting for research groups, institutes, and space agencies.
-          </p>
-          <a href="/consulting" class="text-accent-cyan text-sm hover:underline self-start">
-            Learn more →
-          </a>
-        </div>
-      </div>
+    <div class="max-w-2xl mx-auto text-center">
+      <a
+        href="/people"
+        class="text-accent-teal hover:text-teal-300 text-lg font-medium transition-colors"
+      >
+        Meet our people →
+      </a>
     </div>
   </section>
 </BaseLayout>

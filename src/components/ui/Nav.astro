@@ -1,8 +1,7 @@
 ---
 const navLinks = [
   { href: '/schools', label: 'Schools' },
-  { href: '/about', label: 'About' },
-  { href: '/videos', label: 'Videos' },
+  { href: '/hackatons', label: 'Hackatons' },
   { href: '/consulting', label: 'Consulting' },
 ];
 const currentPath = Astro.url.pathname;
@@ -13,6 +12,7 @@ const currentPath = Astro.url.pathname;
     <a href="/" class="text-lg font-bold tracking-tight text-accent-teal hover:text-teal-300 transition-colors">
       AstroStat Academy
     </a>
+    <!-- Desktop -->
     <ul class="hidden md:flex items-center gap-6">
       {navLinks.map(link => (
         <li>
@@ -28,12 +28,28 @@ const currentPath = Astro.url.pathname;
           </a>
         </li>
       ))}
+      <li aria-hidden="true" class="h-4 w-px bg-white/20" />
+      <li>
+        <a
+          href="/people"
+          class={`text-sm font-medium transition-colors ${
+            currentPath.startsWith('/people')
+              ? 'text-white'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          People
+        </a>
+      </li>
     </ul>
-    <!-- Mobile: hamburger placeholder (no JS needed for MVP) -->
+    <!-- Mobile -->
     <div class="md:hidden flex gap-4">
       {navLinks.map(link => (
-        <a href={link.href} class="text-slate-400 hover:text-white text-xs transition-colors">{link.label}</a>
+        <a href={link.href} class="text-slate-400 hover:text-white text-xs transition-colors">
+          {link.label}
+        </a>
       ))}
+      <a href="/people" class="text-slate-400 hover:text-white text-xs transition-colors">People</a>
     </div>
   </div>
 </nav>
