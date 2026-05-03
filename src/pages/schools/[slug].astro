@@ -58,9 +58,9 @@ const isPast = (endDate ?? date) < new Date();
       </div>
       <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">{title}</h1>
       <div class="flex flex-wrap gap-x-6 gap-y-2 text-slate-300 text-sm">
-        <span>📅 {dateRange}</span>
-        <span>📍 {location}</span>
-        {attendees && <span>👥 {attendees} attendees</span>}
+        <span>{dateRange}</span>
+        <span>{location}</span>
+        {attendees && <span>{attendees} attendees</span>}
       </div>
       {applicationUrl && !isPast && (
         <a

@@ -14,7 +14,7 @@ export default {
         },
         accent: {
           blue: '#3b82f6',
-          teal: '#14b8a6',
+          teal: '#e8dcc8',
           cyan: '#06b6d4',
         },
       },

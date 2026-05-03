@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 
 const CHARS = 'αβγδεζηθικλμνξπρστφχψωΣ∑∫∂∇∞≈±√⊕⊙☉★✦χμσ0123456789';
+const FONT_SIZE = 16;
+const FRAME_INTERVAL_MS = 110;
 
 export default function CodeRain() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -8,35 +10,13 @@ export default function CodeRain() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const FONT_SIZE = 16;
-    const FRAME_INTERVAL_MS = 110;
     let columns = 0;
     let drops: number[] = [];
-
-    const resize = () => {
-      const w = canvas.offsetWidth;
-      const h = canvas.offsetHeight;
-      if (w === 0 || h === 0) return;
-      canvas.width = w;
-      canvas.height = h;
-      columns = Math.floor(w / FONT_SIZE);
-      drops = Array.from(
-        { length: columns },
-        () => (Math.random() * h) / FONT_SIZE,
-      );
-    };
-
-    resize();
-    window.addEventListener('resize', resize);
-
-    let lastTick = 0;
     let raf = 0;
+    let lastTick = 0;
 
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
@@ -45,34 +25,70 @@ export default function CodeRain() {
 
       ctx.fillStyle = 'rgba(7, 13, 26, 0.18)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.font = `${FONT_SIZE}px ui-monospace, "JetBrains Mono", monospace`;
-      ctx.fillStyle = '#22ff22';
+      ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
+      ctx.fillStyle = '#e8dcc8';
       ctx.textBaseline = 'top';
 
       for (let i = 0; i < columns; i++) {
         const char = CHARS[Math.floor(Math.random() * CHARS.length)];
         ctx.fillText(char, i * FONT_SIZE, drops[i] * FONT_SIZE);
-
-        if (drops[i] * FONT_SIZE > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
+        if (drops[i] * FONT_SIZE > canvas.height && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
       }
     };
 
-    raf = requestAnimationFrame(tick);
+    const init = (w: number, h: number) => {
+      canvas.width = w;
+      canvas.height = h;
+      columns = Math.floor(w / FONT_SIZE);
+      drops = Array.from({ length: columns }, () => (Math.random() * h) / FONT_SIZE);
+    };
+
+    // Measure from the parent section, not the canvas itself, since the canvas
+    // offsetWidth/Height may lag behind CSS when first inserted into the DOM.
+    // canvas.parentElement is an <astro-island> wrapper with no dimensions;
+    // walk up to the first ancestor that has a real height.
+    const container = (): HTMLElement => {
+      let el: HTMLElement = canvas;
+      while (el.parentElement) {
+        el = el.parentElement;
+        if (el.offsetWidth > 0 && el.offsetHeight > 0) return el;
+      }
+      return document.documentElement;
+    };
+
+    const tryStart = () => {
+      const el = container();
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      if (w > 0 && h > 0) {
+        init(w, h);
+        raf = requestAnimationFrame(tick);
+      } else {
+        requestAnimationFrame(tryStart);
+      }
+    };
+
+    requestAnimationFrame(tryStart);
+
+    const onResize = () => {
+      const el = container();
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      if (w > 0 && h > 0) init(w, h);
+    };
+    window.addEventListener('resize', onResize);
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full -z-10 pointer-events-none"
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
       aria-hidden="true"
     />
   );
