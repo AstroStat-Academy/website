@@ -33,6 +33,9 @@ export default function TitleDot() {
     let landingY = 0;
     let bins = new Float32Array(BINS);
     let binW = 0;
+    type Particle = { x: number; y: number; vx: number; vy: number; life: number };
+    let particles: Particle[] = [];
+    let frameCount = 0;
 
     const build = () => {
       const h1 = wrap.querySelector('h1') as HTMLElement;
@@ -172,20 +175,59 @@ export default function TitleDot() {
       if (path.length < 2) return;
 
       ctx.clearRect(0, 0, canvasW, canvasH);
+
+      // dot position
       progress = (progress + DOT_SPEED) % path.length;
       const i = Math.floor(progress);
       const t = progress - i;
       const a = path[i];
       const b = path[(i + 1) % path.length];
-      const x = a.x + (b.x - a.x) * t;
-      const y = a.y + (b.y - a.y) * t;
+      const dotX = a.x + (b.x - a.x) * t;
+      const dotY = a.y + (b.y - a.y) * t;
 
+      // spawn
+      frameCount++;
+      if (frameCount % SPAWN_EVERY === 0 && particles.length < MAX_PARTICLES) {
+        particles.push({
+          x:    dotX + (Math.random() - 0.5) * 1,
+          y:    dotY,
+          vx:   (Math.random() - 0.5) * 0.2,
+          vy:   0.4 + Math.random() * 0.3,
+          life: 1,
+        });
+      }
+
+      // update + draw particles
+      for (let j = particles.length - 1; j >= 0; j--) {
+        const p = particles[j];
+        p.x  += p.vx;
+        p.y  += p.vy;
+        p.vy += 0.01;
+        p.life -= DECAY_RATE;
+
+        if (p.life <= 0) { particles.splice(j, 1); continue; }
+
+        if (p.y >= landingY) {
+          const binIdx = Math.min(Math.floor(p.x / binW), BINS - 1);
+          if (binIdx >= 0) bins[binIdx] = Math.min(bins[binIdx] + BIN_INCREMENT, MAX_BIN);
+          particles.splice(j, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(232,220,200,${p.life * 0.85})`;
+        ctx.fill();
+      }
+
+      // dot (on top)
       ctx.beginPath();
-      ctx.arc(x, y, DOT_R, 0, Math.PI * 2);
+      ctx.arc(dotX, dotY, DOT_R, 0, Math.PI * 2);
       ctx.shadowBlur = 10;
       ctx.shadowColor = '#e8dcc8';
       ctx.fillStyle = '#e8dcc8';
       ctx.fill();
+      ctx.shadowBlur = 0;
     };
 
     document.fonts.ready.then(() => {
