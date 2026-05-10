@@ -228,6 +228,19 @@ export default function TitleDot() {
       ctx.fillStyle = '#e8dcc8';
       ctx.fill();
       ctx.shadowBlur = 0;
+
+      // bin decay
+      for (let k = 0; k < BINS; k++) bins[k] = Math.max(0, bins[k] - BIN_DECAY);
+
+      // histogram
+      const histoTop = landingY + 8;
+      for (let k = 0; k < BINS; k++) {
+        if (bins[k] < 0.05) continue;
+        const bh    = (bins[k] / MAX_BIN) * HISTO_ZONE;
+        const alpha = 0.55 + (bins[k] / MAX_BIN) * 0.35;
+        ctx.fillStyle = `rgba(232,220,200,${alpha})`;
+        ctx.fillRect(k * binW + 0.5, histoTop + HISTO_ZONE - bh, binW - 1, bh);
+      }
     };
 
     document.fonts.ready.then(() => {
