@@ -205,8 +205,6 @@ export default function TitleDot() {
         p.vy += 0.01;
         p.life -= DECAY_RATE;
 
-        if (p.life <= 0) { particles.splice(j, 1); continue; }
-
         if (p.y >= landingY) {
           const binIdx = Math.min(Math.floor(p.x / binW), BINS - 1);
           if (binIdx >= 0) bins[binIdx] = Math.min(bins[binIdx] + BIN_INCREMENT, MAX_BIN);
@@ -214,10 +212,12 @@ export default function TitleDot() {
           continue;
         }
 
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(232,220,200,${p.life * 0.85})`;
-        ctx.fill();
+        if (p.life > 0) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(232,220,200,${p.life * 0.85})`;
+          ctx.fill();
+        }
       }
 
       // dot (on top)
