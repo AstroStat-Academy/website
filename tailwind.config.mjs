@@ -7,6 +7,7 @@ export default {
     extend: {
       colors: {
         navy: {
+          950: '#02040d',
           900: '#070d1a',
           800: '#0d1629',
           700: '#162040',
