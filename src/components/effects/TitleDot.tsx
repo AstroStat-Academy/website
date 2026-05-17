@@ -12,7 +12,7 @@ const MAX_BIN    = 40;   // bin cap — maps to full bar height
 const MAX_PARTICLES = 60;
 const SPAWN_EVERY   = 4;   // frames between spawns
 const DECAY_RATE    = 0.005;
-const BIN_INCREMENT = 0.6;
+const BIN_INCREMENT = 1.5;
 const BIN_DECAY     = 0.001;
 
 export default function TitleDot() {
