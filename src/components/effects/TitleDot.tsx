@@ -28,6 +28,7 @@ export default function TitleDot() {
     let histoBase    = 0;   // y where histogram bars anchor (canvas bottom)
     let columns  = 0;
     let drops: number[] = [];
+    let speeds: number[] = [];
     let bins: Float32Array = new Float32Array(0);
 
     const build = () => {
@@ -54,9 +55,10 @@ export default function TitleDot() {
       bins    = new Float32Array(columns);
 
       // Start drops at random rows so they don't all land at once
-      drops = Array.from({ length: columns }, () =>
+      drops  = Array.from({ length: columns }, () =>
         -Math.floor(Math.random() * (rainBottom / FONT_SIZE))
       );
+      speeds = Array.from({ length: columns }, () => 0.5 + Math.random() * 1.5);
     };
 
     const tick = (now: number) => {
@@ -84,7 +86,7 @@ export default function TitleDot() {
           bins[i] = Math.min(bins[i] + BIN_INCREMENT, MAX_BIN);
           drops[i] = -Math.floor(Math.random() * 8);
         } else {
-          drops[i]++;
+          drops[i] += speeds[i];
         }
       }
 
