@@ -66,9 +66,10 @@ export default function TitleDot() {
       if (now - lastTick < FRAME_MS) return;
       lastTick = now;
 
-      // Fade trail — full canvas including histogram zone
+      // Fade trail — rain zone only; histogram zone cleared cleanly
       ctx.fillStyle = FADE;
-      ctx.fillRect(0, 0, canvasW, canvasH);
+      ctx.fillRect(0, 0, canvasW, rainBottom);
+      ctx.clearRect(0, rainBottom, canvasW, canvasH - rainBottom);
 
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
