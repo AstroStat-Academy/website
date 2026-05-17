@@ -53,7 +53,7 @@ export default function TitleDot() {
       canvas.style.height = canvasH + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      landingY = hRect.bottom - wRect.top;   // h1 bottom edge, canvas-relative
+      landingY = hRect.bottom - wRect.top + HISTO_ZONE - 4;  // histogram baseline
       binW     = canvasW / BINS;
       bins     = new Float32Array(BINS);     // reset on resize
 
@@ -232,14 +232,13 @@ export default function TitleDot() {
       // bin decay
       for (let k = 0; k < BINS; k++) bins[k] = Math.max(0, bins[k] - BIN_DECAY);
 
-      // histogram
-      const histoTop = landingY + 8;
+      // histogram — bars grow upward from landingY
       for (let k = 0; k < BINS; k++) {
         if (bins[k] < 0.05) continue;
         const bh    = (bins[k] / MAX_BIN) * HISTO_ZONE;
         const alpha = 0.55 + (bins[k] / MAX_BIN) * 0.35;
         ctx.fillStyle = `rgba(232,220,200,${alpha})`;
-        ctx.fillRect(k * binW + 0.5, histoTop + HISTO_ZONE - bh, binW - 1, bh);
+        ctx.fillRect(k * binW + 0.5, landingY - bh, binW - 1, bh);
       }
     };
 
