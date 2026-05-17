@@ -13,7 +13,7 @@ const MAX_PARTICLES = 60;
 const SPAWN_EVERY   = 4;   // frames between spawns
 const DECAY_RATE    = 0.005;
 const BIN_INCREMENT = 0.6;
-const BIN_DECAY     = 0.003;
+const BIN_DECAY     = 0.001;
 
 export default function TitleDot() {
   const wrapRef = useRef<HTMLDivElement>(null);
