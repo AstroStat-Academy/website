@@ -24,6 +24,7 @@ export default function TitleDot() {
     let raf      = 0;
     let lastTick = 0;
     let canvasW  = 0, canvasH = 0;
+    let rainTop      = 0;   // y where rain starts (bottom of "AstroStat" row)
     let rainBottom   = 0;   // y where drops are captured (h1 bottom)
     let histoBase    = 0;   // y where histogram bars anchor (canvas bottom)
     let columns  = 0;
@@ -48,15 +49,17 @@ export default function TitleDot() {
       canvas.style.height = canvasH + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+      const span = h1.querySelector('span') as HTMLElement;
+      rainTop    = (span ? span.getBoundingClientRect().top : hRect.top) - wRect.top;
       rainBottom = hRect.bottom - wRect.top;          // h1 bottom edge
       histoBase  = rainBottom + HISTO_ZONE - 4;       // histogram baseline
 
       columns = Math.floor(canvasW / FONT_SIZE);
       bins    = new Float32Array(columns);
 
-      // Start drops at random rows so they don't all land at once
+      const rainRows = Math.ceil((histoBase - rainTop) / FONT_SIZE);
       drops  = Array.from({ length: columns }, () =>
-        -Math.floor(Math.random() * (rainBottom / FONT_SIZE))
+        rainTop / FONT_SIZE - Math.floor(Math.random() * rainRows)
       );
       speeds = Array.from({ length: columns }, () => 0.5 + Math.random() * 1.5);
     };
@@ -68,7 +71,7 @@ export default function TitleDot() {
 
       // Fade trail — rain zone fades toward background colour
       ctx.fillStyle = FADE;
-      ctx.fillRect(0, 0, canvasW, rainBottom);
+      ctx.fillRect(0, rainTop, canvasW, rainBottom - rainTop);
 
       // Histogram zone fades toward transparency (no colour accumulation)
       ctx.save();
@@ -79,7 +82,7 @@ export default function TitleDot() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.rect(0, 0, canvasW, histoBase);
+      ctx.rect(0, rainTop, canvasW, histoBase - rainTop);
       ctx.clip();
 
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
