@@ -64,12 +64,9 @@ export default function TitleDot() {
       if (now - lastTick < FRAME_MS) return;
       lastTick = now;
 
-      // Fade trail — covers only the rain zone (above rainBottom)
+      // Fade trail — full canvas including histogram zone
       ctx.fillStyle = FADE;
-      ctx.fillRect(0, 0, canvasW, rainBottom);
-
-      // Clear histogram zone each frame (bars are redrawn cleanly)
-      ctx.clearRect(0, rainBottom, canvasW, HISTO_ZONE);
+      ctx.fillRect(0, 0, canvasW, canvasH);
 
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
@@ -77,15 +74,15 @@ export default function TitleDot() {
 
       for (let i = 0; i < columns; i++) {
         const y = drops[i] * FONT_SIZE;
-        if (y >= 0 && y < rainBottom) {
+        if (y >= 0 && y < histoBase) {
           const char = CHARS[Math.floor(Math.random() * CHARS.length)];
           ctx.fillText(char, i * FONT_SIZE, y);
         }
 
-        // Drop reached the baseline — register hit, reset
-        if (y >= rainBottom) {
+        // Drop reached the histogram baseline — register hit, reset
+        if (y >= histoBase) {
           bins[i] = Math.min(bins[i] + BIN_INCREMENT, MAX_BIN);
-          drops[i] = -Math.floor(Math.random() * 8);   // random delay before next drop
+          drops[i] = -Math.floor(Math.random() * 8);
         } else {
           drops[i]++;
         }
