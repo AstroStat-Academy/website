@@ -66,10 +66,16 @@ export default function TitleDot() {
       if (now - lastTick < FRAME_MS) return;
       lastTick = now;
 
-      // Fade trail — rain zone only; histogram zone cleared cleanly
+      // Fade trail — rain zone fades toward background colour
       ctx.fillStyle = FADE;
       ctx.fillRect(0, 0, canvasW, rainBottom);
-      ctx.clearRect(0, rainBottom, canvasW, canvasH - rainBottom);
+
+      // Histogram zone fades toward transparency (no colour accumulation)
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillRect(0, rainBottom, canvasW, canvasH - rainBottom);
+      ctx.restore();
 
       ctx.save();
       ctx.beginPath();
