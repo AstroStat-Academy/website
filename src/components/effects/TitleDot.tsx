@@ -71,6 +71,11 @@ export default function TitleDot() {
       ctx.fillRect(0, 0, canvasW, rainBottom);
       ctx.clearRect(0, rainBottom, canvasW, canvasH - rainBottom);
 
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, canvasW, histoBase);
+      ctx.clip();
+
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
       ctx.fillStyle = '#e8dcc8';
@@ -90,6 +95,8 @@ export default function TitleDot() {
           drops[i] += speeds[i];
         }
       }
+
+      ctx.restore();
 
       // Bin decay
       for (let k = 0; k < columns; k++) bins[k] = Math.max(0, bins[k] - BIN_DECAY);
