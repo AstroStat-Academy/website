@@ -1,5 +1,5 @@
 import Plot from 'react-plotly.js';
-import { ui, accent } from '../../styles/tokens';
+import { ui, palette } from '../../styles/tokens';
 
 interface SchoolBar {
   title: string;
@@ -18,7 +18,7 @@ export default function AttendanceChart({ schools, highlightTitle }: Props) {
   );
 
   const colors = sorted.map((s) =>
-    s.title === highlightTitle ? ui.chartHighlight : accent.blue
+    s.title === highlightTitle ? ui.chartHighlight : palette.blue
   );
 
   const labels = sorted.map((s) =>
@@ -26,7 +26,7 @@ export default function AttendanceChart({ schools, highlightTitle }: Props) {
   );
 
   return (
-    <div className="bg-navy-800 border border-white/10 rounded-xl p-4 overflow-hidden">
+    <div className="bg-surface border border-white/10 rounded-xl p-4 overflow-hidden">
       <Plot
         data={[
           {

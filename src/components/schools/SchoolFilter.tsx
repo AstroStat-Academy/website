@@ -45,7 +45,7 @@ export default function SchoolFilter({ schools }: Props) {
   }, [schools, yearFilter, topicFilter]);
 
   const selectClass =
-    'bg-navy-800 border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:border-teal-400 focus:outline-none';
+    'bg-surface border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:border-accent focus:outline-none';
 
   return (
     <div>
@@ -100,14 +100,14 @@ export default function SchoolFilter({ schools }: Props) {
               <a
                 key={school.slug}
                 href={`/schools/${school.slug}`}
-                className="group flex flex-col bg-navy-800 border border-white/10 rounded-xl p-6 hover:border-teal-400/50 transition-all hover:-translate-y-0.5"
+                className="group flex flex-col bg-surface border border-white/10 rounded-xl p-6 hover:border-accent/50 transition-all hover:-translate-y-0.5"
               >
                 <div className="flex items-center justify-between mb-3">
                   <span
                     className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                       isPast
                         ? 'bg-slate-700 text-slate-300'
-                        : 'bg-teal-900/60 text-teal-400 border border-teal-400/30'
+                        : 'bg-base/60 text-accent border border-accent/30'
                     }`}
                   >
                     {isPast ? 'Past' : 'Upcoming'}
@@ -116,7 +116,7 @@ export default function SchoolFilter({ schools }: Props) {
                     {date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                   </span>
                 </div>
-                <h3 className="text-base font-bold mb-1 group-hover:text-teal-400 transition-colors leading-snug">
+                <h3 className="text-base font-bold mb-1 group-hover:text-accent transition-colors leading-snug">
                   {school.title}
                 </h3>
                 <p className="text-slate-400 text-sm mb-3">{school.location}</p>
@@ -127,7 +127,7 @@ export default function SchoolFilter({ schools }: Props) {
                   {school.topics.slice(0, 3).map((topic) => (
                     <span
                       key={topic}
-                      className="text-xs bg-navy-700 text-slate-300 px-2 py-0.5 rounded"
+                      className="text-xs bg-surface text-slate-300 px-2 py-0.5 rounded"
                     >
                       {topic}
                     </span>

@@ -38,14 +38,14 @@ export default function ApplicationForm({ schoolTitle }: Props) {
   };
 
   const inputClass =
-    'w-full bg-navy-900 border border-white/20 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-600 focus:border-teal-400 focus:outline-none transition-colors';
+    'w-full bg-base border border-white/20 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-600 focus:border-accent focus:outline-none transition-colors';
   const errorClass = 'text-red-400 text-xs mt-1';
   const labelClass = 'text-sm text-slate-300 block mb-1.5';
 
   if (submitted) {
     return (
-      <div className="bg-teal-900/25 border border-teal-500/30 rounded-xl p-8 text-center">
-        <p className="text-teal-400 text-lg font-semibold mb-2">Thank you!</p>
+      <div className="bg-base/25 border border-accent/30 rounded-xl p-8 text-center">
+        <p className="text-accent text-lg font-semibold mb-2">Thank you!</p>
         <p className="text-slate-300 text-sm">
           We've noted your interest in <strong>{schoolTitle}</strong>. We'll be in touch.
         </p>
@@ -56,7 +56,7 @@ export default function ApplicationForm({ schoolTitle }: Props) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-navy-800 border border-white/10 rounded-xl p-6 space-y-5 max-w-xl"
+      className="bg-surface border border-white/10 rounded-xl p-6 space-y-5 max-w-xl"
       noValidate
     >
       {/* Full name */}
@@ -138,7 +138,7 @@ export default function ApplicationForm({ schoolTitle }: Props) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-accent-teal text-navy-900 font-semibold py-3 rounded-lg hover:bg-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full bg-accent text-base font-semibold py-3 rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {isSubmitting ? 'Sending…' : 'Submit Interest'}
       </button>
