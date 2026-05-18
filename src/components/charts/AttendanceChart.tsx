@@ -26,7 +26,7 @@ export default function AttendanceChart({ schools, highlightTitle }: Props) {
   );
 
   return (
-    <div className="bg-surface border border-white/10 rounded-xl p-4 overflow-hidden">
+    <div className="bg-ink border border-white/10 rounded-xl p-4 overflow-hidden">
       <Plot
         data={[
           {

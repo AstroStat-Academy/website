@@ -16,14 +16,14 @@ const formattedDate = endDate
 
 <a
   href={`/schools/${school.slug}`}
-  class="group flex flex-col bg-surface border border-white/10 rounded-xl p-6 hover:border-accent/50 transition-all hover:-translate-y-0.5"
+  class="group flex flex-col bg-ink border border-white/10 rounded-xl p-6 hover:border-bone/50 transition-all hover:-translate-y-0.5"
 >
   <div class="flex items-center justify-between mb-3">
     <span
       class={`text-xs font-semibold px-2.5 py-1 rounded-full ${
         isPast
           ? 'bg-slate-700 text-slate-300'
-          : 'bg-base/60 text-accent border border-accent/30'
+          : 'bg-ink/60 text-bone border border-bone/30'
       }`}
     >
       {isPast ? 'Past' : 'Upcoming'}
@@ -31,7 +31,7 @@ const formattedDate = endDate
     <span class="text-slate-400 text-xs">{formattedDate}</span>
   </div>
 
-  <h3 class="text-base font-bold mb-1 group-hover:text-accent transition-colors leading-snug">
+  <h3 class="text-base font-bold mb-1 group-hover:text-bone transition-colors leading-snug">
     {title}
   </h3>
   <p class="text-slate-400 text-sm mb-3">{location}</p>
@@ -39,7 +39,7 @@ const formattedDate = endDate
 
   <div class="flex flex-wrap gap-1.5 mt-4">
     {topics.slice(0, 3).map((topic) => (
-      <span class="text-xs bg-surface text-slate-300 px-2 py-0.5 rounded">{topic}</span>
+      <span class="text-xs bg-ink text-slate-300 px-2 py-0.5 rounded">{topic}</span>
     ))}
     {topics.length > 3 && (
       <span class="text-xs text-slate-500">+{topics.length - 3} more</span>

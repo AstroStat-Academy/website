@@ -136,7 +136,7 @@ export default function TitleDot() {
     <div ref={wrapRef} style={{ position: 'relative', paddingBottom: HISTO_ZONE + 'px' }}>
       <h1 className="text-5xl md:text-7xl font-bold leading-tight relative z-10">
         AstroStat<br />
-        <span className="text-accent">Academy</span>
+        <span className="text-bone">Academy</span>
       </h1>
       <canvas
         ref={canvasRef}
