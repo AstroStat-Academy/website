@@ -86,12 +86,14 @@ export default function TitleDot() {
 
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
-      ctx.fillStyle = colors.charColor;
 
       for (let i = 0; i < columns; i++) {
         const y = drops[i] * FONT_SIZE;
         if (y >= 0 && y < histoBase) {
           const char = CHARS[Math.floor(Math.random() * CHARS.length)];
+          ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.45)`;
+          ctx.fillText(char, i * FONT_SIZE + 1, y + 1);
+          ctx.fillStyle = colors.charColor;
           ctx.fillText(char, i * FONT_SIZE, y);
         }
 
@@ -109,9 +111,16 @@ export default function TitleDot() {
       // Bin decay
       for (let k = 0; k < columns; k++) bins[k] = Math.max(0, bins[k] - BIN_DECAY);
 
-      // Histogram — bars normalised to current max so tallest bar always fills HISTO_ZONE
+      // Histogram — blue shadow pass, then red bars
       const binW   = canvasW / columns;
       const maxBin = Math.max(...bins, MAX_BIN);
+      for (let k = 0; k < columns; k++) {
+        if (bins[k] < 0.05) continue;
+        const norm = bins[k] / maxBin;
+        const bh   = norm * HISTO_ZONE;
+        ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
+        ctx.fillRect(k * binW + 1.5, histoBase - bh + 2, binW - 1, bh);
+      }
       for (let k = 0; k < columns; k++) {
         if (bins[k] < 0.05) continue;
         const norm  = bins[k] / maxBin;
