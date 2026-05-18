@@ -4,7 +4,7 @@ import { canvas as colors } from '../../styles/tokens';
 const CHARS = 'αβγδεζηθικλμνξπρστφχψωΣ∑∫∂∇∞≈±√⊕⊙☉★✦χμσ0123456789';
 const FONT_SIZE     = 14;
 const FRAME_MS      = 110;   // ~9 fps — classic Matrix pace
-const HISTO_ZONE    = 80;
+const HISTO_ZONE    = 120;
 const MAX_BIN       = 40;    // fixed ceiling — normalise only above this
 const BIN_INCREMENT = 5.0;
 const BIN_DECAY     = 0.25;
