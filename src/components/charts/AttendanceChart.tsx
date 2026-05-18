@@ -1,4 +1,5 @@
 import Plot from 'react-plotly.js';
+import { ui, accent } from '../../styles/tokens';
 
 interface SchoolBar {
   title: string;
@@ -17,7 +18,7 @@ export default function AttendanceChart({ schools, highlightTitle }: Props) {
   );
 
   const colors = sorted.map((s) =>
-    s.title === highlightTitle ? '#14b8a6' : '#3b82f6'
+    s.title === highlightTitle ? ui.chartHighlight : accent.blue
   );
 
   const labels = sorted.map((s) =>
@@ -41,15 +42,15 @@ export default function AttendanceChart({ schools, highlightTitle }: Props) {
         layout={{
           paper_bgcolor: 'transparent',
           plot_bgcolor: 'transparent',
-          font: { color: '#cbd5e1', family: 'Inter, system-ui, sans-serif', size: 13 },
+          font: { color: ui.chartText, family: 'Inter, system-ui, sans-serif', size: 13 },
           margin: { t: 20, r: 20, b: 50, l: 50 },
           xaxis: {
-            gridcolor: 'rgba(255,255,255,0.07)',
+            gridcolor: ui.gridLine,
             tickfont: { size: 12 },
           },
           yaxis: {
             title: { text: 'Attendees', font: { size: 12 } },
-            gridcolor: 'rgba(255,255,255,0.07)',
+            gridcolor: ui.gridLine,
           },
           bargap: 0.35,
         }}

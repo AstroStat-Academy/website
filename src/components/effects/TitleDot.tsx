@@ -1,15 +1,13 @@
 import { useEffect, useRef } from 'react';
+import { canvas as colors } from '../../styles/tokens';
 
 const CHARS = 'αβγδεζηθικλμνξπρστφχψωΣ∑∫∂∇∞≈±√⊕⊙☉★✦χμσ0123456789';
 const FONT_SIZE     = 14;
 const FRAME_MS      = 110;   // ~9 fps — classic Matrix pace
 const HISTO_ZONE    = 80;
 const MAX_BIN       = 40;    // fixed ceiling — normalise only above this
-
 const BIN_INCREMENT = 5.0;
 const BIN_DECAY     = 0.25;
-// Fade color matches navy-900 hero background
-const FADE = 'rgba(7, 13, 26, 0.22)';
 
 export default function TitleDot() {
   const wrapRef  = useRef<HTMLDivElement>(null);
@@ -71,13 +69,13 @@ export default function TitleDot() {
       lastTick = now;
 
       // Fade trail — rain zone fades toward background colour
-      ctx.fillStyle = FADE;
+      ctx.fillStyle = colors.rainFade;
       ctx.fillRect(0, rainTop, canvasW, rainBottom - rainTop);
 
       // Histogram zone fades toward transparency (no colour accumulation)
       ctx.save();
       ctx.globalCompositeOperation = 'destination-out';
-      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillStyle = colors.histoFade;
       ctx.fillRect(0, rainBottom, canvasW, canvasH - rainBottom);
       ctx.restore();
 
@@ -88,7 +86,7 @@ export default function TitleDot() {
 
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
-      ctx.fillStyle = '#e8dcc8';
+      ctx.fillStyle = colors.charColor;
 
       for (let i = 0; i < columns; i++) {
         const y = drops[i] * FONT_SIZE;
@@ -119,7 +117,7 @@ export default function TitleDot() {
         const norm  = bins[k] / maxBin;
         const bh    = norm * HISTO_ZONE;
         const alpha = 0.55 + norm * 0.35;
-        ctx.fillStyle = `rgba(232,220,200,${alpha})`;
+        ctx.fillStyle = `rgba(${colors.charColorRgb}, ${alpha})`;
         ctx.fillRect(k * binW + 0.5, histoBase - bh, binW - 1, bh);
       }
     };

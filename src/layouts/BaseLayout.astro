@@ -13,6 +13,16 @@ const {
 } = Astro.props;
 ---
 
+<style is:global>
+  :root {
+    --color-hex-active:      #07101f;
+    --color-hex-inactive:    #050810;
+    --color-accent-teal-20:  rgba(232, 220, 200, 0.2);
+    --color-accent-teal-45:  rgba(232, 220, 200, 0.45);
+    --color-subtle-white:    rgba(255, 255, 255, 0.07);
+  }
+</style>
+
 <!doctype html>
 <html lang="en" class="bg-black text-white scroll-smooth">
   <head>

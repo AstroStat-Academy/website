@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { canvas as colors } from '../../styles/tokens';
 
 const CHARS = 'αβγδεζηθικλμνξπρστφχψωΣ∑∫∂∇∞≈±√⊕⊙☉★✦χμσ0123456789';
 const FONT_SIZE = 16;
@@ -23,10 +24,10 @@ export default function CodeRain() {
       if (now - lastTick < FRAME_INTERVAL_MS) return;
       lastTick = now;
 
-      ctx.fillStyle = 'rgba(7, 13, 26, 0.18)';
+      ctx.fillStyle = colors.rainFadeAlt;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
-      ctx.fillStyle = '#e8dcc8';
+      ctx.fillStyle = colors.charColor;
       ctx.textBaseline = 'top';
 
       for (let i = 0; i < columns; i++) {
