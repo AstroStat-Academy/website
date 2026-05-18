@@ -6,7 +6,7 @@ const FRAME_MS      = 110;   // ~9 fps — classic Matrix pace
 const HISTO_ZONE    = 80;
 const MAX_BIN       = 40;
 const BIN_INCREMENT = 1.2;
-const BIN_DECAY     = 0.002;
+const BIN_DECAY     = 0.008;
 // Fade color matches navy-900 hero background
 const FADE = 'rgba(7, 13, 26, 0.22)';
 
