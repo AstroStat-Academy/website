@@ -68,10 +68,8 @@ export default function TitleDot() {
       if (now - lastTick < FRAME_MS) return;
       lastTick = now;
 
-      // Two-pass fade: darken (keeps bg black) then blue tint (ages chars toward blue)
+      // Fade trail toward black
       ctx.fillStyle = colors.rainFade;
-      ctx.fillRect(0, rainTop, canvasW, rainBottom - rainTop);
-      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.15)`;
       ctx.fillRect(0, rainTop, canvasW, rainBottom - rainTop);
 
       // Histogram zone fades toward transparency (no colour accumulation)

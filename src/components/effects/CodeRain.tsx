@@ -26,8 +26,6 @@ export default function CodeRain() {
 
       ctx.fillStyle = colors.rainFadeAlt;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.15)`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
 
