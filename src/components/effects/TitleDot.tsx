@@ -68,8 +68,10 @@ export default function TitleDot() {
       if (now - lastTick < FRAME_MS) return;
       lastTick = now;
 
-      // Fade trail — rain zone fades toward background colour
+      // Two-pass fade: darken (keeps bg black) then blue tint (ages chars toward blue)
       ctx.fillStyle = colors.rainFade;
+      ctx.fillRect(0, rainTop, canvasW, rainBottom - rainTop);
+      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.15)`;
       ctx.fillRect(0, rainTop, canvasW, rainBottom - rainTop);
 
       // Histogram zone fades toward transparency (no colour accumulation)
@@ -91,8 +93,6 @@ export default function TitleDot() {
         const y = drops[i] * FONT_SIZE;
         if (y >= 0 && y < histoBase) {
           const char = CHARS[Math.floor(Math.random() * CHARS.length)];
-          ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.45)`;
-          ctx.fillText(char, i * FONT_SIZE + 1, y + 1);
           ctx.fillStyle = colors.charColor;
           ctx.fillText(char, i * FONT_SIZE, y);
         }

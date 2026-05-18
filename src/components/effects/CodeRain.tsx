@@ -26,13 +26,13 @@ export default function CodeRain() {
 
       ctx.fillStyle = colors.rainFadeAlt;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.15)`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
 
       for (let i = 0; i < columns; i++) {
         const char = CHARS[Math.floor(Math.random() * CHARS.length)];
-        ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.45)`;
-        ctx.fillText(char, i * FONT_SIZE + 1, drops[i] * FONT_SIZE + 1);
         ctx.fillStyle = colors.charColor;
         ctx.fillText(char, i * FONT_SIZE, drops[i] * FONT_SIZE);
         if (drops[i] * FONT_SIZE > canvas.height && Math.random() > 0.975) drops[i] = 0;

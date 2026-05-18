@@ -2,7 +2,7 @@
 export const palette = {
   blue:  '#0465ad',   // primary blue
   red:   '#8c0527',   // primary crimson
-  bone:  '#e8dcc8',   // warm off-white — text, highlights
+  bone:  '#fbf6ec',   // warm off-white — text, highlights
   ink:   '#000000',   // spare / pure black background
 } as const;
 
@@ -21,7 +21,7 @@ export const canvas = {
   charColorRgb:   '140, 5, 39',          // RGB of palette.red
   shadowColor:    palette.blue,
   shadowColorRgb: '4, 101, 173',         // RGB of palette.blue
-  rainFade:       'rgba(0, 0, 0, 0.22)', // fade to black — TitleDot trail
-  rainFadeAlt:    'rgba(0, 0, 0, 0.18)', // fade to black — CodeRain trail
+  rainFade:       'rgba(0, 0, 0, 0.12)', // darken pass — TitleDot (pair with blue tint)
+  rainFadeAlt:    'rgba(0, 0, 0, 0.12)', // darken pass — CodeRain  (pair with blue tint)
   histoFade:      'rgba(0, 0, 0, 0.18)', // destination-out alpha wipe
 } as const;
