@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { canvas as colors } from '../../styles/tokens';
+import React, { useEffect, useRef } from 'react';
+import { canvas as colors, palette } from '../../styles/tokens';
 
 const CHARS = 'αβγδεζηθικλμνξπρστφχψωΣ∑∫∂∇∞≈±√⊕⊙☉★✦χμσ0123456789';
 const FONT_SIZE     = 14;
@@ -8,10 +8,16 @@ const HISTO_ZONE    = 120;
 const MAX_BIN       = 40;    // fixed ceiling — normalise only above this
 const BIN_INCREMENT = 5.0;
 const BIN_DECAY     = 0.25;
+const TRI_W         = 9;     // triangle half-width (px)
+const TRI_H         = 13;    // triangle height (px)
 
 export default function TitleDot() {
-  const wrapRef  = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapRef      = useRef<HTMLDivElement>(null);
+  const canvasRef    = useRef<HTMLCanvasElement>(null);
+  const meanXRef     = useRef(0.5);   // normalised [0,1], default centre
+  const histoBaseRef = useRef(0);     // canvas-px Y of histogram baseline
+  const canvasWRef   = useRef(0);     // canvas CSS width
+  const isDragging   = useRef(false);
 
   useEffect(() => {
     const wrap   = wrapRef.current;
@@ -23,13 +29,13 @@ export default function TitleDot() {
     let raf      = 0;
     let lastTick = 0;
     let canvasW  = 0, canvasH = 0;
-    let rainTop      = 0;   // y where rain starts (bottom of "AstroStat" row)
-    let rainBottom   = 0;   // y where drops are captured (h1 bottom)
-    let histoBase    = 0;   // y where histogram bars anchor (canvas bottom)
-    let columns  = 0;
-    let drops: number[] = [];
-    let speeds: number[] = [];
-    let bins: Float32Array = new Float32Array(0);
+    let rainTop    = 0;
+    let rainBottom = 0;
+    let histoBase  = 0;
+    let columns    = 0;
+    let drops: number[]     = [];
+    let speeds: number[]    = [];
+    let bins: Float32Array  = new Float32Array(0);
 
     const build = () => {
       const h1 = wrap.querySelector('h1') as HTMLElement;
@@ -50,22 +56,27 @@ export default function TitleDot() {
 
       const span = h1.querySelector('span') as HTMLElement;
       rainTop    = (span ? span.getBoundingClientRect().top : hRect.top) - wRect.top;
-      rainBottom = hRect.bottom - wRect.top;          // h1 bottom edge
-      histoBase  = rainBottom + HISTO_ZONE - 4;       // histogram baseline
+      rainBottom = hRect.bottom - wRect.top;
+      histoBase  = rainBottom + HISTO_ZONE - 4;
+
+      histoBaseRef.current = histoBase;
+      canvasWRef.current   = canvasW;
 
       columns = Math.floor(canvasW / FONT_SIZE);
       bins    = new Float32Array(columns);
 
       const rainRows = Math.ceil((histoBase - rainTop) / FONT_SIZE);
-      drops  = Array.from({ length: columns }, () =>
+      drops = Array.from({ length: columns }, () =>
         rainTop / FONT_SIZE - Math.floor(Math.random() * rainRows)
       );
-      const mid = (columns - 1) / 2;
-      const sigma = columns / 5;          // bell width — ~40% of total span
+
+      // Gaussian speed profile: centre cols fastest → bell-curve histogram
+      const mid   = (columns - 1) / 2;
+      const sigma = columns / 5;
       speeds = Array.from({ length: columns }, (_, i) => {
-        const g = Math.exp(-0.5 * ((i - mid) / sigma) ** 2); // 0→1, peak at center
-        const base = 0.4 + g * 2.1;      // edge ≈ 0.4, centre ≈ 2.5
-        return base * (0.85 + Math.random() * 0.30); // ±15% natural jitter
+        const g    = Math.exp(-0.5 * ((i - mid) / sigma) ** 2);
+        const base = 0.4 + g * 2.1;          // edge ≈ 0.4, centre ≈ 2.5
+        return base * (0.85 + Math.random() * 0.30);
       });
     };
 
@@ -78,7 +89,7 @@ export default function TitleDot() {
       ctx.fillStyle = colors.rainFade;
       ctx.fillRect(0, rainTop, canvasW, rainBottom - rainTop);
 
-      // Histogram zone fades toward transparency (no colour accumulation)
+      // Histogram zone fades toward transparency
       ctx.save();
       ctx.globalCompositeOperation = 'destination-out';
       ctx.fillStyle = colors.histoFade;
@@ -100,8 +111,6 @@ export default function TitleDot() {
           ctx.fillStyle = colors.charColor;
           ctx.fillText(char, i * FONT_SIZE, y);
         }
-
-        // Drop reached the histogram baseline — register hit, reset
         if (y >= histoBase) {
           bins[i] += BIN_INCREMENT;
           drops[i] = -Math.floor(Math.random() * 8);
@@ -115,7 +124,7 @@ export default function TitleDot() {
       // Bin decay
       for (let k = 0; k < columns; k++) bins[k] = Math.max(0, bins[k] - BIN_DECAY);
 
-      // Histogram — blue shadow pass, then red bars
+      // Histogram: blue shadow pass then red bars
       const binW   = canvasW / columns;
       const maxBin = Math.max(...bins, MAX_BIN);
       for (let k = 0; k < columns; k++) {
@@ -133,6 +142,29 @@ export default function TitleDot() {
         ctx.fillStyle = `rgba(${colors.charColorRgb}, ${alpha})`;
         ctx.fillRect(k * binW + 0.5, histoBase - bh, binW - 1, bh);
       }
+
+      // Mean marker: dashed blue guideline + bone triangle (drawn last, always on top)
+      const mx = meanXRef.current * canvasW;
+
+      ctx.save();
+      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.40)`;
+      ctx.setLineDash([3, 5]);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(mx, rainTop);
+      ctx.lineTo(mx, histoBase + 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Triangle pointing up — apex at histoBase baseline
+      ctx.fillStyle = palette.bone;
+      ctx.beginPath();
+      ctx.moveTo(mx,          histoBase + 2);
+      ctx.lineTo(mx - TRI_W,  histoBase + 2 + TRI_H);
+      ctx.lineTo(mx + TRI_W,  histoBase + 2 + TRI_H);
+      ctx.closePath();
+      ctx.fill();
     };
 
     document.fonts.ready.then(() => {
@@ -145,6 +177,38 @@ export default function TitleDot() {
     return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); };
   }, []);
 
+  // ── Drag handling ──────────────────────────────────────────────────────────
+  const nearTriangle = (cssX: number, cssY: number) => {
+    const mx = meanXRef.current * canvasWRef.current;
+    const hb = histoBaseRef.current;
+    return Math.abs(cssX - mx) < TRI_W + 8 && cssY >= hb && cssY <= hb + TRI_H + 10;
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    if (nearTriangle(e.clientX - rect.left, e.clientY - rect.top)) {
+      isDragging.current = true;
+      e.currentTarget.setPointerCapture(e.pointerId);
+      e.currentTarget.style.cursor = 'ew-resize';
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (isDragging.current) {
+      meanXRef.current = Math.max(0, Math.min(x / canvasWRef.current, 1));
+    } else {
+      e.currentTarget.style.cursor =
+        nearTriangle(x, e.clientY - rect.top) ? 'ew-resize' : 'default';
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    isDragging.current = false;
+    e.currentTarget.style.cursor = 'default';
+  };
+
   return (
     <div ref={wrapRef} style={{ position: 'relative', paddingBottom: HISTO_ZONE + 'px' }}>
       <h1 className="text-5xl md:text-7xl font-bold leading-tight relative z-10 text-bone">
@@ -153,7 +217,10 @@ export default function TitleDot() {
       </h1>
       <canvas
         ref={canvasRef}
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}
         aria-hidden="true"
       />
     </div>
