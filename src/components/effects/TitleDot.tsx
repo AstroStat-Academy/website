@@ -10,6 +10,7 @@ const BIN_INCREMENT = 5.0;
 const BIN_DECAY     = 0.25;
 const TRI_W         = 9;     // triangle half-width (px)
 const TRI_H         = 13;    // triangle height (px)
+const MEAN_LERP     = 0.06;  // per-frame pull toward target (lower = slower migration)
 
 export default function TitleDot() {
   const wrapRef      = useRef<HTMLDivElement>(null);
@@ -34,8 +35,9 @@ export default function TitleDot() {
     let histoBase  = 0;
     let columns    = 0;
     let drops: number[]    = [];
-    let jitter: number[]   = [];   // per-column random factor, stable across frames
+    let jitter: number[]   = [];
     let bins: Float32Array = new Float32Array(0);
+    let smoothMean         = 0.5;  // effective Gaussian centre, lerps toward marker
 
     const build = () => {
       const h1 = wrap.querySelector('h1') as HTMLElement;
@@ -98,8 +100,9 @@ export default function TitleDot() {
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
 
-      // Gaussian centred on current marker position — recomputed every tick
-      const meanCol = meanXRef.current * columns;
+      // Smooth-follow: Gaussian centre lags behind the marker
+      smoothMean += (meanXRef.current - smoothMean) * MEAN_LERP;
+      const meanCol = smoothMean * columns;
       const sigma   = columns / 5;
 
       for (let i = 0; i < columns; i++) {
