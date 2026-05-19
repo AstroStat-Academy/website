@@ -8,7 +8,7 @@ const HISTO_ZONE    = 120;
 const MAX_BIN       = 40;
 const BIN_INCREMENT = 5.0;
 const BIN_DECAY     = 0.25;
-const MEAN_LERP     = 0.18;
+const MEAN_LERP     = 0.40;
 
 // Pill control geometry
 const PILL_H        = 6;    // capsule height (straddles baseline)
