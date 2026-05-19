@@ -17,7 +17,6 @@ const TRI_W         = 9;    // triangle half-width
 const TRI_H         = 12;   // triangle height
 
 const SIGMA_DEFAULT = 0.20; // σ as fraction of canvas width (≈ columns/5)
-const FWHM_FACTOR   = 2.355;
 
 export default function TitleDot() {
   const wrapRef      = useRef<HTMLDivElement>(null);
@@ -157,7 +156,7 @@ export default function TitleDot() {
 
       // ── Pill control ───────────────────────────────────────────────────────
       const mx       = smoothMean * canvasW;
-      const fwhmHalf = sigmaFracRef.current * canvasW * FWHM_FACTOR / 2;
+      const fwhmHalf = sigmaFracRef.current * canvasW;
       const lx       = Math.max(GRIP_W + 2, mx - fwhmHalf);
       const rx       = Math.min(canvasW - GRIP_W - 2, mx + fwhmHalf);
       const pillTop  = histoBase - PILL_H / 2;
@@ -204,7 +203,7 @@ export default function TitleDot() {
   // ── Hit testing (CSS px = canvas CSS px, no DPR scaling needed) ──────────
   const getHit = (x: number, y: number) => {
     const mx       = smoothMeanRef.current * canvasWRef.current;
-    const fwhmHalf = sigmaFracRef.current * canvasWRef.current * FWHM_FACTOR / 2;
+    const fwhmHalf = sigmaFracRef.current * canvasWRef.current;
     const lx       = Math.max(GRIP_W + 2, mx - fwhmHalf);
     const rx       = Math.min(canvasWRef.current - GRIP_W - 2, mx + fwhmHalf);
     const hb       = histoBaseRef.current;
@@ -241,7 +240,7 @@ export default function TitleDot() {
     } else if (dragMode.current === 'left' || dragMode.current === 'right') {
       const mx   = smoothMeanRef.current * cw;
       const dist = Math.abs(x - mx);
-      sigmaFracRef.current = Math.max(0.05, Math.min(0.45, dist * 2 / (cw * FWHM_FACTOR)));
+      sigmaFracRef.current = Math.max(0.05, Math.min(0.45, dist / cw));
     } else {
       const hit = getHit(x, y);
       e.currentTarget.style.cursor =
