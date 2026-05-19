@@ -164,14 +164,14 @@ export default function TitleDot() {
       const r        = PILL_H / 2;
 
       // Pill outline
-      ctx.strokeStyle = palette.bone;
+      ctx.strokeStyle = palette.blue;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.roundRect(lx, pillTop, rx - lx, PILL_H, r);
       ctx.stroke();
 
       // Left grip tab (filled)
-      ctx.fillStyle = palette.bone;
+      ctx.fillStyle = palette.blue;
       ctx.beginPath();
       ctx.roundRect(lx - GRIP_W, pillTop, GRIP_W, PILL_H, [r, 0, 0, r]);
       ctx.fill();
@@ -182,7 +182,7 @@ export default function TitleDot() {
       ctx.fill();
 
       // Big centre triangle — base flush with pill top, apex pointing up
-      ctx.fillStyle = palette.bone;
+      ctx.fillStyle = palette.blue;
       ctx.beginPath();
       ctx.moveTo(mx,          pillTop - TRI_H);   // apex
       ctx.lineTo(mx - TRI_W,  pillTop);            // base-left
