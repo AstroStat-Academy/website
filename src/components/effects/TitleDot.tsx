@@ -33,9 +33,9 @@ export default function TitleDot() {
     let rainBottom = 0;
     let histoBase  = 0;
     let columns    = 0;
-    let drops: number[]     = [];
-    let speeds: number[]    = [];
-    let bins: Float32Array  = new Float32Array(0);
+    let drops: number[]    = [];
+    let jitter: number[]   = [];   // per-column random factor, stable across frames
+    let bins: Float32Array = new Float32Array(0);
 
     const build = () => {
       const h1 = wrap.querySelector('h1') as HTMLElement;
@@ -70,14 +70,8 @@ export default function TitleDot() {
         rainTop / FONT_SIZE - Math.floor(Math.random() * rainRows)
       );
 
-      // Gaussian speed profile: centre cols fastest → bell-curve histogram
-      const mid   = (columns - 1) / 2;
-      const sigma = columns / 5;
-      speeds = Array.from({ length: columns }, (_, i) => {
-        const g    = Math.exp(-0.5 * ((i - mid) / sigma) ** 2);
-        const base = 0.4 + g * 2.1;          // edge ≈ 0.4, centre ≈ 2.5
-        return base * (0.85 + Math.random() * 0.30);
-      });
+      // Per-column jitter (stable); Gaussian centre is computed live in tick()
+      jitter = Array.from({ length: columns }, () => 0.85 + Math.random() * 0.30);
     };
 
     const tick = (now: number) => {
@@ -104,6 +98,10 @@ export default function TitleDot() {
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
 
+      // Gaussian centred on current marker position — recomputed every tick
+      const meanCol = meanXRef.current * columns;
+      const sigma   = columns / 5;
+
       for (let i = 0; i < columns; i++) {
         const y = drops[i] * FONT_SIZE;
         if (y >= 0 && y < histoBase) {
@@ -115,7 +113,8 @@ export default function TitleDot() {
           bins[i] += BIN_INCREMENT;
           drops[i] = -Math.floor(Math.random() * 8);
         } else {
-          drops[i] += speeds[i];
+          const g = Math.exp(-0.5 * ((i - meanCol) / sigma) ** 2);
+          drops[i] += (0.4 + g * 2.1) * jitter[i];
         }
       }
 
