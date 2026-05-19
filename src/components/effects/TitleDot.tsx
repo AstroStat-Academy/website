@@ -11,10 +11,10 @@ const BIN_DECAY     = 0.25;
 const MEAN_LERP     = 0.18;
 
 // Pill control geometry
-const PILL_H        = 10;   // capsule height (straddles baseline)
-const GRIP_W        = 9;    // end-tab width
-const TRI_W         = 16;   // triangle half-width — intentionally big
-const TRI_H         = 20;   // triangle height
+const PILL_H        = 6;    // capsule height (straddles baseline)
+const GRIP_W        = 6;    // end-tab width
+const TRI_W         = 9;    // triangle half-width
+const TRI_H         = 12;   // triangle height
 
 const SIGMA_DEFAULT = 0.20; // σ as fraction of canvas width (≈ columns/5)
 const FWHM_FACTOR   = 2.355;
