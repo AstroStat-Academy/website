@@ -10,7 +10,7 @@ const BIN_INCREMENT = 5.0;
 const BIN_DECAY     = 0.25;
 const TRI_W         = 9;     // triangle half-width (px)
 const TRI_H         = 13;    // triangle height (px)
-const MEAN_LERP     = 0.06;  // per-frame pull toward target (lower = slower migration)
+const MEAN_LERP     = 0.18;  // per-frame pull toward target (lower = slower migration)
 
 export default function TitleDot() {
   const wrapRef      = useRef<HTMLDivElement>(null);
