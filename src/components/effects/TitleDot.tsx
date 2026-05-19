@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { canvas as colors, palette } from '../../styles/tokens';
+import { canvas as colors } from '../../styles/tokens';
 
 const CHARS = 'αβγδεζηθικλμνξπρστφχψωΣ∑∫∂∇∞≈±√⊕⊙☉★✦χμσ0123456789';
 const FONT_SIZE     = 14;
@@ -163,14 +163,14 @@ export default function TitleDot() {
       const r        = PILL_H / 2;
 
       // Pill outline
-      ctx.strokeStyle = palette.blue;
+      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.55)`;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.roundRect(lx, pillTop, rx - lx, PILL_H, r);
       ctx.stroke();
 
       // Left grip tab (filled)
-      ctx.fillStyle = palette.blue;
+      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.55)`;
       ctx.beginPath();
       ctx.roundRect(lx - GRIP_W, pillTop, GRIP_W, PILL_H, [r, 0, 0, r]);
       ctx.fill();
@@ -181,7 +181,7 @@ export default function TitleDot() {
       ctx.fill();
 
       // Big centre triangle — base flush with pill top, apex pointing up
-      ctx.fillStyle = palette.blue;
+      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.55)`;
       ctx.beginPath();
       ctx.moveTo(mx,          pillTop - TRI_H);   // apex
       ctx.lineTo(mx - TRI_W,  pillTop);            // base-left
