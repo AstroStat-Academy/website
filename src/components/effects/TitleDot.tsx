@@ -60,7 +60,13 @@ export default function TitleDot() {
       drops  = Array.from({ length: columns }, () =>
         rainTop / FONT_SIZE - Math.floor(Math.random() * rainRows)
       );
-      speeds = Array.from({ length: columns }, () => 0.5 + Math.random() * 1.5);
+      const mid = (columns - 1) / 2;
+      const sigma = columns / 5;          // bell width — ~40% of total span
+      speeds = Array.from({ length: columns }, (_, i) => {
+        const g = Math.exp(-0.5 * ((i - mid) / sigma) ** 2); // 0→1, peak at center
+        const base = 0.4 + g * 2.1;      // edge ≈ 0.4, centre ≈ 2.5
+        return base * (0.85 + Math.random() * 0.30); // ±15% natural jitter
+      });
     };
 
     const tick = (now: number) => {
