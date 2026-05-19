@@ -151,9 +151,9 @@ export default function TitleDot() {
       // Triangle pointing up — apex at histoBase baseline
       ctx.fillStyle = palette.bone;
       ctx.beginPath();
-      ctx.moveTo(mx,          histoBase + 2);
-      ctx.lineTo(mx - TRI_W,  histoBase + 2 + TRI_H);
-      ctx.lineTo(mx + TRI_W,  histoBase + 2 + TRI_H);
+      ctx.moveTo(mx,          histoBase - TRI_H / 2);
+      ctx.lineTo(mx - TRI_W,  histoBase + TRI_H / 2);
+      ctx.lineTo(mx + TRI_W,  histoBase + TRI_H / 2);
       ctx.closePath();
       ctx.fill();
     };
@@ -172,7 +172,7 @@ export default function TitleDot() {
   const nearTriangle = (cssX: number, cssY: number) => {
     const mx = meanXRef.current * canvasWRef.current;
     const hb = histoBaseRef.current;
-    return Math.abs(cssX - mx) < TRI_W + 8 && cssY >= hb && cssY <= hb + TRI_H + 10;
+    return Math.abs(cssX - mx) < TRI_W + 8 && cssY >= hb - TRI_H / 2 - 4 && cssY <= hb + TRI_H / 2 + 4;
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
