@@ -148,17 +148,6 @@ export default function TitleDot() {
       // Mean marker: dashed blue guideline + bone triangle (drawn last, always on top)
       const mx = meanXRef.current * canvasW;
 
-      ctx.save();
-      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.40)`;
-      ctx.setLineDash([3, 5]);
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(mx, rainTop);
-      ctx.lineTo(mx, histoBase + 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
-
       // Triangle pointing up — apex at histoBase baseline
       ctx.fillStyle = palette.bone;
       ctx.beginPath();
