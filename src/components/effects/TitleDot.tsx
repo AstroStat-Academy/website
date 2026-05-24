@@ -92,9 +92,12 @@ export default function TitleDot() {
       smoothMeanRef.current += (meanXRef.current - smoothMeanRef.current) * MEAN_LERP;
       const smoothMean = smoothMeanRef.current;
 
-      // Fade trail
+      // Fade trail (transparency, not black paint, so page background shows through)
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-out';
       ctx.fillStyle = colors.rainFade;
       ctx.fillRect(0, rainTop, canvasW, rainBottom - rainTop);
+      ctx.restore();
 
       // Histogram zone → transparency
       ctx.save();
@@ -255,7 +258,7 @@ export default function TitleDot() {
   };
 
   return (
-    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: HISTO_ZONE + 'px' }}>
+    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: HISTO_ZONE + 'px', display: 'inline-block' }}>
       <h1 className="text-5xl md:text-7xl font-bold leading-tight relative z-10 text-bone">
         AstroStat<br />
         <span className="text-bone">Academy</span>

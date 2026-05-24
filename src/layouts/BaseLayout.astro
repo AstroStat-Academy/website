@@ -1,15 +1,18 @@
 ---
 import Nav from '../components/ui/Nav.astro';
 import Footer from '../components/ui/Footer.astro';
+import SpiralGalaxy from '../components/effects/SpiralGalaxy';
 
 interface Props {
   title: string;
   description?: string;
+  showGalaxy?: boolean;
 }
 
 const {
   title,
   description = 'AstroStat Academy — statistics schools and workshops for astronomers.',
+  showGalaxy = true,
 } = Astro.props;
 ---
 
@@ -24,7 +27,7 @@ const {
 </style>
 
 <!doctype html>
-<html lang="en" class="bg-black text-white scroll-smooth">
+<html lang="en" class="text-white scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -38,9 +41,14 @@ const {
       rel="stylesheet"
     />
   </head>
-  <body class="min-h-screen flex flex-col antialiased">
+  <body class="min-h-screen flex flex-col antialiased bg-black">
+    {showGalaxy && (
+      <div class="fixed inset-0 z-0 pointer-events-none">
+        <SpiralGalaxy client:load />
+      </div>
+    )}
     <Nav />
-    <main class="flex-1">
+    <main class="relative z-10 flex-1">
       <slot />
     </main>
     <Footer />

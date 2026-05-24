@@ -1,20 +1,35 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TitleDot from '../components/effects/TitleDot';
+import Typewriter from '../components/effects/Typewriter';
+
+const taglines = [
+  'Advanced statistics. Taught and applied.',
+  'Where rigorous statistics meets real science.',
+  'Master the methods. Solve the problems.',
+  'Statistical expertise — in the classroom and in the field.',
+  'From first principles to your toughest analysis.',
+  'Train deep. Consult smart.',
+  'Advanced statistical training and expert consulting.',
+  'The statistics you need. Taught and delivered.',
+  'Precision statistics for complex problems.',
+  'Learn it. Apply it. Get it done.',
+];
 ---
 
 <BaseLayout
   title="Home"
   description="AstroStat Academy — intensive statistics schools and workshops for the astronomical community."
+  showGalaxy={false}
 >
   <!-- Hero: full viewport below sticky nav (nav = h-16 = 4rem), title centered -->
   <section class="relative min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 text-center overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-b from-ink to-black" />
     <div class="relative z-10 max-w-3xl mx-auto">
-      <p class="text-bone text-sm font-semibold tracking-widest uppercase mb-4">
-        Statistics for the Universe
+      <p class="text-bone text-sm font-mono tracking-wider uppercase mb-4 min-h-[1.5em]">
+        <Typewriter phrases={taglines} client:load />
       </p>
       <TitleDot client:load />
+      <p class="text-bone/40 text-xs font-mono tracking-widest mt-2">Take control of your statistics.</p>
     </div>
   </section>
 

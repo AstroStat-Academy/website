@@ -1,0 +1,64 @@
+---
+// ⚠️  Standalone test page — NOT linked from nav or any layout.
+//     Remove this file when the component is approved and embedded.
+import SpiralGalaxy from '../components/effects/SpiralGalaxy';
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galaxy Test</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+    #galaxy-wrap { position: fixed; inset: 0; }
+    #controls {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; gap: 8px; padding: 12px 16px;
+      flex-wrap: wrap; justify-content: center;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    }
+    .tog {
+      cursor: pointer; border-radius: 20px; padding: 5px 14px;
+      font-size: 0.72rem; font-family: system-ui, sans-serif;
+      border: 1px solid; transition: opacity 0.15s; user-select: none;
+    }
+    .tog[data-type="bulge"] { border-color:#aa7722; background:#1a0e00; color:#ddaa55; }
+    .tog[data-type="ob"]    { border-color:#2255aa; background:#00091a; color:#88bbff; }
+    .tog[data-type="arm"]   { border-color:#226644; background:#001108; color:#55cc88; }
+    .tog[data-type="hii"]   { border-color:#882255; background:#180008; color:#ff88bb; }
+    .tog[data-type="dust"]  { border-color:#554422; background:#0d0800; color:#aa8855; }
+    .tog[data-type="disk"]  { border-color:#334455; background:#050a10; color:#7799bb; }
+    .tog[aria-pressed="false"] { opacity: 0.28; }
+  </style>
+</head>
+<body>
+  <div id="galaxy-wrap">
+    <SpiralGalaxy id="galaxy" client:load />
+  </div>
+
+  <div id="controls">
+    <button class="tog" data-type="bulge" aria-pressed="true">Bulge</button>
+    <button class="tog" data-type="ob"    aria-pressed="true">OB stars</button>
+    <button class="tog" data-type="arm"   aria-pressed="true">Arm stars</button>
+    <button class="tog" data-type="hii"   aria-pressed="true">HII regions</button>
+    <button class="tog" data-type="dust"  aria-pressed="true">Dust lanes</button>
+    <button class="tog" data-type="disk"  aria-pressed="true">Disk</button>
+  </div>
+
+  <script>
+    // Wire toggle buttons → SpiralGalaxy via custom event
+    const enabled = { bulge: true, ob: true, arm: true, hii: true, dust: true, disk: true };
+
+    document.querySelectorAll('.tog').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const t = (btn as HTMLElement).dataset.type as string;
+        (enabled as any)[t] = !(enabled as any)[t];
+        btn.setAttribute('aria-pressed', String((enabled as any)[t]));
+        window.dispatchEvent(new CustomEvent('galaxy-enabled', { detail: { ...enabled } }));
+      });
+    });
+  </script>
+</body>
+</html>
