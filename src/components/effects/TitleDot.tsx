@@ -101,6 +101,49 @@ export default function TitleDot() {
       jitter = Array.from({ length: columns }, () => 0.85 + Math.random() * 0.30);
     };
 
+    const drawToggle = (now: number) => {
+      const cx = toggleXRef.current;
+      const cy = toggleYRef.current;
+      const hw = TOGGLE_W / 2;
+      const hh = TOGGLE_H / 2;
+      const pulse = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
+
+      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.45)`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(cx - hw, cy - hh, TOGGLE_W, TOGGLE_H, hh);
+      ctx.stroke();
+
+      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.25)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - hh + 2);
+      ctx.lineTo(cx, cy + hh - 2);
+      ctx.stroke();
+
+      const dotX = viewRef.current === 'hist' ? cx - hw / 2 : cx + hw / 2;
+      const glow = 5 + pulse * 12;
+      ctx.save();
+      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+      ctx.shadowBlur  = glow;
+      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+      ctx.beginPath();
+      ctx.arc(dotX, cy, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      ctx.font = '9px ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const histAlpha = viewRef.current === 'hist' ? 0.9 : 0.3;
+      const tsAlpha   = viewRef.current === 'ts'   ? 0.9 : 0.3;
+      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, ${histAlpha})`;
+      ctx.fillText('▮▮▮', cx - hw / 2, cy);
+      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, ${tsAlpha})`;
+      ctx.fillText('〜', cx + hw / 2, cy);
+      ctx.textAlign = 'left';
+    };
+
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
       if (now - lastTick < FRAME_MS) return;
@@ -216,6 +259,9 @@ export default function TitleDot() {
       ctx.arc(mx, pillTop + PILL_H / 2, dotR, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
+
+      // Toggle widget — always visible
+      drawToggle(now);
     };
 
     document.fonts.ready.then(() => {
