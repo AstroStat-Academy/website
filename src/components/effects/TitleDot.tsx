@@ -366,6 +366,25 @@ export default function TitleDot() {
     return null;
   };
 
+  const getTsHit = (x: number, y: number) => {
+    const cw       = canvasWRef.current;
+    const meanFrac = tsMuRef.current + 0.5;
+    const sigFrac  = tsSigmaRef.current * 0.5;
+    const mx       = meanFrac * cw;
+    const halfW    = sigFrac * cw;
+    const lx       = Math.max(GRIP_W + 2, mx - halfW);
+    const rx       = Math.min(cw - GRIP_W - 2, mx + halfW);
+    const hb       = tsPillBaseRef.current;
+    const pillTop  = hb + WIDGET_BELOW - PILL_H / 2;
+    const dotR     = 6;
+
+    if (Math.abs(x - mx) <= dotR + 6 && Math.abs(y - (pillTop + PILL_H / 2)) <= dotR + 6) return 'move';
+    if (Math.abs(x - lx) <= GRIP_W / 2 + 6 && y >= pillTop - 10 && y <= pillTop + PILL_H + 10) return 'left';
+    if (Math.abs(x - rx) <= GRIP_W / 2 + 6 && y >= pillTop - 10 && y <= pillTop + PILL_H + 10) return 'right';
+    if (x >= lx && x <= rx && y >= pillTop - 4 && y <= pillTop + PILL_H + 4) return 'move';
+    return 'none';
+  };
+
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -377,7 +396,7 @@ export default function TitleDot() {
       return;
     }
 
-    const hit = getHit(x, y);
+    const hit = viewRef.current === 'ts' ? getTsHit(x, y) : getHit(x, y);
     if (hit !== 'none') {
       dragMode.current = hit;
       e.currentTarget.setPointerCapture(e.pointerId);
@@ -392,19 +411,30 @@ export default function TitleDot() {
     const cw = canvasWRef.current;
 
     if (dragMode.current === 'move') {
-      const v = Math.max(0, Math.min(x / cw, 1));
-      meanXRef.current = v;
-      smoothMeanRef.current = v;
+      if (viewRef.current === 'ts') {
+        tsMuRef.current = Math.max(-0.5, Math.min(0.5, x / cw - 0.5));
+      } else {
+        const v = Math.max(0, Math.min(x / cw, 1));
+        meanXRef.current = v;
+        smoothMeanRef.current = v;
+      }
       e.currentTarget.style.cursor = 'grabbing';
     } else if (dragMode.current === 'left' || dragMode.current === 'right') {
-      const mx   = smoothMeanRef.current * cw;
-      const dist = Math.abs(x - mx);
-      sigmaFracRef.current = Math.max(0.05, Math.min(0.45, dist / cw));
+      if (viewRef.current === 'ts') {
+        const meanFrac = tsMuRef.current + 0.5;
+        const mx       = meanFrac * cw;
+        const dist     = Math.abs(x - mx);
+        tsSigmaRef.current = Math.max(0.05, Math.min(0.8, dist / cw / 0.5));
+      } else {
+        const mx   = smoothMeanRef.current * cw;
+        const dist = Math.abs(x - mx);
+        sigmaFracRef.current = Math.max(0.05, Math.min(0.45, dist / cw));
+      }
     } else {
       if (hitToggle(x, y) !== null) {
         e.currentTarget.style.cursor = 'pointer';
       } else {
-        const hit = getHit(x, y);
+        const hit = viewRef.current === 'ts' ? getTsHit(x, y) : getHit(x, y);
         e.currentTarget.style.cursor =
           hit === 'move'  ? 'grab'      :
           hit !== 'none'  ? 'ew-resize' : 'default';
