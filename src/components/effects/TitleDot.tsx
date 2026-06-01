@@ -309,6 +309,11 @@ export default function TitleDot() {
           ctx.stroke();
           ctx.restore();
         }
+
+        // ts pill widget
+        const tsMeanFrac  = tsMuRef.current + 0.5;
+        const tsSigmaFrac = tsSigmaRef.current * 0.5;
+        drawPillWidget(tsMeanFrac, tsSigmaFrac, histoBase, now);
       }
 
       if (viewRef.current === 'hist') {
