@@ -5,7 +5,6 @@ const CHARS = 'αβγδεζηθικλμνξπρστφχψωΣ∑∫∂∇∞≈�
 const FONT_SIZE     = 14;
 const FRAME_MS      = 110;
 const HISTO_ZONE    = 120;
-const GRAPH_OFFSET  = TOGGLE_ABOVE + TOGGLE_H + 8;  // px below rainBottom where graph starts
 const WIDGET_BELOW  = 16;  // px below histogram base where the pill sits
 const MAX_BIN       = 40;
 const BIN_INCREMENT = 5.0;
@@ -21,9 +20,12 @@ const SIGMA_DEFAULT = 0.20; // σ as fraction of canvas width (≈ columns/5)
 const TS_LEN        = 100;   // number of time series points
 const AR_PHI        = 0.92;  // AR(1) mean-reversion coefficient
 const AR_NOISE      = 0.4;   // noise scale
-const TOGGLE_H      = 16;    // toggle widget total height
-const TOGGLE_W      = 48;    // toggle widget total width
+const TOGGLE_H      = 16;    // button height
+const TOGGLE_BW     = 36;    // each button width
+const TOGGLE_GAP    = 6;     // gap between buttons
+const TOGGLE_W      = TOGGLE_BW * 2 + TOGGLE_GAP;  // total span (for hit-test centre)
 const TOGGLE_ABOVE  = 10;    // px above graph area
+const GRAPH_OFFSET  = TOGGLE_ABOVE + TOGGLE_H + 8;  // px below rainBottom where graph starts
 
 export default function TitleDot() {
   const wrapRef      = useRef<HTMLDivElement>(null);
@@ -39,6 +41,9 @@ export default function TitleDot() {
   const viewRef       = useRef<'hist' | 'ts'>('hist');
   const toggleXRef    = useRef(0);
   const toggleYRef    = useRef(0);
+  const tsMuRef       = useRef(0);     // AR(1) mean offset [-0.5, 0.5]
+  const tsSigmaRef    = useRef(0.3);   // AR(1) noise scale [0.05, 0.8]
+  const tsPillBaseRef = useRef(0);     // y of ts pill baseline (histoBase)
 
   useEffect(() => {
     const wrap   = wrapRef.current;
@@ -83,7 +88,8 @@ export default function TitleDot() {
       rainBottom = hRect.bottom - wRect.top;
       histoBase  = rainBottom + GRAPH_OFFSET + HISTO_ZONE - 4;
 
-      histoBaseRef.current = histoBase;
+      histoBaseRef.current  = histoBase;
+      tsPillBaseRef.current = histoBase;
       canvasWRef.current   = canvasW;
       toggleXRef.current = canvasW / 2;
       toggleYRef.current = rainBottom + TOGGLE_ABOVE + TOGGLE_H / 2;
@@ -104,44 +110,51 @@ export default function TitleDot() {
     const drawToggle = (now: number) => {
       const cx = toggleXRef.current;
       const cy = toggleYRef.current;
-      const hw = TOGGLE_W / 2;
       const hh = TOGGLE_H / 2;
+      const r  = 3;
       const pulse = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
 
-      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.45)`;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.roundRect(cx - hw, cy - hh, TOGGLE_W, TOGGLE_H, hh);
-      ctx.stroke();
+      // Left button (hist) — x: cx - GAP/2 - BW  to  cx - GAP/2
+      const lx = cx - TOGGLE_GAP / 2 - TOGGLE_BW;
+      // Right button (ts)  — x: cx + GAP/2         to  cx + GAP/2 + BW
+      const rx = cx + TOGGLE_GAP / 2;
 
-      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.25)`;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy - hh + 2);
-      ctx.lineTo(cx, cy + hh - 2);
-      ctx.stroke();
+      const drawBtn = (x: number, label: string, active: boolean) => {
+        const glow = active ? 5 + pulse * 12 : 0;
+        ctx.save();
+        if (active) {
+          ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+          ctx.shadowBlur  = glow;
+        }
+        // Fill
+        ctx.fillStyle = active
+          ? `rgba(${colors.shadowColorRgb}, ${0.18 + pulse * 0.08})`
+          : 'rgba(255,255,255,0.04)';
+        ctx.beginPath();
+        ctx.roundRect(x, cy - hh, TOGGLE_BW, TOGGLE_H, r);
+        ctx.fill();
+        // Border
+        ctx.strokeStyle = active
+          ? `rgba(${colors.shadowColorRgb}, ${0.7 + pulse * 0.3})`
+          : `rgba(${colors.shadowColorRgb}, 0.25)`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(x, cy - hh, TOGGLE_BW, TOGGLE_H, r);
+        ctx.stroke();
+        ctx.restore();
+        // Label
+        ctx.font = '9px ui-monospace, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = active
+          ? `rgba(${colors.shadowColorRgb}, ${0.9 + pulse * 0.1})`
+          : `rgba(${colors.shadowColorRgb}, 0.3)`;
+        ctx.fillText(label, x + TOGGLE_BW / 2, cy);
+        ctx.textAlign = 'left';
+      };
 
-      const dotX = viewRef.current === 'hist' ? cx - hw / 2 : cx + hw / 2;
-      const glow = 5 + pulse * 12;
-      ctx.save();
-      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
-      ctx.shadowBlur  = glow;
-      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
-      ctx.beginPath();
-      ctx.arc(dotX, cy, 5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      ctx.font = '9px ui-monospace, monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      const histAlpha = viewRef.current === 'hist' ? 0.9 : 0.3;
-      const tsAlpha   = viewRef.current === 'ts'   ? 0.9 : 0.3;
-      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, ${histAlpha})`;
-      ctx.fillText('▮▮▮', cx - hw / 2, cy);
-      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, ${tsAlpha})`;
-      ctx.fillText('〜', cx + hw / 2, cy);
-      ctx.textAlign = 'left';
+      drawBtn(lx, '▮▮▮', viewRef.current === 'hist');
+      drawBtn(rx, '〜',  viewRef.current === 'ts');
     };
 
     const tick = (now: number) => {
@@ -188,7 +201,7 @@ export default function TitleDot() {
       ctx.restore();
 
       // Always advance AR(1) buffer so ts view is warm on switch
-      tsAR = AR_PHI * tsAR + (Math.random() - 0.5) * AR_NOISE;
+      tsAR = AR_PHI * tsAR + tsMuRef.current + (Math.random() - 0.5) * tsSigmaRef.current;
       tsData[tsHead % TS_LEN] = tsAR;
       tsHead++;
 
@@ -341,10 +354,16 @@ export default function TitleDot() {
     return 'none';
   };
 
-  const hitToggle = (x: number, y: number): boolean => {
+  const hitToggle = (x: number, y: number): 'hist' | 'ts' | null => {
     const cx = toggleXRef.current;
     const cy = toggleYRef.current;
-    return Math.abs(x - cx) <= TOGGLE_W / 2 + 4 && Math.abs(y - cy) <= TOGGLE_H / 2 + 4;
+    const hh = TOGGLE_H / 2;
+    if (y < cy - hh - 4 || y > cy + hh + 4) return null;
+    const lx = cx - TOGGLE_GAP / 2 - TOGGLE_BW;
+    const rx = cx + TOGGLE_GAP / 2;
+    if (x >= lx - 4 && x <= lx + TOGGLE_BW + 4) return 'hist';
+    if (x >= rx - 4 && x <= rx + TOGGLE_BW + 4) return 'ts';
+    return null;
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -352,8 +371,9 @@ export default function TitleDot() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (hitToggle(x, y)) {
-      viewRef.current = viewRef.current === 'hist' ? 'ts' : 'hist';
+    const tv = hitToggle(x, y);
+    if (tv) {
+      viewRef.current = tv;
       return;
     }
 
@@ -381,7 +401,7 @@ export default function TitleDot() {
       const dist = Math.abs(x - mx);
       sigmaFracRef.current = Math.max(0.05, Math.min(0.45, dist / cw));
     } else {
-      if (hitToggle(x, y)) {
+      if (hitToggle(x, y) !== null) {
         e.currentTarget.style.cursor = 'pointer';
       } else {
         const hit = getHit(x, y);
