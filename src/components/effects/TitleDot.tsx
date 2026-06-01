@@ -288,7 +288,7 @@ export default function TitleDot() {
       ctx.restore();
 
       // Always advance AR(1) buffer so ts view is warm on switch
-      tsAR = AR_PHI * tsAR + tsMuRef.current + (Math.random() - 0.5) * tsSigmaRef.current;
+      tsAR = AR_PHI * tsAR - tsMuRef.current + (Math.random() - 0.5) * tsSigmaRef.current;
       tsData[tsHead % TS_LEN] = tsAR;
       tsHead++;
 
