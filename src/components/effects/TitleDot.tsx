@@ -107,6 +107,45 @@ export default function TitleDot() {
       jitter = Array.from({ length: columns }, () => 0.85 + Math.random() * 0.30);
     };
 
+    const drawPillWidget = (meanFrac: number, sigmaFrac: number, baseline: number, now: number) => {
+      const mx      = meanFrac * canvasW;
+      const halfW   = sigmaFrac * canvasW;
+      const lx      = Math.max(GRIP_W + 2, mx - halfW);
+      const rx      = Math.min(canvasW - GRIP_W - 2, mx + halfW);
+      const pillTop = baseline + WIDGET_BELOW - PILL_H / 2;
+      const r       = PILL_H / 2;
+      const pulse   = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
+
+      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.45)`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(lx, pillTop, rx - lx, PILL_H, r);
+      ctx.stroke();
+
+      const drawGrip = (x: number) => {
+        ctx.save();
+        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+        ctx.shadowBlur  = 6 + pulse * 14;
+        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+        ctx.beginPath();
+        ctx.roundRect(x - GRIP_W / 2, pillTop - 5, GRIP_W, PILL_H + 10, 3);
+        ctx.fill();
+        ctx.restore();
+      };
+      drawGrip(lx);
+      drawGrip(rx);
+
+      const dotR = 6;
+      ctx.save();
+      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+      ctx.shadowBlur  = 6 + pulse * 16;
+      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+      ctx.beginPath();
+      ctx.arc(mx, pillTop + PILL_H / 2, dotR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
     const drawToggle = (now: number) => {
       const cx = toggleXRef.current;
       const cy = toggleYRef.current;
@@ -272,53 +311,9 @@ export default function TitleDot() {
         }
       }
 
-      // ── Pill control (hist mode only) ──────────────────────────────────────
       if (viewRef.current === 'hist') {
-      const mx       = smoothMean * canvasW;
-      const fwhmHalf = sigmaFracRef.current * canvasW;
-      const lx       = Math.max(GRIP_W + 2, mx - fwhmHalf);
-      const rx       = Math.min(canvasW - GRIP_W - 2, mx + fwhmHalf);
-      const pillTop  = histoBase + WIDGET_BELOW - PILL_H / 2;
-      const r        = PILL_H / 2;
-
-      // Pulse: 0→1→0 on a 2 s cycle
-      const pulse = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
-
-      // Pill outline
-      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.45)`;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.roundRect(lx, pillTop, rx - lx, PILL_H, r);
-      ctx.stroke();
-
-      // Draw a glowing chunky grip at position x
-      const drawGrip = (x: number) => {
-        const glow = 6 + pulse * 14;
-        ctx.save();
-        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
-        ctx.shadowBlur  = glow;
-        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
-        ctx.beginPath();
-        ctx.roundRect(x - GRIP_W / 2, pillTop - 5, GRIP_W, PILL_H + 10, 3);
-        ctx.fill();
-        ctx.restore();
-      };
-
-      drawGrip(lx);
-      drawGrip(rx);
-
-      // Mean dot — glowing circle
-      const dotR  = 6;
-      const dotGlow = 6 + pulse * 16;
-      ctx.save();
-      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
-      ctx.shadowBlur  = dotGlow;
-      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
-      ctx.beginPath();
-      ctx.arc(mx, pillTop + PILL_H / 2, dotR, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-      } // end hist-only pill control
+        drawPillWidget(smoothMean, sigmaFracRef.current, histoBase, now);
+      }
 
       // Toggle widget — always visible
       drawToggle(now);
