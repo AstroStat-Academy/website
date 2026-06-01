@@ -45,23 +45,9 @@ export default function CodeRain() {
       drops = Array.from({ length: columns }, () => (Math.random() * h) / FONT_SIZE);
     };
 
-    // Measure from the parent section, not the canvas itself, since the canvas
-    // offsetWidth/Height may lag behind CSS when first inserted into the DOM.
-    // canvas.parentElement is an <astro-island> wrapper with no dimensions;
-    // walk up to the first ancestor that has a real height.
-    const container = (): HTMLElement => {
-      let el: HTMLElement = canvas;
-      while (el.parentElement) {
-        el = el.parentElement;
-        if (el.offsetWidth > 0 && el.offsetHeight > 0) return el;
-      }
-      return document.documentElement;
-    };
-
     const tryStart = () => {
-      const el = container();
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
       if (w > 0 && h > 0) {
         init(w, h);
         raf = requestAnimationFrame(tick);
@@ -73,9 +59,8 @@ export default function CodeRain() {
     requestAnimationFrame(tryStart);
 
     const onResize = () => {
-      const el = container();
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
       if (w > 0 && h > 0) init(w, h);
     };
     window.addEventListener('resize', onResize);

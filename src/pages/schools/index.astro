@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SchoolFilter from '../../components/schools/SchoolFilter';
-import CodeRain from '../../components/effects/CodeRain';
 import { getCollection } from 'astro:content';
 
 const allSchools = await getCollection('schools');
@@ -24,8 +23,7 @@ const schoolData = allSchools.map((s) => ({
   title="Schools"
   description="All AstroStat Academy schools and workshops — browse by year or topic."
 >
-  <div class="relative overflow-hidden">
-    <CodeRain client:load />
+  <div class="relative">
     <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-20">
       <h1 class="text-4xl font-bold mb-3">Schools & Workshops</h1>
       <p class="text-slate-300 text-lg">

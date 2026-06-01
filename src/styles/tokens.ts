@@ -17,7 +17,7 @@ export const ui = {
 
 // ─── Canvas 2D API strings (ctx.fillStyle etc.) ───────────────────────────────
 export const canvas = {
-  charColor:      palette.red,
+  charColor:      'rgba(140, 5, 39, 0.5)',
   charColorRgb:   '140, 5, 39',          // RGB of palette.red
   shadowColor:    palette.blue,
   shadowColorRgb: '4, 101, 173',         // RGB of palette.blue
