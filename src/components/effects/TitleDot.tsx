@@ -341,9 +341,23 @@ export default function TitleDot() {
     return 'none';
   };
 
+  const hitToggle = (x: number, y: number): boolean => {
+    const cx = toggleXRef.current;
+    const cy = toggleYRef.current;
+    return Math.abs(x - cx) <= TOGGLE_W / 2 + 4 && Math.abs(y - cy) <= TOGGLE_H / 2 + 4;
+  };
+
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const hit = getHit(e.clientX - rect.left, e.clientY - rect.top);
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (hitToggle(x, y)) {
+      viewRef.current = viewRef.current === 'hist' ? 'ts' : 'hist';
+      return;
+    }
+
+    const hit = getHit(x, y);
     if (hit !== 'none') {
       dragMode.current = hit;
       e.currentTarget.setPointerCapture(e.pointerId);
@@ -367,10 +381,14 @@ export default function TitleDot() {
       const dist = Math.abs(x - mx);
       sigmaFracRef.current = Math.max(0.05, Math.min(0.45, dist / cw));
     } else {
-      const hit = getHit(x, y);
-      e.currentTarget.style.cursor =
-        hit === 'move'  ? 'grab'      :
-        hit !== 'none'  ? 'ew-resize' : 'default';
+      if (hitToggle(x, y)) {
+        e.currentTarget.style.cursor = 'pointer';
+      } else {
+        const hit = getHit(x, y);
+        e.currentTarget.style.cursor =
+          hit === 'move'  ? 'grab'      :
+          hit !== 'none'  ? 'ew-resize' : 'default';
+      }
     }
   };
 
