@@ -146,6 +146,51 @@ export default function TitleDot() {
       ctx.restore();
     };
 
+    const drawVerticalPillWidget = (muFrac: number, sigmaFrac: number, graphTop: number, graphH: number, now: number) => {
+      const VPILL_W  = 6;   // pill width
+      const VGRIP_H  = 6;   // grip height
+      const VGRIP_W  = 14;  // grip width
+      const VDOT_R   = 6;
+      const px       = 18;  // x position of pill centre from left edge
+      const pulse    = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
+
+      const my       = graphTop + (1 - muFrac) * graphH;           // mean y (inverted: high value = top)
+      const halfH    = sigmaFrac * graphH;
+      const ty       = Math.max(graphTop + VGRIP_H / 2 + 2, my - halfH);  // top grip y centre
+      const by       = Math.min(graphTop + graphH - VGRIP_H / 2 - 2, my + halfH); // bottom grip y centre
+
+      // Pill outline (vertical capsule)
+      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.45)`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(px - VPILL_W / 2, ty, VPILL_W, by - ty, VPILL_W / 2);
+      ctx.stroke();
+
+      // Grips (horizontal rectangles)
+      const drawVGrip = (y: number) => {
+        ctx.save();
+        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+        ctx.shadowBlur  = 6 + pulse * 14;
+        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+        ctx.beginPath();
+        ctx.roundRect(px - VGRIP_W / 2, y - VGRIP_H / 2, VGRIP_W, VGRIP_H, 3);
+        ctx.fill();
+        ctx.restore();
+      };
+      drawVGrip(ty);
+      drawVGrip(by);
+
+      // Mean dot
+      ctx.save();
+      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+      ctx.shadowBlur  = 6 + pulse * 16;
+      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+      ctx.beginPath();
+      ctx.arc(px, my, VDOT_R, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
     const drawToggle = (now: number) => {
       const cx = toggleXRef.current;
       const cy = toggleYRef.current;
@@ -310,10 +355,10 @@ export default function TitleDot() {
           ctx.restore();
         }
 
-        // ts pill widget
-        const tsMeanFrac  = tsMuRef.current + 0.5;
+        // ts vertical widget
+        const tsMeanFrac  = 0.5 - tsMuRef.current;  // mu>0 → line drifts up → dot higher
         const tsSigmaFrac = tsSigmaRef.current * 0.5;
-        drawPillWidget(tsMeanFrac, tsSigmaFrac, histoBase, now);
+        drawVerticalPillWidget(tsMeanFrac, tsSigmaFrac, graphTop, graphH, now);
       }
 
       if (viewRef.current === 'hist') {
@@ -367,21 +412,26 @@ export default function TitleDot() {
   };
 
   const getTsHit = (x: number, y: number) => {
-    const cw       = canvasWRef.current;
-    const meanFrac = tsMuRef.current + 0.5;
-    const sigFrac  = tsSigmaRef.current * 0.5;
-    const mx       = meanFrac * cw;
-    const halfW    = sigFrac * cw;
-    const lx       = Math.max(GRIP_W + 2, mx - halfW);
-    const rx       = Math.min(cw - GRIP_W - 2, mx + halfW);
     const hb       = tsPillBaseRef.current;
-    const pillTop  = hb + WIDGET_BELOW - PILL_H / 2;
-    const dotR     = 6;
+    const graphTop = hb - HISTO_ZONE;
+    const graphH   = HISTO_ZONE;
+    const px       = 18;   // must match drawVerticalPillWidget
+    const VGRIP_W  = 14;
+    const VGRIP_H  = 6;
+    const VDOT_R   = 6;
+    if (x < px - VGRIP_W / 2 - 6 || x > px + VGRIP_W / 2 + 6) return 'none';
 
-    if (Math.abs(x - mx) <= dotR + 6 && Math.abs(y - (pillTop + PILL_H / 2)) <= dotR + 6) return 'move';
-    if (Math.abs(x - lx) <= GRIP_W / 2 + 6 && y >= pillTop - 10 && y <= pillTop + PILL_H + 10) return 'left';
-    if (Math.abs(x - rx) <= GRIP_W / 2 + 6 && y >= pillTop - 10 && y <= pillTop + PILL_H + 10) return 'right';
-    if (x >= lx && x <= rx && y >= pillTop - 4 && y <= pillTop + PILL_H + 4) return 'move';
+    const muFrac   = 0.5 - tsMuRef.current;
+    const sigFrac  = tsSigmaRef.current * 0.5;
+    const my       = graphTop + (1 - muFrac) * graphH;
+    const halfH    = sigFrac * graphH;
+    const ty       = Math.max(graphTop + VGRIP_H / 2 + 2, my - halfH);
+    const by       = Math.min(graphTop + graphH - VGRIP_H / 2 - 2, my + halfH);
+
+    if (Math.abs(y - my) <= VDOT_R + 6) return 'move';
+    if (Math.abs(y - ty) <= VGRIP_H / 2 + 6) return 'left';
+    if (Math.abs(y - by) <= VGRIP_H / 2 + 6) return 'right';
+    if (y >= ty && y <= by) return 'move';
     return 'none';
   };
 
@@ -400,7 +450,7 @@ export default function TitleDot() {
     if (hit !== 'none') {
       dragMode.current = hit;
       e.currentTarget.setPointerCapture(e.pointerId);
-      e.currentTarget.style.cursor = hit === 'move' ? 'grab' : 'ew-resize';
+      e.currentTarget.style.cursor = hit === 'move' ? 'grab' : (viewRef.current === 'ts' ? 'ns-resize' : 'ew-resize');
     }
   };
 
@@ -412,7 +462,10 @@ export default function TitleDot() {
 
     if (dragMode.current === 'move') {
       if (viewRef.current === 'ts') {
-        tsMuRef.current = Math.max(-0.5, Math.min(0.5, x / cw - 0.5));
+        const hb     = tsPillBaseRef.current;
+        const gTop   = hb - HISTO_ZONE;
+        const muFrac = 1 - (y - gTop) / HISTO_ZONE;  // inverted: drag up = higher value
+        tsMuRef.current = Math.max(-0.5, Math.min(0.5, muFrac - 0.5));
       } else {
         const v = Math.max(0, Math.min(x / cw, 1));
         meanXRef.current = v;
@@ -421,10 +474,11 @@ export default function TitleDot() {
       e.currentTarget.style.cursor = 'grabbing';
     } else if (dragMode.current === 'left' || dragMode.current === 'right') {
       if (viewRef.current === 'ts') {
-        const meanFrac = tsMuRef.current + 0.5;
-        const mx       = meanFrac * cw;
-        const dist     = Math.abs(x - mx);
-        tsSigmaRef.current = Math.max(0.05, Math.min(0.8, dist / cw / 0.5));
+        const hb   = tsPillBaseRef.current;
+        const gTop = hb - HISTO_ZONE;
+        const my   = gTop + (1 - (tsMuRef.current + 0.5)) * HISTO_ZONE;
+        const dist = Math.abs(y - my);
+        tsSigmaRef.current = Math.max(0.05, Math.min(0.8, dist / HISTO_ZONE / 0.5));
       } else {
         const mx   = smoothMeanRef.current * cw;
         const dist = Math.abs(x - mx);
@@ -437,7 +491,7 @@ export default function TitleDot() {
         const hit = viewRef.current === 'ts' ? getTsHit(x, y) : getHit(x, y);
         e.currentTarget.style.cursor =
           hit === 'move'  ? 'grab'      :
-          hit !== 'none'  ? 'ew-resize' : 'default';
+          hit !== 'none'  ? (viewRef.current === 'ts' ? 'ns-resize' : 'ew-resize') : 'default';
       }
     }
   };
