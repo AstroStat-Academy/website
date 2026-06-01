@@ -155,7 +155,7 @@ export default function TitleDot() {
       const px       = canvasW - SIDEBAR_W / 2;  // x position of pill centre (sidebar)
       const pulse    = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
 
-      const my       = graphTop + (1 - muFrac) * graphH;           // mean y (inverted: high value = top)
+      const my       = graphTop + muFrac * graphH;
       const halfH    = sigmaFrac * graphH;
       const ty       = Math.max(graphTop + VGRIP_H / 2 + 2, my - halfH);  // top grip y centre
       const by       = Math.min(graphTop + graphH - VGRIP_H / 2 - 2, my + halfH); // bottom grip y centre
@@ -360,7 +360,7 @@ export default function TitleDot() {
         }
 
         // ts vertical widget
-        const tsMeanFrac  = 0.5 - tsMuRef.current;  // mu>0 → line drifts up → dot higher
+        const tsMeanFrac  = tsMuRef.current + 0.5;
         const tsSigmaFrac = tsSigmaRef.current * 0.5;
         drawVerticalPillWidget(tsMeanFrac, tsSigmaFrac, graphTop, graphH, now);
       }
@@ -468,7 +468,7 @@ export default function TitleDot() {
       if (viewRef.current === 'ts') {
         const hb     = tsPillBaseRef.current;
         const gTop   = hb - HISTO_ZONE;
-        const muFrac = 1 - (y - gTop) / HISTO_ZONE;  // inverted: drag up = higher value
+        const muFrac = (y - gTop) / HISTO_ZONE;  // drag down = lower value
         tsMuRef.current = Math.max(-0.5, Math.min(0.5, muFrac - 0.5));
       } else {
         const v = Math.max(0, Math.min(x / cw, 1));
@@ -480,7 +480,7 @@ export default function TitleDot() {
       if (viewRef.current === 'ts') {
         const hb   = tsPillBaseRef.current;
         const gTop = hb - HISTO_ZONE;
-        const my   = gTop + (1 - (tsMuRef.current + 0.5)) * HISTO_ZONE;
+        const my   = gTop + (tsMuRef.current + 0.5) * HISTO_ZONE;
         const dist = Math.abs(y - my);
         tsSigmaRef.current = Math.max(0.05, Math.min(0.8, dist / HISTO_ZONE / 0.5));
       } else {
