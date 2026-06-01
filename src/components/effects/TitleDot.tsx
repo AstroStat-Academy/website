@@ -187,34 +187,80 @@ export default function TitleDot() {
 
       ctx.restore();
 
-      // Histogram grows independently from a Gaussian centered on smoothMean
-      const meanCol = smoothMean * columns;
-      const sigma   = sigmaFracRef.current * columns;
-      for (let k = 0; k < columns; k++) {
-        const g = Math.exp(-0.5 * ((k - meanCol) / sigma) ** 2);
-        bins[k] = Math.max(0, bins[k] + g * BIN_INCREMENT - BIN_DECAY);
+      // Always advance AR(1) buffer so ts view is warm on switch
+      tsAR = AR_PHI * tsAR + (Math.random() - 0.5) * AR_NOISE;
+      tsData[tsHead % TS_LEN] = tsAR;
+      tsHead++;
+
+      if (viewRef.current === 'hist') {
+        // Histogram grows independently from a Gaussian centered on smoothMean
+        const meanCol = smoothMean * columns;
+        const sigma   = sigmaFracRef.current * columns;
+        for (let k = 0; k < columns; k++) {
+          const g = Math.exp(-0.5 * ((k - meanCol) / sigma) ** 2);
+          bins[k] = Math.max(0, bins[k] + g * BIN_INCREMENT - BIN_DECAY);
+        }
+
+        // Histogram — blue shadow then red bars
+        const binW   = canvasW / columns;
+        const maxBin = Math.max(...bins, MAX_BIN);
+        for (let k = 0; k < columns; k++) {
+          if (bins[k] < 0.05) continue;
+          const norm = bins[k] / maxBin;
+          const bh   = norm * HISTO_ZONE;
+          ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
+          ctx.fillRect(k * binW + 1.5, histoBase - bh + 2, binW - 1, bh);
+        }
+        for (let k = 0; k < columns; k++) {
+          if (bins[k] < 0.05) continue;
+          const norm  = bins[k] / maxBin;
+          const bh    = norm * HISTO_ZONE;
+          const alpha = 0.55 + norm * 0.35;
+          ctx.fillStyle = `rgba(${colors.charColorRgb}, ${alpha})`;
+          ctx.fillRect(k * binW + 0.5, histoBase - bh, binW - 1, bh);
+        }
+      } else {
+        // Time series — draw ordered circular buffer as a line
+        const ordered: number[] = [];
+        const start = tsHead >= TS_LEN ? tsHead : 0;
+        const count = Math.min(tsHead, TS_LEN);
+        for (let i = 0; i < count; i++) ordered.push(tsData[(start + i) % TS_LEN]);
+
+        if (ordered.length >= 2) {
+          let minV = ordered[0], maxV = ordered[0];
+          for (const v of ordered) { if (v < minV) minV = v; if (v > maxV) maxV = v; }
+          const range = maxV - minV || 1;
+          const graphTop = histoBase - HISTO_ZONE;
+          const graphH   = HISTO_ZONE;
+
+          ctx.save();
+          ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ordered.forEach((v, i) => {
+            const x = (i / (TS_LEN - 1)) * canvasW;
+            const y = graphTop + graphH - ((v - minV) / range) * (graphH - 4) - 2;
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+          ctx.restore();
+
+          ctx.save();
+          ctx.strokeStyle = `rgba(${colors.charColorRgb}, 0.85)`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ordered.forEach((v, i) => {
+            const x = (i / (TS_LEN - 1)) * canvasW;
+            const y = graphTop + graphH - ((v - minV) / range) * (graphH - 4) - 2;
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+          ctx.restore();
+        }
       }
 
-      // Histogram — blue shadow then red bars
-      const binW   = canvasW / columns;
-      const maxBin = Math.max(...bins, MAX_BIN);
-      for (let k = 0; k < columns; k++) {
-        if (bins[k] < 0.05) continue;
-        const norm = bins[k] / maxBin;
-        const bh   = norm * HISTO_ZONE;
-        ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
-        ctx.fillRect(k * binW + 1.5, histoBase - bh + 2, binW - 1, bh);
-      }
-      for (let k = 0; k < columns; k++) {
-        if (bins[k] < 0.05) continue;
-        const norm  = bins[k] / maxBin;
-        const bh    = norm * HISTO_ZONE;
-        const alpha = 0.55 + norm * 0.35;
-        ctx.fillStyle = `rgba(${colors.charColorRgb}, ${alpha})`;
-        ctx.fillRect(k * binW + 0.5, histoBase - bh, binW - 1, bh);
-      }
-
-      // ── Pill control ───────────────────────────────────────────────────────
+      // ── Pill control (hist mode only) ──────────────────────────────────────
+      if (viewRef.current === 'hist') {
       const mx       = smoothMean * canvasW;
       const fwhmHalf = sigmaFracRef.current * canvasW;
       const lx       = Math.max(GRIP_W + 2, mx - fwhmHalf);
@@ -259,6 +305,7 @@ export default function TitleDot() {
       ctx.arc(mx, pillTop + PILL_H / 2, dotR, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
+      } // end hist-only pill control
 
       // Toggle widget — always visible
       drawToggle(now);
