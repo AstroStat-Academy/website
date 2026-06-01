@@ -5,6 +5,8 @@ const CHARS = 'αβγδεζηθικλμνξπρστφχψωΣ∑∫∂∇∞≈�
 const FONT_SIZE     = 14;
 const FRAME_MS      = 110;
 const HISTO_ZONE    = 120;
+const HISTO_GAP     = 40;  // px between title bottom and histogram top
+const WIDGET_BELOW  = 16;  // px below histogram base where the pill sits
 const MAX_BIN       = 40;
 const BIN_INCREMENT = 5.0;
 const BIN_DECAY     = 0.25;
@@ -13,10 +15,15 @@ const MEAN_LERP     = 0.40;
 // Pill control geometry
 const PILL_H        = 6;    // capsule height (straddles baseline)
 const GRIP_W        = 6;    // end-tab width
-const TRI_W         = 9;    // triangle half-width
-const TRI_H         = 12;   // triangle height
 
 const SIGMA_DEFAULT = 0.20; // σ as fraction of canvas width (≈ columns/5)
+
+const TS_LEN        = 100;   // number of time series points
+const AR_PHI        = 0.92;  // AR(1) mean-reversion coefficient
+const AR_NOISE      = 0.4;   // noise scale
+const TOGGLE_H      = 16;    // toggle widget total height
+const TOGGLE_W      = 48;    // toggle widget total width
+const TOGGLE_ABOVE  = 10;    // px above graph area
 
 export default function TitleDot() {
   const wrapRef      = useRef<HTMLDivElement>(null);
@@ -29,6 +36,9 @@ export default function TitleDot() {
   const histoBaseRef  = useRef(0);
   const canvasWRef    = useRef(0);
   const dragMode      = useRef<'none' | 'move' | 'left' | 'right'>('none');
+  const viewRef       = useRef<'hist' | 'ts'>('hist');
+  const toggleXRef    = useRef(0);
+  const toggleYRef    = useRef(0);
 
   useEffect(() => {
     const wrap   = wrapRef.current;
@@ -47,6 +57,9 @@ export default function TitleDot() {
     let drops: number[]    = [];
     let jitter: number[]   = [];
     let bins: Float32Array = new Float32Array(0);
+    let tsData: Float32Array = new Float32Array(TS_LEN);
+    let tsHead  = 0;
+    let tsAR    = 0;
 
     const build = () => {
       const h1 = wrap.querySelector('h1') as HTMLElement;
@@ -57,7 +70,7 @@ export default function TitleDot() {
       const hRect = h1.getBoundingClientRect();
 
       canvasW = wRect.width;
-      canvasH = wRect.height + HISTO_ZONE;
+      canvasH = wRect.height + HISTO_GAP + HISTO_ZONE + WIDGET_BELOW;
 
       canvas.width  = Math.ceil(canvasW * dpr);
       canvas.height = Math.ceil(canvasH * dpr);
@@ -68,13 +81,18 @@ export default function TitleDot() {
       const span = h1.querySelector('span') as HTMLElement;
       rainTop    = (span ? span.getBoundingClientRect().top : hRect.top) - wRect.top;
       rainBottom = hRect.bottom - wRect.top;
-      histoBase  = rainBottom + HISTO_ZONE - 4;
+      histoBase  = rainBottom + HISTO_GAP + HISTO_ZONE - 4;
 
       histoBaseRef.current = histoBase;
       canvasWRef.current   = canvasW;
+      toggleXRef.current = canvasW / 2;
+      toggleYRef.current = rainBottom + TOGGLE_ABOVE + TOGGLE_H / 2;
 
       columns = Math.floor(canvasW / FONT_SIZE);
       bins    = new Float32Array(columns);
+      tsData = new Float32Array(TS_LEN);
+      tsHead = 0;
+      tsAR   = 0;
 
       const rainRows = Math.ceil((histoBase - rainTop) / FONT_SIZE);
       drops = Array.from({ length: columns }, () =>
@@ -99,12 +117,8 @@ export default function TitleDot() {
       ctx.fillRect(0, rainTop, canvasW, rainBottom - rainTop);
       ctx.restore();
 
-      // Histogram zone → transparency
-      ctx.save();
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.fillStyle = colors.histoFade;
-      ctx.fillRect(0, rainBottom, canvasW, canvasH - rainBottom);
-      ctx.restore();
+      // Histogram + widget zone → full clear each frame so widget moves crisp
+      ctx.clearRect(0, rainBottom, canvasW, canvasH - rainBottom);
 
       ctx.save();
       ctx.beginPath();
@@ -114,9 +128,6 @@ export default function TitleDot() {
       ctx.font = `${FONT_SIZE}px ui-monospace, monospace`;
       ctx.textBaseline = 'top';
 
-      const meanCol = smoothMean * columns;
-      const sigma   = sigmaFracRef.current * columns;
-
       for (let i = 0; i < columns; i++) {
         const y = drops[i] * FONT_SIZE;
         if (y >= 0 && y < histoBase) {
@@ -125,18 +136,21 @@ export default function TitleDot() {
           ctx.fillText(char, i * FONT_SIZE, y);
         }
         if (y >= histoBase) {
-          bins[i] += BIN_INCREMENT;
           drops[i] = -Math.floor(Math.random() * 8);
         } else {
-          const g = Math.exp(-0.5 * ((i - meanCol) / sigma) ** 2);
-          drops[i] += (0.4 + g * 2.1) * jitter[i];
+          drops[i] += jitter[i];
         }
       }
 
       ctx.restore();
 
-      // Bin decay
-      for (let k = 0; k < columns; k++) bins[k] = Math.max(0, bins[k] - BIN_DECAY);
+      // Histogram grows independently from a Gaussian centered on smoothMean
+      const meanCol = smoothMean * columns;
+      const sigma   = sigmaFracRef.current * columns;
+      for (let k = 0; k < columns; k++) {
+        const g = Math.exp(-0.5 * ((k - meanCol) / sigma) ** 2);
+        bins[k] = Math.max(0, bins[k] + g * BIN_INCREMENT - BIN_DECAY);
+      }
 
       // Histogram — blue shadow then red bars
       const binW   = canvasW / columns;
@@ -162,35 +176,46 @@ export default function TitleDot() {
       const fwhmHalf = sigmaFracRef.current * canvasW;
       const lx       = Math.max(GRIP_W + 2, mx - fwhmHalf);
       const rx       = Math.min(canvasW - GRIP_W - 2, mx + fwhmHalf);
-      const pillTop  = histoBase - PILL_H / 2;
+      const pillTop  = histoBase + WIDGET_BELOW - PILL_H / 2;
       const r        = PILL_H / 2;
 
+      // Pulse: 0→1→0 on a 2 s cycle
+      const pulse = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
+
       // Pill outline
-      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.55)`;
+      ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.45)`;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.roundRect(lx, pillTop, rx - lx, PILL_H, r);
       ctx.stroke();
 
-      // Left grip tab (filled)
-      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.55)`;
-      ctx.beginPath();
-      ctx.roundRect(lx - GRIP_W, pillTop, GRIP_W, PILL_H, [r, 0, 0, r]);
-      ctx.fill();
+      // Draw a glowing chunky grip at position x
+      const drawGrip = (x: number) => {
+        const glow = 6 + pulse * 14;
+        ctx.save();
+        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+        ctx.shadowBlur  = glow;
+        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+        ctx.beginPath();
+        ctx.roundRect(x - GRIP_W / 2, pillTop - 5, GRIP_W, PILL_H + 10, 3);
+        ctx.fill();
+        ctx.restore();
+      };
 
-      // Right grip tab (filled)
-      ctx.beginPath();
-      ctx.roundRect(rx, pillTop, GRIP_W, PILL_H, [0, r, r, 0]);
-      ctx.fill();
+      drawGrip(lx);
+      drawGrip(rx);
 
-      // Big centre triangle — base flush with pill top, apex pointing up
-      ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.55)`;
+      // Mean dot — glowing circle
+      const dotR  = 6;
+      const dotGlow = 6 + pulse * 16;
+      ctx.save();
+      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+      ctx.shadowBlur  = dotGlow;
+      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
       ctx.beginPath();
-      ctx.moveTo(mx,          pillTop - TRI_H);   // apex
-      ctx.lineTo(mx - TRI_W,  pillTop);            // base-left
-      ctx.lineTo(mx + TRI_W,  pillTop);            // base-right
-      ctx.closePath();
+      ctx.arc(mx, pillTop + PILL_H / 2, dotR, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
     };
 
     document.fonts.ready.then(() => {
@@ -210,14 +235,16 @@ export default function TitleDot() {
     const lx       = Math.max(GRIP_W + 2, mx - fwhmHalf);
     const rx       = Math.min(canvasWRef.current - GRIP_W - 2, mx + fwhmHalf);
     const hb       = histoBaseRef.current;
-    const pillTop  = hb - PILL_H / 2;
+    const pillTop  = hb + WIDGET_BELOW - PILL_H / 2;
 
-    // Grips first (narrower targets)
-    if (x >= lx - GRIP_W - 4 && x <= lx + 4   && y >= pillTop - 4 && y <= hb + PILL_H / 2 + 4) return 'left';
-    if (x >= rx - 4           && x <= rx + GRIP_W + 4 && y >= pillTop - 4 && y <= hb + PILL_H / 2 + 4) return 'right';
-    // Triangle + pill body
-    if (x >= lx && x <= rx && y >= pillTop - TRI_H - 4 && y <= hb + PILL_H / 2 + 4) return 'move';
-    if (Math.abs(x - mx) <= TRI_W + 4 && y >= pillTop - TRI_H - 4 && y <= pillTop + 4) return 'move';
+    const dotR = 6;
+    // Mean dot hit
+    if (Math.abs(x - mx) <= dotR + 6 && Math.abs(y - (pillTop + PILL_H / 2)) <= dotR + 6) return 'move';
+    // Grips (centered on lx / rx)
+    if (Math.abs(x - lx) <= GRIP_W / 2 + 6 && y >= pillTop - 10 && y <= pillTop + PILL_H + 10) return 'left';
+    if (Math.abs(x - rx) <= GRIP_W / 2 + 6 && y >= pillTop - 10 && y <= pillTop + PILL_H + 10) return 'right';
+    // Pill body
+    if (x >= lx && x <= rx && y >= pillTop - 4 && y <= pillTop + PILL_H + 4) return 'move';
     return 'none';
   };
 
@@ -238,7 +265,9 @@ export default function TitleDot() {
     const cw = canvasWRef.current;
 
     if (dragMode.current === 'move') {
-      meanXRef.current = Math.max(0, Math.min(x / cw, 1));
+      const v = Math.max(0, Math.min(x / cw, 1));
+      meanXRef.current = v;
+      smoothMeanRef.current = v;
       e.currentTarget.style.cursor = 'grabbing';
     } else if (dragMode.current === 'left' || dragMode.current === 'right') {
       const mx   = smoothMeanRef.current * cw;
@@ -258,7 +287,7 @@ export default function TitleDot() {
   };
 
   return (
-    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: HISTO_ZONE + 'px', display: 'inline-block' }}>
+    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: (HISTO_GAP + HISTO_ZONE + WIDGET_BELOW) + 'px', display: 'inline-block' }}>
       <h1 className="text-5xl md:text-7xl font-bold leading-tight relative z-10 text-bone">
         AstroStat<br />
         <span className="text-bone">Academy</span>
