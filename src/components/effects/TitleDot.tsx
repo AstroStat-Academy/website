@@ -26,6 +26,7 @@ const TOGGLE_GAP    = 6;     // gap between buttons
 const TOGGLE_W      = TOGGLE_BW * 2 + TOGGLE_GAP;  // total span (for hit-test centre)
 const TOGGLE_ABOVE  = 10;    // px above graph area
 const GRAPH_OFFSET  = TOGGLE_ABOVE + TOGGLE_H + 8;  // px below rainBottom where graph starts
+const SIDEBAR_W     = 40;  // extra canvas width to the right for the ts vertical widget
 
 export default function TitleDot() {
   const wrapRef      = useRef<HTMLDivElement>(null);
@@ -74,7 +75,7 @@ export default function TitleDot() {
       const wRect = wrap.getBoundingClientRect();
       const hRect = h1.getBoundingClientRect();
 
-      canvasW = wRect.width;
+      canvasW = wRect.width + SIDEBAR_W;
       canvasH = wRect.height + GRAPH_OFFSET + HISTO_ZONE + WIDGET_BELOW;
 
       canvas.width  = Math.ceil(canvasW * dpr);
@@ -151,7 +152,7 @@ export default function TitleDot() {
       const VGRIP_H  = 6;   // grip height
       const VGRIP_W  = 14;  // grip width
       const VDOT_R   = 6;
-      const px       = canvasW - 18;  // x position of pill centre (right side)
+      const px       = canvasW - SIDEBAR_W / 2;  // x position of pill centre (sidebar)
       const pulse    = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
 
       const my       = graphTop + (1 - muFrac) * graphH;           // mean y (inverted: high value = top)
@@ -332,12 +333,13 @@ export default function TitleDot() {
           for (const v of ordered) { if (v < minV) minV = v; if (v > maxV) maxV = v; }
           const range = maxV - minV || 1;
 
+          const lineW = canvasW - SIDEBAR_W;
           ctx.save();
           ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
           ctx.lineWidth = 2.5;
           ctx.beginPath();
           ordered.forEach((v, i) => {
-            const x = (i / (TS_LEN - 1)) * canvasW;
+            const x = (i / (TS_LEN - 1)) * lineW;
             const y = graphTop + graphH - ((v - minV) / range) * (graphH - 4) - 2;
             i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
           });
@@ -349,7 +351,7 @@ export default function TitleDot() {
           ctx.lineWidth = 1.5;
           ctx.beginPath();
           ordered.forEach((v, i) => {
-            const x = (i / (TS_LEN - 1)) * canvasW;
+            const x = (i / (TS_LEN - 1)) * lineW;
             const y = graphTop + graphH - ((v - minV) / range) * (graphH - 4) - 2;
             i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
           });
@@ -417,7 +419,7 @@ export default function TitleDot() {
     const hb       = tsPillBaseRef.current;
     const graphTop = hb - HISTO_ZONE;
     const graphH   = HISTO_ZONE;
-    const px       = canvasWRef.current - 18;  // must match drawVerticalPillWidget
+    const px       = canvasWRef.current - SIDEBAR_W / 2;  // must match drawVerticalPillWidget
     const VGRIP_W  = 14;
     const VGRIP_H  = 6;
     const VDOT_R   = 6;
@@ -504,7 +506,7 @@ export default function TitleDot() {
   };
 
   return (
-    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: (GRAPH_OFFSET + HISTO_ZONE + WIDGET_BELOW) + 'px', display: 'inline-block' }}>
+    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: (GRAPH_OFFSET + HISTO_ZONE + WIDGET_BELOW) + 'px', display: 'inline-block', overflow: 'visible' }}>
       <h1 className="text-5xl md:text-7xl font-bold leading-tight relative z-10 text-bone">
         AstroStat<br />
         <span className="text-bone">Academy</span>
