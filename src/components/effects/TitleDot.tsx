@@ -151,7 +151,7 @@ export default function TitleDot() {
       const VGRIP_H  = 6;   // grip height
       const VGRIP_W  = 14;  // grip width
       const VDOT_R   = 6;
-      const px       = 18;  // x position of pill centre from left edge
+      const px       = canvasW - 18;  // x position of pill centre (right side)
       const pulse    = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
 
       const my       = graphTop + (1 - muFrac) * graphH;           // mean y (inverted: high value = top)
@@ -237,8 +237,10 @@ export default function TitleDot() {
         ctx.textAlign = 'left';
       };
 
+      ctx.save();
       drawBtn(lx, '▮▮▮', viewRef.current === 'hist');
       drawBtn(rx, '〜',  viewRef.current === 'ts');
+      ctx.restore();
     };
 
     const tick = (now: number) => {
@@ -323,12 +325,12 @@ export default function TitleDot() {
         const count = Math.min(tsHead, TS_LEN);
         for (let i = 0; i < count; i++) ordered.push(tsData[(start + i) % TS_LEN]);
 
+        const graphTop = histoBase - HISTO_ZONE;
+        const graphH   = HISTO_ZONE;
         if (ordered.length >= 2) {
           let minV = ordered[0], maxV = ordered[0];
           for (const v of ordered) { if (v < minV) minV = v; if (v > maxV) maxV = v; }
           const range = maxV - minV || 1;
-          const graphTop = histoBase - HISTO_ZONE;
-          const graphH   = HISTO_ZONE;
 
           ctx.save();
           ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
@@ -415,7 +417,7 @@ export default function TitleDot() {
     const hb       = tsPillBaseRef.current;
     const graphTop = hb - HISTO_ZONE;
     const graphH   = HISTO_ZONE;
-    const px       = 18;   // must match drawVerticalPillWidget
+    const px       = canvasWRef.current - 18;  // must match drawVerticalPillWidget
     const VGRIP_W  = 14;
     const VGRIP_H  = 6;
     const VDOT_R   = 6;
