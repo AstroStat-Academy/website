@@ -329,12 +329,23 @@ export default function TitleDot() {
         const graphTop = histoBase - HISTO_ZONE;
         const graphH   = HISTO_ZONE;
         if (ordered.length >= 2) {
-          // Fixed scale: widget mean maps to muFrac*graphH, scale = tsSigmaRef * graphH
-          const muFrac   = tsMuRef.current + 0.5;
-          const midY     = graphTop + muFrac * graphH;
-          const scale    = tsSigmaRef.current * graphH * 2 || 1; // px per unit value
+          // Autoscale the shape, then translate so series mean aligns with widget dot
+          const seriesMean = ordered.reduce((a, b) => a + b, 0) / ordered.length;
+          let minV = ordered[0], maxV = ordered[0];
+          for (const v of ordered) { if (v < minV) minV = v; if (v > maxV) maxV = v; }
+          const range = (maxV - minV) || 1;
+
+          // Widget dot Y
+          const muFrac = tsMuRef.current + 0.5;
+          const midY   = graphTop + muFrac * graphH;
+
+          // Map: series mean → midY, autoscale controls shape height
+          const sigma      = tsSigmaRef.current;
+          const heightFrac = Math.min(sigma * 2, 0.95); // fraction of graphH to use
+          const scale      = (graphH * heightFrac) / range;
 
           const lineW = canvasW - SIDEBAR_W;
+          const toY   = (v: number) => midY - (v - seriesMean) * scale;
 
           ctx.save();
           ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
@@ -342,8 +353,7 @@ export default function TitleDot() {
           ctx.beginPath();
           ordered.forEach((v, i) => {
             const x = (i / (TS_LEN - 1)) * lineW;
-            const y = Math.max(graphTop, Math.min(graphTop + graphH, midY - v * scale));
-            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            i === 0 ? ctx.moveTo(x, toY(v)) : ctx.lineTo(x, toY(v));
           });
           ctx.stroke();
           ctx.restore();
@@ -354,8 +364,7 @@ export default function TitleDot() {
           ctx.beginPath();
           ordered.forEach((v, i) => {
             const x = (i / (TS_LEN - 1)) * lineW;
-            const y = Math.max(graphTop, Math.min(graphTop + graphH, midY - v * scale));
-            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            i === 0 ? ctx.moveTo(x, toY(v)) : ctx.lineTo(x, toY(v));
           });
           ctx.stroke();
           ctx.restore();
