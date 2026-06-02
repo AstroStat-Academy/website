@@ -75,14 +75,16 @@ export default function TitleDot() {
       const wRect = wrap.getBoundingClientRect();
       const hRect = h1.getBoundingClientRect();
 
-      canvasW = wRect.width + SIDEBAR_W;
+      canvasW = wRect.width;  // content width — all drawing uses this
       canvasH = wRect.height + GRAPH_OFFSET + HISTO_ZONE + WIDGET_BELOW;
 
-      canvas.width  = Math.ceil(canvasW * dpr);
+      const physW = canvasW + SIDEBAR_W * 2;
+      canvas.width  = Math.ceil(physW * dpr);
       canvas.height = Math.ceil(canvasH * dpr);
-      canvas.style.width  = canvasW + 'px';
+      canvas.style.width  = physW + 'px';
       canvas.style.height = canvasH + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // Translate so x=0 in drawing space = left sidebar edge (content centred under title)
+      ctx.setTransform(dpr, 0, 0, dpr, SIDEBAR_W * dpr, 0);
 
       const span = h1.querySelector('span') as HTMLElement;
       rainTop    = (span ? span.getBoundingClientRect().top : hRect.top) - wRect.top;
@@ -152,7 +154,7 @@ export default function TitleDot() {
       const VGRIP_H  = 6;   // grip height
       const VGRIP_W  = 14;  // grip width
       const VDOT_R   = 6;
-      const px       = canvasW - SIDEBAR_W / 2;  // x position of pill centre (sidebar)
+      const px       = canvasW - SIDEBAR_W / 2;  // x = right sidebar centre
       const pulse    = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
 
       const my       = graphTop + muFrac * graphH;
@@ -344,7 +346,7 @@ export default function TitleDot() {
           const heightFrac = Math.min(sigma * 2, 0.95); // fraction of graphH to use
           const scale      = (graphH * heightFrac) / range;
 
-          const lineW = canvasW - SIDEBAR_W;
+          const lineW = canvasW;
           const toY   = (v: number) => midY - (v - seriesMean) * scale;
 
           ctx.save();
@@ -452,7 +454,7 @@ export default function TitleDot() {
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
+    const x = e.clientX - rect.left - SIDEBAR_W;  // convert to drawing space
     const y = e.clientY - rect.top;
 
     const tv = hitToggle(x, y);
@@ -471,7 +473,7 @@ export default function TitleDot() {
 
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
+    const x = e.clientX - rect.left - SIDEBAR_W;  // convert to drawing space
     const y = e.clientY - rect.top;
     const cw = canvasWRef.current;
 
@@ -517,7 +519,7 @@ export default function TitleDot() {
   };
 
   return (
-    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: (GRAPH_OFFSET + HISTO_ZONE + WIDGET_BELOW) + 'px', display: 'inline-block', overflow: 'visible', marginLeft: (SIDEBAR_W / 2) + 'px', marginRight: (-SIDEBAR_W / 2) + 'px' }}>
+    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: (GRAPH_OFFSET + HISTO_ZONE + WIDGET_BELOW) + 'px', display: 'inline-block', overflow: 'visible',  }}>
       <h1 className="text-5xl md:text-7xl font-bold leading-tight relative z-10 text-bone">
         AstroStat<br />
         <span className="text-bone">Academy</span>
@@ -527,7 +529,7 @@ export default function TitleDot() {
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}
+        style={{ position: 'absolute', top: 0, bottom: 0, left: -SIDEBAR_W + 'px', pointerEvents: 'auto' }}
         aria-hidden="true"
       />
     </div>
