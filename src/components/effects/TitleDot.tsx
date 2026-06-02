@@ -6,10 +6,9 @@ const FONT_SIZE     = 14;
 const FRAME_MS      = 110;
 const HISTO_ZONE    = 120;
 const WIDGET_BELOW  = 16;  // px below histogram base where the pill sits
-const MAX_BIN       = 40;
-const BIN_INCREMENT = 5.0;
-const BIN_DECAY     = 0.25;
 const MEAN_LERP     = 0.40;
+const BAR_WIGGLE_PX = 4;
+const BAR_WIGGLE_MS = 900;
 
 // Pill control geometry
 const PILL_H        = 6;    // capsule height (straddles baseline)
@@ -24,7 +23,7 @@ const TOGGLE_H      = 16;    // button height
 const TOGGLE_BW     = 36;    // each button width
 const TOGGLE_GAP    = 6;     // gap between buttons
 const TOGGLE_W      = TOGGLE_BW * 2 + TOGGLE_GAP;  // total span (for hit-test centre)
-const TOGGLE_ABOVE  = 10;    // px above graph area
+const TOGGLE_ABOVE  = 32;    // px above graph area
 const GRAPH_OFFSET  = TOGGLE_ABOVE + TOGGLE_H + 18;  // px below rainBottom where graph starts
 const SIDEBAR_W     = 40;  // extra canvas width to the right for the ts vertical widget
 const GRAPH_W       = 400; // fixed width of histogram/ts area, centered in wrapper
@@ -65,7 +64,6 @@ export default function TitleDot() {
     let columns    = 0;
     let drops: number[]    = [];
     let jitter: number[]   = [];
-    let bins: Float32Array = new Float32Array(0);
     let tsData: Float32Array = new Float32Array(TS_LEN);
     let tsHead  = 0;
     let tsAR    = 0;
@@ -104,7 +102,6 @@ export default function TitleDot() {
       toggleYRef.current = rainBottom + TOGGLE_ABOVE + TOGGLE_H / 2;
 
       columns = Math.floor(canvasW / FONT_SIZE);
-      bins    = new Float32Array(Math.floor(GRAPH_W / FONT_SIZE));
       tsData = new Float32Array(TS_LEN);
       tsHead = 0;
       tsAR   = 0;
@@ -247,7 +244,7 @@ export default function TitleDot() {
       };
 
       ctx.save();
-      drawBtn(lx, '▮▮▮', viewRef.current === 'hist');
+      drawBtn(lx, '∩', viewRef.current === 'hist');
       drawBtn(rx, '〜',  viewRef.current === 'ts');
       ctx.restore();
     };
@@ -301,30 +298,27 @@ export default function TitleDot() {
       tsHead++;
 
       if (viewRef.current === 'hist') {
-        // Histogram grows independently from a Gaussian centered on smoothMean
         const graphCols = Math.floor(GRAPH_W / FONT_SIZE);
-        const meanCol = smoothMean * graphCols;
-        const sigma   = sigmaFracRef.current * graphCols;
-        for (let k = 0; k < graphCols; k++) {
-          const g = Math.exp(-0.5 * ((k - meanCol) / sigma) ** 2);
-          bins[k] = Math.max(0, bins[k] + g * BIN_INCREMENT - BIN_DECAY);
-        }
+        const binW = GRAPH_W / graphCols;
+        const amplitude = HISTO_ZONE * 0.92;
+        const sigma = Math.max(sigmaFracRef.current, 0.01);
+        const wiggleTime = now / BAR_WIGGLE_MS;
 
-        // Histogram — blue shadow then red bars
-        const binW   = GRAPH_W / graphCols;
-        const maxBin = Math.max(...bins.slice(0, graphCols), MAX_BIN);
         for (let k = 0; k < graphCols; k++) {
-          if (bins[k] < 0.05) continue;
-          const norm = bins[k] / maxBin;
-          const bh   = norm * HISTO_ZONE;
+          const xFrac = (k + 0.5) / graphCols;
+          const gaussian = Math.exp(-0.5 * ((xFrac - smoothMean) / sigma) ** 2);
+          const wiggle = Math.sin(wiggleTime + k * 0.73) * BAR_WIGGLE_PX * gaussian;
+          const bh = Math.max(0, gaussian * amplitude + wiggle);
           ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
           ctx.fillRect(graphLeft + k * binW + 1.5, histoBase - bh + 2, binW - 1, bh);
         }
+
         for (let k = 0; k < graphCols; k++) {
-          if (bins[k] < 0.05) continue;
-          const norm  = bins[k] / maxBin;
-          const bh    = norm * HISTO_ZONE;
-          const alpha = 0.55 + norm * 0.35;
+          const xFrac = (k + 0.5) / graphCols;
+          const gaussian = Math.exp(-0.5 * ((xFrac - smoothMean) / sigma) ** 2);
+          const wiggle = Math.sin(wiggleTime + k * 0.73) * BAR_WIGGLE_PX * gaussian;
+          const bh = Math.max(0, gaussian * amplitude + wiggle);
+          const alpha = 0.55 + gaussian * 0.35;
           ctx.fillStyle = `rgba(${colors.charColorRgb}, ${alpha})`;
           ctx.fillRect(graphLeft + k * binW + 0.5, histoBase - bh, binW - 1, bh);
         }
