@@ -172,9 +172,9 @@ export default function TitleDot() {
       // Grips (horizontal rectangles)
       const drawVGrip = (y: number) => {
         ctx.save();
-        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 0.6)`;
-        ctx.shadowBlur  = 3 + pulse * 5;
-        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.7 + pulse * 0.1})`;
+        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+        ctx.shadowBlur  = 6 + pulse * 14;
+        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
         ctx.beginPath();
         ctx.roundRect(px - VGRIP_W / 2, y - VGRIP_H / 2, VGRIP_W, VGRIP_H, 3);
         ctx.fill();
@@ -185,9 +185,9 @@ export default function TitleDot() {
 
       // Mean dot
       ctx.save();
-      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 0.6)`;
-      ctx.shadowBlur  = 3 + pulse * 6;
-      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.7 + pulse * 0.1})`;
+      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+      ctx.shadowBlur  = 6 + pulse * 16;
+      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
       ctx.beginPath();
       ctx.arc(px, my, VDOT_R, 0, Math.PI * 2);
       ctx.fill();
@@ -372,10 +372,12 @@ export default function TitleDot() {
           ctx.restore();
         }
 
-        // ts vertical widget
-        const tsMeanFrac  = tsMuRef.current + 0.5;
-        const tsSigmaFrac = tsSigmaRef.current * 0.5;
-        drawVerticalPillWidget(tsMeanFrac, tsSigmaFrac, graphTop, graphH, now);
+        // ts vertical widget (only in ts view)
+        if (viewRef.current === 'ts') {
+          const tsMeanFrac  = tsMuRef.current + 0.5;
+          const tsSigmaFrac = tsSigmaRef.current * 0.5;
+          drawVerticalPillWidget(tsMeanFrac, tsSigmaFrac, graphTop, graphH, now);
+        }
       }
 
       if (viewRef.current === 'hist') {
