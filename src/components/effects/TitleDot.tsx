@@ -127,9 +127,9 @@ export default function TitleDot() {
 
       const drawGrip = (x: number) => {
         ctx.save();
-        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
-        ctx.shadowBlur  = 6 + pulse * 14;
-        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 0.5)`;
+        ctx.shadowBlur  = 3 + pulse * 4;
+        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.65 + pulse * 0.1})`;
         ctx.beginPath();
         ctx.roundRect(x - GRIP_W / 2, pillTop - 5, GRIP_W, PILL_H + 10, 3);
         ctx.fill();
@@ -140,9 +140,9 @@ export default function TitleDot() {
 
       const dotR = 6;
       ctx.save();
-      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
-      ctx.shadowBlur  = 6 + pulse * 16;
-      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 0.5)`;
+      ctx.shadowBlur  = 3 + pulse * 4;
+      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.65 + pulse * 0.1})`;
       ctx.beginPath();
       ctx.arc(mx, pillTop + PILL_H / 2, dotR, 0, Math.PI * 2);
       ctx.fill();
@@ -172,9 +172,9 @@ export default function TitleDot() {
       // Grips (horizontal rectangles)
       const drawVGrip = (y: number) => {
         ctx.save();
-        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
-        ctx.shadowBlur  = 6 + pulse * 14;
-        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+        ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 0.5)`;
+        ctx.shadowBlur  = 3 + pulse * 4;
+        ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.65 + pulse * 0.1})`;
         ctx.beginPath();
         ctx.roundRect(px - VGRIP_W / 2, y - VGRIP_H / 2, VGRIP_W, VGRIP_H, 3);
         ctx.fill();
@@ -185,9 +185,9 @@ export default function TitleDot() {
 
       // Mean dot
       ctx.save();
-      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
-      ctx.shadowBlur  = 6 + pulse * 16;
-      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.85 + pulse * 0.15})`;
+      ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 0.5)`;
+      ctx.shadowBlur  = 3 + pulse * 4;
+      ctx.fillStyle   = `rgba(${colors.shadowColorRgb}, ${0.65 + pulse * 0.1})`;
       ctx.beginPath();
       ctx.arc(px, my, VDOT_R, 0, Math.PI * 2);
       ctx.fill();
@@ -210,7 +210,7 @@ export default function TitleDot() {
         const glow = active ? 5 + pulse * 12 : 0;
         ctx.save();
         if (active) {
-          ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 1)`;
+          ctx.shadowColor = `rgba(${colors.shadowColorRgb}, 0.5)`;
           ctx.shadowBlur  = glow;
         }
         // Fill
