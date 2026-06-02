@@ -154,7 +154,7 @@ export default function TitleDot() {
       const VGRIP_H  = 6;   // grip height
       const VGRIP_W  = 14;  // grip width
       const VDOT_R   = 6;
-      const px       = canvasW - SIDEBAR_W / 2;  // x = right sidebar centre
+      const px       = canvasW + SIDEBAR_W / 2;  // x = right sidebar centre (past content edge)
       const pulse    = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
 
       const my       = graphTop + muFrac * graphH;
@@ -432,7 +432,7 @@ export default function TitleDot() {
     const hb       = tsPillBaseRef.current;
     const graphTop = hb - HISTO_ZONE;
     const graphH   = HISTO_ZONE;
-    const px       = canvasWRef.current - SIDEBAR_W / 2;  // must match drawVerticalPillWidget
+    const px       = canvasWRef.current + SIDEBAR_W / 2;  // must match drawVerticalPillWidget
     const VGRIP_W  = 14;
     const VGRIP_H  = 6;
     const VDOT_R   = 6;
