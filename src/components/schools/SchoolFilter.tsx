@@ -45,14 +45,14 @@ export default function SchoolFilter({ schools }: Props) {
   }, [schools, yearFilter, topicFilter]);
 
   const selectClass =
-    'bg-ink border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:border-bone focus:outline-none';
+    'bg-white/80 border border-ink/10 rounded-full px-4 py-2 text-sm text-ink shadow-sm focus:border-blue focus:outline-none focus:ring-2 focus:ring-blue/15 transition-colors dark:border-white/15 dark:bg-white/10 dark:text-bone';
 
   return (
     <div>
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-8">
         <div className="flex flex-col gap-1">
-          <label htmlFor="year-filter" className="text-xs text-slate-400 uppercase tracking-wider">Year</label>
+          <label htmlFor="year-filter" className="text-xs text-ink/55 uppercase tracking-wider dark:text-bone/55">Year</label>
           <select
             id="year-filter"
             value={yearFilter}
@@ -67,7 +67,7 @@ export default function SchoolFilter({ schools }: Props) {
           </select>
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="topic-filter" className="text-xs text-slate-400 uppercase tracking-wider">Topic</label>
+          <label htmlFor="topic-filter" className="text-xs text-ink/55 uppercase tracking-wider dark:text-bone/55">Topic</label>
           <select
             id="topic-filter"
             value={topicFilter}
@@ -84,13 +84,13 @@ export default function SchoolFilter({ schools }: Props) {
       </div>
 
       {/* Result count */}
-      <p className="text-slate-500 text-sm mb-6">
+      <p className="text-ink/50 text-sm mb-6 dark:text-bone/50">
         {filtered.length} school{filtered.length !== 1 ? 's' : ''} found
       </p>
 
       {/* Grid */}
       {filtered.length === 0 ? (
-        <p className="text-center text-slate-400 py-20">No schools match your filters.</p>
+        <p className="text-center text-ink/55 py-20 dark:text-bone/55">No schools match your filters.</p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((school) => {
@@ -100,46 +100,46 @@ export default function SchoolFilter({ schools }: Props) {
               <a
                 key={school.slug}
                 href={`/schools/${school.slug}`}
-                className="group flex flex-col bg-ink border border-white/10 rounded-xl p-6 hover:border-bone/50 transition-all hover:-translate-y-0.5"
+                className="group flex flex-col rounded-2xl border border-ink/10 bg-gradient-to-br from-white/85 via-bone to-blue/5 p-6 shadow-[0_16px_40px_rgba(4,101,173,0.08)] transition-all hover:-translate-y-0.5 hover:border-blue/30 hover:shadow-[0_18px_45px_rgba(4,101,173,0.14)] dark:border-white/10 dark:from-white/10 dark:via-ink dark:to-blue/10 dark:shadow-[0_16px_40px_rgba(4,101,173,0.16)]"
               >
                 <div className="flex items-center justify-between mb-3">
                   <span
                     className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                       isPast
-                        ? 'bg-slate-700 text-slate-300'
-                        : 'bg-ink/60 text-bone border border-bone/30'
+                        ? 'bg-ink/5 text-ink/55 border border-ink/10 dark:bg-white/10 dark:text-bone/55 dark:border-white/10'
+                        : 'bg-blue/10 text-blue border border-blue/20'
                     }`}
                   >
                     {isPast ? 'Past' : 'Upcoming'}
                   </span>
-                  <span className="text-slate-400 text-xs">
+                  <span className="text-ink/55 text-xs dark:text-bone/55">
                     {date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                   </span>
                 </div>
-                <h3 className="text-base font-bold mb-1 group-hover:text-bone transition-colors leading-snug">
+                <h3 className="text-base font-bold mb-1 text-ink group-hover:text-blue transition-colors leading-snug dark:text-bone dark:group-hover:text-bone">
                   {school.title}
                 </h3>
-                <p className="text-slate-400 text-sm mb-3">{school.location}</p>
-                <p className="text-slate-300 text-sm leading-relaxed line-clamp-3 flex-1">
+                <p className="text-ink/55 text-sm mb-3 dark:text-bone/55">{school.location}</p>
+                <p className="text-ink/70 text-sm leading-relaxed line-clamp-3 flex-1 dark:text-bone/70">
                   {school.description}
                 </p>
                 <div className="flex flex-wrap gap-1.5 mt-4">
                   {school.topics.slice(0, 3).map((topic) => (
                     <span
                       key={topic}
-                      className="text-xs bg-ink text-slate-300 px-2 py-0.5 rounded"
+                      className="text-xs bg-white/70 text-ink/65 border border-ink/10 px-2 py-0.5 rounded-full dark:border-white/10 dark:bg-white/10 dark:text-bone/65"
                     >
                       {topic}
                     </span>
                   ))}
                   {school.topics.length > 3 && (
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-ink/45 dark:text-bone/45">
                       +{school.topics.length - 3} more
                     </span>
                   )}
                 </div>
                 {school.attendees && (
-                  <p className="text-xs text-slate-500 mt-3">{school.attendees} attendees</p>
+                  <p className="text-xs text-ink/45 mt-3 dark:text-bone/45">{school.attendees} attendees</p>
                 )}
               </a>
             );

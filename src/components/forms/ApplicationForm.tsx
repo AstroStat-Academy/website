@@ -38,15 +38,15 @@ export default function ApplicationForm({ schoolTitle }: Props) {
   };
 
   const inputClass =
-    'w-full bg-ink border border-white/20 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-600 focus:border-bone focus:outline-none transition-colors';
-  const errorClass = 'text-red-400 text-xs mt-1';
-  const labelClass = 'text-sm text-slate-300 block mb-1.5';
+    'w-full bg-white/80 border border-ink/10 rounded-xl px-3 py-2.5 text-ink text-sm placeholder-ink/35 focus:border-blue focus:outline-none focus:ring-2 focus:ring-blue/15 transition-colors dark:border-white/15 dark:bg-white/10 dark:text-bone dark:placeholder-bone/35';
+  const errorClass = 'text-red text-xs mt-1';
+  const labelClass = 'text-sm text-ink/65 block mb-1.5 dark:text-bone/65';
 
   if (submitted) {
     return (
-      <div className="bg-ink/25 border border-bone/30 rounded-xl p-8 text-center">
-        <p className="text-bone text-lg font-semibold mb-2">Thank you!</p>
-        <p className="text-slate-300 text-sm">
+      <div className="rounded-2xl border border-blue/20 bg-gradient-to-br from-white/85 via-bone to-teal/10 p-8 text-center shadow-[0_16px_40px_rgba(0,140,140,0.08)] dark:border-white/10 dark:from-white/10 dark:via-ink dark:to-teal/10">
+        <p className="text-blue text-lg font-semibold mb-2">Thank you!</p>
+        <p className="text-ink/70 text-sm dark:text-bone/70">
           We've noted your interest in <strong>{schoolTitle}</strong>. We'll be in touch.
         </p>
       </div>
@@ -56,7 +56,7 @@ export default function ApplicationForm({ schoolTitle }: Props) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-ink border border-white/10 rounded-xl p-6 space-y-5 max-w-xl"
+      className="rounded-2xl border border-ink/10 bg-gradient-to-br from-white/85 via-bone to-blue/5 p-6 space-y-5 max-w-xl shadow-[0_16px_40px_rgba(4,101,173,0.08)] dark:border-white/10 dark:from-white/10 dark:via-ink dark:to-blue/10"
       noValidate
     >
       {/* Full name */}
@@ -132,13 +132,13 @@ export default function ApplicationForm({ schoolTitle }: Props) {
       </div>
 
       {serverError && (
-        <p className="text-red-400 text-sm" role="alert">{serverError}</p>
+        <p className="text-red text-sm" role="alert">{serverError}</p>
       )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-bone text-ink font-semibold py-3 rounded-lg hover:bg-bone disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full rounded-full bg-blue py-3 font-semibold text-bone shadow-[0_12px_30px_rgba(4,101,173,0.18)] transition-all hover:-translate-y-0.5 hover:bg-blue/90 disabled:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Sending…' : 'Submit Interest'}
       </button>

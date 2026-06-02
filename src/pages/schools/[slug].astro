@@ -40,24 +40,24 @@ const isPast = (endDate ?? date) < new Date();
 
 <BaseLayout title={title} description={description}>
   <!-- Page header -->
-  <div class="bg-ink/60 border-b border-white/10">
+  <div class="border-b border-ink/10 bg-gradient-to-br from-white/80 via-bone to-blue/10 dark:border-white/10 dark:from-white/10 dark:via-ink dark:to-blue/10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      <a href="/schools" class="text-bone text-sm hover:underline inline-block mb-6">
+      <a href="/schools" class="inline-flex rounded-full border border-blue/20 bg-white/70 px-3 py-1.5 text-blue text-sm font-medium hover:bg-blue hover:text-bone transition-colors mb-6">
         ← All schools
       </a>
       <div class="flex items-center gap-3 mb-4">
         <span
           class={`text-xs font-semibold px-2.5 py-1 rounded-full ${
             isPast
-              ? 'bg-slate-700 text-slate-300'
-              : 'bg-ink/60 text-bone border border-bone/30'
+              ? 'bg-ink/5 text-ink/55 border border-ink/10'
+              : 'bg-blue/10 text-blue border border-blue/20'
           }`}
         >
           {isPast ? 'Past' : 'Upcoming'}
         </span>
       </div>
-      <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">{title}</h1>
-      <div class="flex flex-wrap gap-x-6 gap-y-2 text-slate-300 text-sm">
+      <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight text-ink dark:text-bone">{title}</h1>
+      <div class="flex flex-wrap gap-x-6 gap-y-2 text-ink/65 text-sm dark:text-bone/65">
         <span>{dateRange}</span>
         <span>{location}</span>
         {attendees && <span>{attendees} attendees</span>}
@@ -65,7 +65,7 @@ const isPast = (endDate ?? date) < new Date();
       {applicationUrl && !isPast && (
         <a
           href={applicationUrl}
-          class="mt-6 inline-block bg-bone text-ink font-semibold px-6 py-2.5 rounded-lg hover:bg-bone transition-colors"
+          class="mt-6 inline-block rounded-full bg-blue px-6 py-2.5 font-semibold text-bone shadow-[0_12px_30px_rgba(4,101,173,0.20)] transition-all hover:-translate-y-0.5 hover:bg-blue/90"
         >
           Apply Now
         </a>
@@ -75,26 +75,25 @@ const isPast = (endDate ?? date) < new Date();
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-14">
     <!-- Markdown content -->
-    <section class="prose prose-invert prose-lg max-w-none
-      prose-headings:font-bold prose-a:text-bone prose-strong:text-white">
+    <section class="prose prose-lg max-w-none prose-headings:text-ink prose-headings:font-bold prose-p:text-ink/75 prose-li:text-ink/75 prose-a:text-blue prose-strong:text-ink dark:prose-headings:text-bone dark:prose-p:text-bone/75 dark:prose-li:text-bone/75 dark:prose-strong:text-bone">
       <Content />
     </section>
 
     <!-- Lecturers -->
     {lecturers.length > 0 && (
       <section>
-        <h2 class="text-2xl font-bold mb-5">Lecturers</h2>
+        <h2 class="text-2xl font-bold mb-5 text-ink dark:text-bone">Lecturers</h2>
         <div class="grid gap-3 sm:grid-cols-2">
           {lecturers.map((l) => (
-            <div class="bg-ink border border-white/10 rounded-lg p-4">
+            <div class="rounded-2xl border border-ink/10 bg-gradient-to-br from-white/85 via-bone to-blue/5 p-4 shadow-[0_12px_30px_rgba(4,101,173,0.06)] dark:border-white/10 dark:from-white/10 dark:via-ink dark:to-blue/10">
               {l.url ? (
-                <a href={l.url} class="font-semibold hover:text-bone transition-colors" target="_blank" rel="noopener noreferrer">
+                <a href={l.url} class="font-semibold text-ink hover:text-blue transition-colors dark:text-bone dark:hover:text-bone" target="_blank" rel="noopener noreferrer">
                   {l.name}
                 </a>
               ) : (
-                <p class="font-semibold">{l.name}</p>
+                <p class="font-semibold text-ink dark:text-bone">{l.name}</p>
               )}
-              {l.affiliation && <p class="text-slate-400 text-sm mt-0.5">{l.affiliation}</p>}
+              {l.affiliation && <p class="text-ink/55 text-sm mt-0.5 dark:text-bone/55">{l.affiliation}</p>}
             </div>
           ))}
         </div>
@@ -104,10 +103,10 @@ const isPast = (endDate ?? date) < new Date();
     <!-- Topics -->
     {topics.length > 0 && (
       <section>
-        <h2 class="text-2xl font-bold mb-5">Topics</h2>
+        <h2 class="text-2xl font-bold mb-5 text-ink dark:text-bone">Topics</h2>
         <div class="flex flex-wrap gap-2">
           {topics.map((topic) => (
-            <span class="bg-ink border border-white/10 rounded-full px-4 py-1.5 text-sm text-slate-200">
+            <span class="bg-white/70 border border-ink/10 rounded-full px-4 py-1.5 text-sm text-ink/65 dark:border-white/10 dark:bg-white/10 dark:text-bone/65">
               {topic}
             </span>
           ))}
@@ -118,22 +117,22 @@ const isPast = (endDate ?? date) < new Date();
     <!-- Attendance chart (only if data exists) -->
     {allSchools.length > 0 && (
       <section>
-        <h2 class="text-2xl font-bold mb-5">Attendance History</h2>
+        <h2 class="text-2xl font-bold mb-5 text-ink dark:text-bone">Attendance History</h2>
         <AttendanceChart
           schools={allSchools}
           highlightTitle={title}
           client:only="react"
         />
-        <p class="text-slate-500 text-sm mt-2">
-          Teal bar = this school. All attendee counts are approximate.
+        <p class="text-ink/50 text-sm mt-2 dark:text-bone/50">
+          Highlighted bar = this school. All attendee counts are approximate.
         </p>
       </section>
     )}
 
     <!-- Interest form -->
     <section>
-      <h2 class="text-2xl font-bold mb-2">Express Interest</h2>
-      <p class="text-slate-400 mb-5 text-sm">
+      <h2 class="text-2xl font-bold mb-2 text-ink dark:text-bone">Express Interest</h2>
+      <p class="text-ink/60 mb-5 text-sm dark:text-bone/60">
         {isPast
           ? 'Interested in future editions? Leave your details and we\'ll notify you.'
           : 'Not ready to apply? Leave your contact details and we\'ll keep you posted.'}

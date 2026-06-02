@@ -1,34 +1,31 @@
 ---
 import Nav from '../components/ui/Nav.astro';
 import Footer from '../components/ui/Footer.astro';
-import SpiralGalaxy from '../components/effects/SpiralGalaxy';
 import CodeRain from '../components/effects/CodeRain';
 
 interface Props {
   title: string;
   description?: string;
-  showGalaxy?: boolean;
 }
 
 const {
   title,
   description = 'AstroStat Academy — statistics schools and workshops for astronomers.',
-  showGalaxy = true,
 } = Astro.props;
 ---
 
 <style is:global>
   :root {
-    --color-hex-active:   #000000;
-    --color-hex-inactive: #000000;
-    --color-accent-20:    rgba(232, 220, 200, 0.2);
-    --color-accent-45:    rgba(232, 220, 200, 0.45);
-    --color-subtle-white: rgba(255, 255, 255, 0.07);
+    --color-hex-active:   #fffaf2;
+    --color-hex-inactive: #fffdf8;
+    --color-accent-20:    rgba(4, 101, 173, 0.16);
+    --color-accent-45:    rgba(4, 101, 173, 0.32);
+    --color-subtle-white: rgba(0, 0, 0, 0.08);
   }
 </style>
 
 <!doctype html>
-<html lang="en" class="text-white scroll-smooth">
+<html lang="en" class="text-ink scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -41,16 +38,16 @@ const {
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script is:inline>
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme === 'dark') document.documentElement.classList.add('dark');
+    </script>
   </head>
-  <body class="min-h-screen flex flex-col antialiased bg-black">
+  <body class="min-h-screen flex flex-col antialiased bg-ink text-ink transition-colors dark:text-bone">
+    <div class="fixed inset-0 z-0 pointer-events-none bg-ink" aria-hidden="true"></div>
     <div class="fixed inset-0 z-0 pointer-events-none">
       <CodeRain client:load />
     </div>
-    {showGalaxy && (
-      <div class="fixed inset-0 z-0 pointer-events-none">
-        <SpiralGalaxy client:load />
-      </div>
-    )}
     <Nav />
     <main class="relative z-10 flex-1">
       <slot />

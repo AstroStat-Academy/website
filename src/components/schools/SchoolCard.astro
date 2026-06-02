@@ -16,37 +16,37 @@ const formattedDate = endDate
 
 <a
   href={`/schools/${school.slug}`}
-  class="group flex flex-col bg-ink border border-white/10 rounded-xl p-6 hover:border-bone/50 transition-all hover:-translate-y-0.5"
+  class="group flex flex-col rounded-2xl border border-ink/10 bg-gradient-to-br from-white/85 via-bone to-blue/5 p-6 shadow-[0_16px_40px_rgba(4,101,173,0.08)] transition-all hover:-translate-y-0.5 hover:border-blue/30 hover:shadow-[0_18px_45px_rgba(4,101,173,0.14)] dark:border-white/10 dark:from-white/10 dark:via-ink dark:to-blue/10 dark:shadow-[0_16px_40px_rgba(4,101,173,0.16)]"
 >
   <div class="flex items-center justify-between mb-3">
     <span
       class={`text-xs font-semibold px-2.5 py-1 rounded-full ${
         isPast
-          ? 'bg-slate-700 text-slate-300'
-          : 'bg-ink/60 text-bone border border-bone/30'
+          ? 'bg-ink/5 text-ink/55 border border-ink/10 dark:bg-white/10 dark:text-bone/55 dark:border-white/10'
+          : 'bg-blue/10 text-blue border border-blue/20'
       }`}
     >
       {isPast ? 'Past' : 'Upcoming'}
     </span>
-    <span class="text-slate-400 text-xs">{formattedDate}</span>
+    <span class="text-ink/55 text-xs dark:text-bone/55">{formattedDate}</span>
   </div>
 
-  <h3 class="text-base font-bold mb-1 group-hover:text-bone transition-colors leading-snug">
+  <h3 class="text-base font-bold mb-1 text-ink group-hover:text-blue transition-colors leading-snug dark:text-bone dark:group-hover:text-bone">
     {title}
   </h3>
-  <p class="text-slate-400 text-sm mb-3">{location}</p>
-  <p class="text-slate-300 text-sm leading-relaxed line-clamp-3 flex-1">{description}</p>
+  <p class="text-ink/55 text-sm mb-3 dark:text-bone/55">{location}</p>
+  <p class="text-ink/70 text-sm leading-relaxed line-clamp-3 flex-1 dark:text-bone/70">{description}</p>
 
   <div class="flex flex-wrap gap-1.5 mt-4">
     {topics.slice(0, 3).map((topic) => (
-      <span class="text-xs bg-ink text-slate-300 px-2 py-0.5 rounded">{topic}</span>
+      <span class="text-xs bg-white/70 text-ink/65 border border-ink/10 px-2 py-0.5 rounded-full dark:border-white/10 dark:bg-white/10 dark:text-bone/65">{topic}</span>
     ))}
     {topics.length > 3 && (
-      <span class="text-xs text-slate-500">+{topics.length - 3} more</span>
+      <span class="text-xs text-ink/45 dark:text-bone/45">+{topics.length - 3} more</span>
     )}
   </div>
 
   {attendees && (
-    <p class="text-xs text-slate-500 mt-3">{attendees} attendees</p>
+    <p class="text-xs text-ink/45 mt-3 dark:text-bone/45">{attendees} attendees</p>
   )}
 </a>

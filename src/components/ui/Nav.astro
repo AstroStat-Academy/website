@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from './ThemeToggle';
+
 const navLinks = [
   { href: '/schools', label: 'Schools' },
   { href: '/hackatons', label: 'Hackatons' },
@@ -7,9 +9,9 @@ const navLinks = [
 const currentPath = Astro.url.pathname;
 ---
 
-<nav class="sticky top-0 z-50 bg-ink/95 backdrop-blur-sm border-b border-white/10">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-    <a href="/" class="text-lg font-bold tracking-tight text-bone hover:text-bone transition-colors">
+<nav class="sticky top-0 z-50 px-3 py-3">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14 rounded-full border border-ink/10 bg-bone/85 backdrop-blur-md shadow-[0_12px_40px_rgba(4,101,173,0.10)] dark:border-white/10 dark:bg-ink/90 dark:shadow-[0_12px_40px_rgba(4,101,173,0.18)]">
+    <a href="/" class="text-lg font-bold tracking-tight text-ink hover:text-blue transition-colors dark:text-bone dark:hover:text-bone">
       AstroStat Academy
     </a>
     <!-- Desktop -->
@@ -18,24 +20,28 @@ const currentPath = Astro.url.pathname;
         <li>
           <a
             href={link.href}
-            class={`text-sm font-medium transition-colors ${
+            class={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
               currentPath.startsWith(link.href)
-                ? 'text-white'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-blue text-bone shadow-sm'
+                : 'text-ink/65 hover:bg-blue/10 hover:text-blue dark:text-bone/60 dark:hover:bg-bone/10 dark:hover:text-bone'
             }`}
           >
             {link.label}
           </a>
         </li>
       ))}
-      <li aria-hidden="true" class="h-4 w-px bg-white/20" />
+      <li aria-hidden="true" class="h-4 w-px bg-ink/15 dark:bg-white/20" />
+      <li>
+        <ThemeToggle client:load />
+      </li>
+      <li aria-hidden="true" class="h-4 w-px bg-ink/15 dark:bg-white/20" />
       <li>
         <a
           href="/people"
-          class={`text-sm font-medium transition-colors ${
+          class={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
             currentPath.startsWith('/people')
-              ? 'text-white'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-blue text-bone shadow-sm'
+              : 'text-ink/65 hover:bg-blue/10 hover:text-blue dark:text-bone/60 dark:hover:bg-bone/10 dark:hover:text-bone'
           }`}
         >
           People
@@ -43,13 +49,14 @@ const currentPath = Astro.url.pathname;
       </li>
     </ul>
     <!-- Mobile -->
-    <div class="md:hidden flex gap-4">
+    <div class="md:hidden flex gap-2">
       {navLinks.map(link => (
-        <a href={link.href} class="text-slate-400 hover:text-white text-xs transition-colors">
+        <a href={link.href} class="rounded-full px-2 py-1 text-ink/65 hover:bg-blue/10 hover:text-blue text-xs transition-colors dark:text-bone/60 dark:hover:bg-bone/10 dark:hover:text-bone">
           {link.label}
         </a>
       ))}
-      <a href="/people" class="text-slate-400 hover:text-white text-xs transition-colors">People</a>
+      <ThemeToggle client:load />
+      <a href="/people" class="rounded-full px-2 py-1 text-ink/65 hover:bg-blue/10 hover:text-blue text-xs transition-colors dark:text-bone/60 dark:hover:bg-bone/10 dark:hover:text-bone">People</a>
     </div>
   </div>
 </nav>
