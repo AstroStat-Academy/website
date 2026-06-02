@@ -25,8 +25,9 @@ const TOGGLE_BW     = 36;    // each button width
 const TOGGLE_GAP    = 6;     // gap between buttons
 const TOGGLE_W      = TOGGLE_BW * 2 + TOGGLE_GAP;  // total span (for hit-test centre)
 const TOGGLE_ABOVE  = 10;    // px above graph area
-const GRAPH_OFFSET  = TOGGLE_ABOVE + TOGGLE_H + 8;  // px below rainBottom where graph starts
+const GRAPH_OFFSET  = TOGGLE_ABOVE + TOGGLE_H + 18;  // px below rainBottom where graph starts
 const SIDEBAR_W     = 40;  // extra canvas width to the right for the ts vertical widget
+const GRAPH_W       = 400; // fixed width of histogram/ts area, centered in wrapper
 
 export default function TitleDot() {
   const wrapRef      = useRef<HTMLDivElement>(null);
@@ -45,6 +46,7 @@ export default function TitleDot() {
   const tsMuRef       = useRef(0);     // AR(1) mean offset [-0.5, 0.5]
   const tsSigmaRef    = useRef(0.3);   // AR(1) noise scale [0.05, 0.8]
   const tsPillBaseRef = useRef(0);     // y of ts pill baseline (histoBase)
+  const graphLeftRef  = useRef(0);     // x offset to center GRAPH_W in wrapper
 
   useEffect(() => {
     const wrap   = wrapRef.current;
@@ -59,6 +61,7 @@ export default function TitleDot() {
     let rainTop    = 0;
     let rainBottom = 0;
     let histoBase  = 0;
+    let graphLeft  = 0;  // x offset: (canvasW - GRAPH_W) / 2
     let columns    = 0;
     let drops: number[]    = [];
     let jitter: number[]   = [];
@@ -91,14 +94,17 @@ export default function TitleDot() {
       rainBottom = hRect.bottom - wRect.top;
       histoBase  = rainBottom + GRAPH_OFFSET + HISTO_ZONE - 4;
 
+      graphLeft = Math.max(0, (canvasW - GRAPH_W) / 2);
+
       histoBaseRef.current  = histoBase;
       tsPillBaseRef.current = histoBase;
       canvasWRef.current   = canvasW;
-      toggleXRef.current = canvasW / 2;
+      graphLeftRef.current = graphLeft;
+      toggleXRef.current = graphLeft + GRAPH_W / 2;
       toggleYRef.current = rainBottom + TOGGLE_ABOVE + TOGGLE_H / 2;
 
       columns = Math.floor(canvasW / FONT_SIZE);
-      bins    = new Float32Array(columns);
+      bins    = new Float32Array(Math.floor(GRAPH_W / FONT_SIZE));
       tsData = new Float32Array(TS_LEN);
       tsHead = 0;
       tsAR   = 0;
@@ -111,10 +117,10 @@ export default function TitleDot() {
     };
 
     const drawPillWidget = (meanFrac: number, sigmaFrac: number, baseline: number, now: number) => {
-      const mx      = meanFrac * canvasW;
-      const halfW   = sigmaFrac * canvasW;
-      const lx      = Math.max(GRIP_W + 2, mx - halfW);
-      const rx      = Math.min(canvasW - GRIP_W - 2, mx + halfW);
+      const mx      = graphLeft + meanFrac * GRAPH_W;
+      const halfW   = sigmaFrac * GRAPH_W;
+      const lx      = Math.max(graphLeft + GRIP_W + 2, mx - halfW);
+      const rx      = Math.min(graphLeft + GRAPH_W - GRIP_W - 2, mx + halfW);
       const pillTop = baseline + WIDGET_BELOW - PILL_H / 2;
       const r       = PILL_H / 2;
       const pulse   = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
@@ -154,7 +160,7 @@ export default function TitleDot() {
       const VGRIP_H  = 6;   // grip height
       const VGRIP_W  = 14;  // grip width
       const VDOT_R   = 6;
-      const px       = canvasW + SIDEBAR_W / 2;  // x = right sidebar centre (past content edge)
+      const px       = graphLeft + GRAPH_W + SIDEBAR_W / 2;  // x = right of graph area + sidebar centre
       const pulse    = 0.5 + 0.5 * Math.sin((now / 2000) * Math.PI * 2);
 
       const my       = graphTop + muFrac * graphH;
@@ -296,30 +302,31 @@ export default function TitleDot() {
 
       if (viewRef.current === 'hist') {
         // Histogram grows independently from a Gaussian centered on smoothMean
-        const meanCol = smoothMean * columns;
-        const sigma   = sigmaFracRef.current * columns;
-        for (let k = 0; k < columns; k++) {
+        const graphCols = Math.floor(GRAPH_W / FONT_SIZE);
+        const meanCol = smoothMean * graphCols;
+        const sigma   = sigmaFracRef.current * graphCols;
+        for (let k = 0; k < graphCols; k++) {
           const g = Math.exp(-0.5 * ((k - meanCol) / sigma) ** 2);
           bins[k] = Math.max(0, bins[k] + g * BIN_INCREMENT - BIN_DECAY);
         }
 
         // Histogram — blue shadow then red bars
-        const binW   = canvasW / columns;
-        const maxBin = Math.max(...bins, MAX_BIN);
-        for (let k = 0; k < columns; k++) {
+        const binW   = GRAPH_W / graphCols;
+        const maxBin = Math.max(...bins.slice(0, graphCols), MAX_BIN);
+        for (let k = 0; k < graphCols; k++) {
           if (bins[k] < 0.05) continue;
           const norm = bins[k] / maxBin;
           const bh   = norm * HISTO_ZONE;
           ctx.fillStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
-          ctx.fillRect(k * binW + 1.5, histoBase - bh + 2, binW - 1, bh);
+          ctx.fillRect(graphLeft + k * binW + 1.5, histoBase - bh + 2, binW - 1, bh);
         }
-        for (let k = 0; k < columns; k++) {
+        for (let k = 0; k < graphCols; k++) {
           if (bins[k] < 0.05) continue;
           const norm  = bins[k] / maxBin;
           const bh    = norm * HISTO_ZONE;
           const alpha = 0.55 + norm * 0.35;
           ctx.fillStyle = `rgba(${colors.charColorRgb}, ${alpha})`;
-          ctx.fillRect(k * binW + 0.5, histoBase - bh, binW - 1, bh);
+          ctx.fillRect(graphLeft + k * binW + 0.5, histoBase - bh, binW - 1, bh);
         }
       } else {
         // Time series — draw ordered circular buffer as a line
@@ -346,16 +353,15 @@ export default function TitleDot() {
           const heightFrac = Math.min(sigma * 2, 0.95); // fraction of graphH to use
           const scale      = (graphH * heightFrac) / range;
 
-          const lineW = canvasW;
-          const toY   = (v: number) => midY - (v - seriesMean) * scale;
+          const toX = (i: number) => graphLeft + (i / (TS_LEN - 1)) * GRAPH_W;
+          const toY = (v: number) => midY - (v - seriesMean) * scale;
 
           ctx.save();
           ctx.strokeStyle = `rgba(${colors.shadowColorRgb}, 0.30)`;
           ctx.lineWidth = 2.5;
           ctx.beginPath();
           ordered.forEach((v, i) => {
-            const x = (i / (TS_LEN - 1)) * lineW;
-            i === 0 ? ctx.moveTo(x, toY(v)) : ctx.lineTo(x, toY(v));
+            i === 0 ? ctx.moveTo(toX(i), toY(v)) : ctx.lineTo(toX(i), toY(v));
           });
           ctx.stroke();
           ctx.restore();
@@ -365,8 +371,7 @@ export default function TitleDot() {
           ctx.lineWidth = 1.5;
           ctx.beginPath();
           ordered.forEach((v, i) => {
-            const x = (i / (TS_LEN - 1)) * lineW;
-            i === 0 ? ctx.moveTo(x, toY(v)) : ctx.lineTo(x, toY(v));
+            i === 0 ? ctx.moveTo(toX(i), toY(v)) : ctx.lineTo(toX(i), toY(v));
           });
           ctx.stroke();
           ctx.restore();
@@ -400,10 +405,11 @@ export default function TitleDot() {
 
   // ── Hit testing (CSS px = canvas CSS px, no DPR scaling needed) ──────────
   const getHit = (x: number, y: number) => {
-    const mx       = smoothMeanRef.current * canvasWRef.current;
-    const fwhmHalf = sigmaFracRef.current * canvasWRef.current;
-    const lx       = Math.max(GRIP_W + 2, mx - fwhmHalf);
-    const rx       = Math.min(canvasWRef.current - GRIP_W - 2, mx + fwhmHalf);
+    const gl       = graphLeftRef.current;
+    const mx       = gl + smoothMeanRef.current * GRAPH_W;
+    const fwhmHalf = sigmaFracRef.current * GRAPH_W;
+    const lx       = Math.max(gl + GRIP_W + 2, mx - fwhmHalf);
+    const rx       = Math.min(gl + GRAPH_W - GRIP_W - 2, mx + fwhmHalf);
     const hb       = histoBaseRef.current;
     const pillTop  = hb + WIDGET_BELOW - PILL_H / 2;
 
@@ -434,7 +440,7 @@ export default function TitleDot() {
     const hb       = tsPillBaseRef.current;
     const graphTop = hb - HISTO_ZONE;
     const graphH   = HISTO_ZONE;
-    const px       = canvasWRef.current + SIDEBAR_W / 2;  // must match drawVerticalPillWidget
+    const px       = graphLeftRef.current + GRAPH_W + SIDEBAR_W / 2;  // must match drawVerticalPillWidget
     const VGRIP_W  = 14;
     const VGRIP_H  = 6;
     const VDOT_R   = 6;
@@ -477,7 +483,7 @@ export default function TitleDot() {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left - SIDEBAR_W;  // convert to drawing space
     const y = e.clientY - rect.top;
-    const cw = canvasWRef.current;
+    const gl = graphLeftRef.current;
 
     if (dragMode.current === 'move') {
       if (viewRef.current === 'ts') {
@@ -486,7 +492,7 @@ export default function TitleDot() {
         const muFrac = (y - gTop) / HISTO_ZONE;  // drag down = lower value
         tsMuRef.current = Math.max(-0.5, Math.min(0.5, muFrac - 0.5));
       } else {
-        const v = Math.max(0, Math.min(x / cw, 1));
+        const v = Math.max(0, Math.min((x - gl) / GRAPH_W, 1));
         meanXRef.current = v;
         smoothMeanRef.current = v;
       }
@@ -499,9 +505,9 @@ export default function TitleDot() {
         const dist = Math.abs(y - my);
         tsSigmaRef.current = Math.max(0.05, Math.min(0.8, dist / HISTO_ZONE / 0.5));
       } else {
-        const mx   = smoothMeanRef.current * cw;
+        const mx   = gl + smoothMeanRef.current * GRAPH_W;
         const dist = Math.abs(x - mx);
-        sigmaFracRef.current = Math.max(0.05, Math.min(0.45, dist / cw));
+        sigmaFracRef.current = Math.max(0.05, Math.min(0.45, dist / GRAPH_W));
       }
     } else {
       if (hitToggle(x, y) !== null) {
@@ -521,8 +527,8 @@ export default function TitleDot() {
   };
 
   return (
-    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: (GRAPH_OFFSET + HISTO_ZONE + WIDGET_BELOW) + 'px', display: 'inline-block', overflow: 'visible',  }}>
-      <h1 className="text-5xl md:text-7xl font-bold leading-tight relative z-10 text-bone">
+    <div ref={wrapRef} style={{ position: 'relative', paddingBottom: (GRAPH_OFFSET + HISTO_ZONE + WIDGET_BELOW) + 'px', display: 'block', width: '100%', overflow: 'visible' }}>
+      <h1 className="text-5xl md:text-7xl font-bold leading-tight relative z-10 text-bone text-center">
         AstroStat<br />
         <span className="text-bone">Academy</span>
       </h1>
