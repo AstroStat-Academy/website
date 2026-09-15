@@ -1,0 +1,189 @@
+/* ============================================================================
+   AstroStat Academy — Colour & Type tokens
+   Source of truth: academy-website-short/src/styles/tokens.ts + Tailwind theme.
+   Import this first, then layer component styles on top.
+   ============================================================================ */
+
+/* Inter — text/accent family referenced by --font-sans.
+   JetBrains Mono — provides the named mono fallback referenced by --font-mono.
+   Replace with self-hosted @font-face declarations once the font files are uploaded. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── Raw palette — 5 colours, nothing else ──────────────────────────────── */
+  --blue:  #0465ad;   /* primary — actions, links, data */
+  --red:   #8c0527;   /* crimson — data motif, errors, highlights */
+  --bone:  #fbf6ec;   /* warm off-white — text on dark, light-mode surface */
+  --ink:   #000000;   /* pure black — primary background */
+  --teal:  #008c8c;   /* tertiary accent — hackatons only */
+
+  /* Convenience RGB triplets (for rgba() / canvas) */
+  --blue-rgb: 4, 101, 173;   /* @kind color */
+  --red-rgb:  140, 5, 39;    /* @kind color */
+  --teal-rgb: 0, 140, 140;   /* @kind color */
+  --bone-rgb: 251, 246, 236; /* @kind color */
+
+  /* ── Semantic colour roles ──────────────────────────────────────────────── */
+  --bg:            var(--ink);     /* page background (dark, default) */
+  --bg-light:      var(--bone);    /* page background (light theme) */
+  --surface:       rgba(255,255,255,0.06);   /* card fill base (dark) */
+  --surface-light: rgba(255,255,255,0.85);   /* card fill base (light) */
+
+  --fg1: var(--bone);              /* primary text on dark */
+  --fg2: rgba(251,246,236,0.70);   /* secondary text on dark (bone/70) */
+  --fg3: rgba(251,246,236,0.55);   /* tertiary / meta text (bone/55) */
+  --fg4: rgba(251,246,236,0.45);   /* faint text (bone/45) */
+
+  --fg1-on-light: var(--ink);              /* primary text on light */
+  --fg2-on-light: rgba(0,0,0,0.70);        /* secondary on light */
+  --fg3-on-light: rgba(0,0,0,0.55);        /* tertiary on light */
+
+  --accent:        var(--blue);    /* default interactive accent */
+  --accent-hover:  rgba(4,101,173,0.90);
+  --accent-soft:   rgba(4,101,173,0.10);   /* tinted fills / active chip bg */
+  --accent-ring:   rgba(4,101,173,0.15);   /* focus ring */
+  --link:          var(--blue);
+  --danger:        var(--red);     /* error text */
+  --data:          var(--red);     /* histogram / chart highlight */
+
+  --border:        rgba(255,255,255,0.10); /* hairline border (dark) */
+  --border-light:  rgba(0,0,0,0.10);       /* hairline border (light) */
+  --border-accent: rgba(4,101,173,0.30);   /* hover/active border */
+
+  /* ── Typography ─────────────────────────────────────────────────────────── */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo, monospace;
+
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* Type scale (px → rem reference; matches Tailwind usage on the site) */
+  --text-xs:    0.75rem;   /* 12 — eyebrows, badges, meta */
+  --text-sm:    0.875rem;  /* 14 — UI text, card body */
+  --text-base:  1rem;      /* 16 */
+  --text-lg:    1.125rem;  /* 18 — lead paragraphs */
+  --text-xl:    1.25rem;   /* 20 */
+  --text-2xl:   1.5rem;    /* 24 — h2 */
+  --text-3xl:   1.875rem;  /* 30 — page h1 (mobile) */
+  --text-4xl:   2.25rem;   /* 36 — section/page h1 */
+  --text-5xl:   3rem;      /* 48 — hero (mobile) */
+  --text-7xl:   4.5rem;    /* 72 — hero (desktop) */
+  --text-2xs:   0.625rem;  /* 10 — micro labels, coords */
+  --text-6xl:   7.5rem;    /* 120 — instrument-panel hero title */
+
+  /* ── Site type roles — the ONLY font-size values pages should reference.
+     Change a role here to restyle every instance of that role sitewide. */
+  --font-display:  var(--text-6xl);  /* the one big hero wordmark (AstroStat Academy) */
+  --font-h1:       var(--text-5xl);  /* page-level headings (as-h1pg) */
+  --font-h2:       var(--text-4xl);  /* section headings (as-h2) */
+  --font-lede:     var(--text-xl);   /* hero intro line (as-lede) */
+  --font-body:     var(--text-lg);   /* paragraph copy (as-p, as-vision, as-about) */
+  --font-brand:    2rem;             /* 32 — nav wordmark lockup */
+  --font-caption:  0.9375rem;        /* 15 — uppercase mono labels: nav links, coords, eyebrows, taglines, rail labels */
+  --font-ui:       0.8125rem;        /* 13 — buttons, chips, badges, fields, widget controls */
+  --font-page-title: 2.875rem;       /* 46 — standard page header card */
+  --font-page-lede: 1.0625rem;       /* 17 — standard page header introduction */
+  --font-counter:  var(--text-3xl);  /* big decorative rail index numerals */
+  --leading-title: 1.18;             /* line-height for display/page/section titles */
+
+  --tracking-tight:   -0.02em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.05em;
+  --tracking-wider:   0.08em;   /* mono taglines */
+  --tracking-widest:  0.15em;   /* uppercase eyebrows */
+
+  --leading-tight:   1.1;
+  --leading-snug:    1.35;
+  --leading-normal:  1.55;
+  --leading-relaxed: 1.65;
+
+  /* ── Radius ─────────────────────────────────────────────────────────────── */
+  --radius-sm:   0.375rem;  /* 6  — favicon tile */
+  --radius-md:   0.75rem;   /* 12 — inputs */
+  --radius-lg:   1rem;      /* 16 — cards (rounded-2xl) */
+  --radius-xl:   1.5rem;    /* 24 — feature panels (rounded-3xl) */
+  --radius-full: 9999px;    /* pills: nav, buttons, badges, chips */
+
+  /* ── Shadows — large, soft, brand-tinted (never neutral grey) ───────────── */
+  --shadow-card:    0 16px 40px rgba(4,101,173,0.08);
+  --shadow-panel:   0 18px 50px rgba(4,101,173,0.10);
+  --shadow-panel-red: 0 18px 50px rgba(140,5,39,0.08);
+  --shadow-panel-teal: 0 18px 50px rgba(0,140,140,0.08);
+  --shadow-button:  0 12px 30px rgba(4,101,173,0.18);
+  --shadow-nav:     0 12px 40px rgba(4,101,173,0.18);
+  --shadow-card-hover: 0 18px 45px rgba(4,101,173,0.14);
+
+  /* ── Spacing scale (Tailwind 4px base) ──────────────────────────────────── */
+  --space-1: 0.25rem;  --space-2: 0.5rem;   --space-3: 0.75rem;
+  --space-4: 1rem;     --space-5: 1.25rem;  --space-6: 1.5rem;
+  --space-8: 2rem;     --space-12: 3rem;    --space-16: 4rem;
+  --space-20: 5rem;    --space-24: 6rem;    --space-32: 8rem;
+
+  /* ── Signature gradients ────────────────────────────────────────────────── */
+  --grad-card-dark:  linear-gradient(135deg, rgba(255,255,255,0.10), var(--ink) 55%, rgba(4,101,173,0.10));
+  --grad-card-light: linear-gradient(135deg, rgba(255,255,255,0.85), var(--bone) 55%, rgba(4,101,173,0.05));
+  --grad-hex:        linear-gradient(145deg, rgba(18,18,18,0.96), rgba(0,0,0,0.86)); /* @kind color */
+
+  /* ── Motion ─────────────────────────────────────────────────────────────── */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --dur-fast: 150ms;  /* @kind other */
+  --dur-base: 300ms;  /* @kind other */
+
+  /* Hex clip-path (pointy-top) */
+  --hex-clip: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* @kind other */
+}
+
+/* ============================================================================
+   Semantic element defaults (dark theme — the brand's default surface)
+   ============================================================================ */
+
+.astro-h1 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-4xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+
+.astro-h2 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-2xl);
+  line-height: var(--leading-snug);
+  color: var(--fg1);
+}
+
+.astro-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-widest);
+  color: var(--accent);
+}
+
+.astro-p {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--fg2);
+}
+
+.astro-mono {
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-wider);
+}
+
+/* The decorative oversized counter (01 / 02 / 03) */
+.astro-counter {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-bold);
+  font-size: 2rem;
+  line-height: 1;
+  color: rgba(251,246,236,0.18);
+}

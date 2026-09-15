@@ -1,0 +1,9 @@
+/* AstroStat Academy — design system entry point.
+   Consumers link this ONE file; it pulls in every global layer, in cascade order.
+   Load order is load-bearing: tokens, then chrome, then the page layers.
+   (ui_kits/ is demo-only and intentionally not imported.) */
+@import url('colors_and_type.css');
+@import url('css/kit-chrome.css');
+@import url('css/kit-school.css');
+@import url('css/kit-hero.css');
+@import url('css/kit-terminal.css');

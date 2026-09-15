@@ -1,0 +1,127 @@
+# ════════════════════════════════════════════════════════════════════
+#  AstroStat School — single source of truth for the Schools page.
+#
+#  HOW TO ADD THE NEXT EDITION
+#  ────────────────────────────
+#  1. Add a new block at the TOP of `editions:` (newest first).
+#  2. The first entry is ALWAYS the featured / next edition — it gets
+#     the big hero card and the red, pulsing marker on the globe.
+#  3. While the programme is not public yet, set `upcoming: true`. The
+#     hero then reads "Next edition" and shows "Programme · To be
+#     announced". Once you have the line-up, delete `upcoming:` and add
+#     a `topics:` list — the hero swaps the note for topic chips.
+#  4. `lat` / `lon` place the city on the globe. Editions that share a
+#     city are grouped and counted automatically (e.g. Crete ×5), so
+#     just give each Crete edition the same coordinates.
+#
+#  Per-edition fields:
+#     ed        edition number (shown as № 0N)
+#     city      host city            country   host country
+#     venue     hosting institution  date      actual dates ("16–20 Jun 2025")
+#     lat, lon  globe coordinates    url       link to that edition's site
+#     topics    optional list of programme topics
+#     upcoming  optional · true while the programme is TBA
+#     founding  optional · true for the first-ever edition
+# ════════════════════════════════════════════════════════════════════
+
+meta:
+  eyebrow: Schools · Editions
+  title: The AstroStat School
+  blurb: >-
+    Since 2019, the School has helped early-career researchers and data
+    scientists bridge the gap to modern statistics and machine learning.
+    Each edition below links out to its own page.
+  # Header tallies. `prefix: true` renders the label before the value
+  # ("since 2019" instead of "2019 since"). Values marked `auto` are
+  # computed at load time from the data: `editions` = exact number of
+  # editions below; `alumni` (accepted participants) and `countries`
+  # (distinct institute country + nationality) are floored to the
+  # nearest 10 with a trailing "+". `since` is fixed.
+  stats:
+    - { value: "8",    label: editions,  auto: editions }
+    - { value: "2019", label: since, prefix: true }
+    - { value: "60+",  label: "countries reached" }
+
+editions:
+  # ── FEATURED / NEXT ─────────────────────────────────────────────
+  - ed: 8
+    city: Rome
+    country: Italy
+    venue: dotcampus
+    date: 27–31 Jul 2026
+    lat: 41.90
+    lon: 12.50
+    url: https://astrostat-academy.github.io/website-school-7/
+    upcoming: true
+
+  # ── PAST EDITIONS (newest first) ────────────────────────────────
+  - ed: 7
+    city: New York
+    country: USA
+    venue: CUNY Graduate Center
+    date: 1–5 Jun 2026
+    lat: 40.71
+    lon: -74.01
+    url: https://astrostat-academy.github.io/website-school-8/
+    topics:
+      - Classical & Bayesian
+      - Deep Learning
+      - MCMC
+      - Simulation-Based Inference
+      - ML Practices
+      - GPU Parallelization
+
+  - ed: 6
+    city: Sharjah
+    country: UAE
+    venue: University of Sharjah
+    date: 10–14 Nov 2025
+    lat: 25.35
+    lon: 55.41
+    url: https://www.sharjah.ac.ae/ssah/astrostat2025
+
+  - ed: 5
+    city: Crete
+    country: Greece
+    venue: University of Crete
+    date: 16–20 Jun 2025
+    lat: 35.34
+    lon: 25.13
+    url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2025/
+
+  - ed: 4
+    city: Crete
+    country: Greece
+    venue: University of Crete
+    date: 8–12 Jul 2024
+    lat: 35.34
+    lon: 25.13
+    url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2024/
+
+  - ed: 3
+    city: Crete
+    country: Greece
+    venue: University of Crete
+    date: 19–23 Jun 2023
+    lat: 35.34
+    lon: 25.13
+    url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2023/
+
+  - ed: 2
+    city: Crete
+    country: Greece
+    venue: University of Crete
+    date: 11–15 Jul 2022
+    lat: 35.34
+    lon: 25.13
+    url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2022/
+
+  - ed: 1
+    city: Crete
+    country: Greece
+    venue: University of Crete
+    date: 18–21 Jun 2019
+    lat: 35.34
+    lon: 25.13
+    founding: true
+    url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2019/

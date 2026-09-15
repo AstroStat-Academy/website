@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "regions": ["iad1"],
+  "functions": {
+    "api/*.js": { "maxDuration": 60 }
+  },
+  "crons": [
+    { "path": "/api/refresh-papers", "schedule": "0 6 * * *" }
+  ]
+}

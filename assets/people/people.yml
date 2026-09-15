@@ -1,0 +1,35 @@
+# ════════════════════════════════════════════════════════════════════
+#  AstroStat Academy — People page roster (SOURCE OF TRUTH).
+#
+#  Each top-level key is a SECTION on the People page, rendered in the
+#  order below. Each "- slug" loads two independent files from the
+#  matching role folder:
+#
+#       assets/people/<role>/<slug>.md    bio + metadata (front-matter)
+#       assets/people/<role>/<slug>.jpg   headshot (optional)
+#
+#  TO CHANGE THE PAGE — edit THIS file only:
+#    • Reorder people   → reorder the lines.
+#    • Remove someone   → delete their line. Their .md / .jpg STAY on
+#                         disk, so nothing is lost — re-add the line to
+#                         bring them back.
+#    • Add someone      → drop <slug>.md (+ <slug>.jpg) in the role
+#                         folder, then add "- <slug>" here.
+#
+#  Editing a person's bio, title, affiliation, or photo is done in
+#  their own <slug>.md — never here.
+# ════════════════════════════════════════════════════════════════════
+
+councellors:
+  - paolo-bonfini
+  - konstantinos-kovlakas
+  - grigoris-maravelias
+  - andreas-tersenov
+  - giorgos-vernardos
+
+lecturers: []
+
+TAs: []
+
+advisors:
+  - nikolas-vasilas
