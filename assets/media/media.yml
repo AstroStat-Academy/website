@@ -1,0 +1,161 @@
+# ════════════════════════════════════════════════════════════════════
+#  AstroStat Academy — Gallery page (SOURCE OF TRUTH).
+#
+#  Two blocks, two top-level keys:
+#
+#    events:  our own photos and videos, one entry per edition. The
+#             page shows ONE edition at a time, picked from the
+#             dropdown at the top of the block.
+#    press:   public outreach — articles, interviews, radio and TV
+#             segments about us, published by someone else.
+#
+#  TO CHANGE THE PAGE — edit THIS file only. Drop the media files
+#  under assets/media/photos/<event-id>/ or assets/media/videos/<event-id>/
+#  and reference them below; a file on disk that is not listed here
+#  does not appear on the page (so nothing is lost when you remove a
+#  line — delete it, re-add it later).
+#
+#  ── events ─────────────────────────────────────────────────────────
+#  Each entry is one edition and one line in the dropdown. The FIRST
+#  entry is the one that opens, so keep the newest edition on top.
+#
+#    id      folder name under photos/ and videos/ (also the anchor)
+#    event   full name, shown in the meta line
+#    tab     short label for the dropdown. QUOTE IT, or "06" becomes
+#            the number 6. Falls back to `event`.
+#    place   venue, city, country
+#    date    free text; the trailing 4-digit year is pulled out and
+#            set larger, as on the Schools page ("27–31 Jul 2026")
+#    video   ONE video per edition — it fills the left column:
+#              file     path relative to /assets/media/
+#              caption  one line, under the player
+#              poster   optional still frame, relative to /assets/media/.
+#                       Without it the browser shows the first frame.
+#            Omit the whole key when an edition has no video.
+#    photos  ordered list for the contact sheet on the right. The first
+#            one opens as the lead frame, so lead with your best. Each:
+#              file     path relative to /assets/media/
+#              caption  one line, shown under the lead frame
+#              thumb    optional. By default the strip looks for the same
+#                       name under a thumbs/ folder beside the photo
+#                       (photos/<id>/thumbs/<name>) and falls back to the
+#                       full frame when that file does not exist. Generate
+#                       thumbs — the strip should never pull full frames.
+#
+#  ── press ──────────────────────────────────────────────────────────
+#    date    YYYY-MM-DD (day may be omitted: YYYY-MM or YYYY)
+#    outlet  publication or broadcaster
+#    kind    article | interview | radio | tv | web
+#    title   the headline. Translate it when the piece is not in English —
+#            the page is English, and `lang` already flags the original.
+#    title_original
+#            optional. The headline as published, kept on record when `title`
+#            is a translation; shown on hover over the headline.
+#    note    one or two sentences of context under the headline: who published
+#            it and what the piece actually covers. Write it for a reader who
+#            will not follow the link — the headline alone rarely says whether
+#            a piece is worth opening.
+#    url     external link — opens in a new tab
+#    lang    2-letter code, shown as a tag when it is not "en"
+#    youtube optional YouTube id (the part after "watch?v="). When present the
+#            report is embedded under the entry, played from youtube-nocookie
+#            so viewers are not tracked before they press play.
+# ════════════════════════════════════════════════════════════════════
+
+events:
+  - id: astrostat-school-7
+    event: AstroStat School · Rome
+    tab: "Rome · 2026"
+    place: dotcampus, Rome, Italy
+    date: 27–31 Jul 2026
+    photos:
+      - { file: photos/astrostat-school-7/IMG_6249.jpg, caption: Full house at dotcampus }
+      - { file: photos/astrostat-school-7/IMG_5862.jpg, caption: A lecturer mid-explanation }
+      - { file: photos/astrostat-school-7/IMG_6194.jpg, caption: Mapping the machine-learning landscape }
+      - { file: photos/astrostat-school-7/IMG_6039.jpg, caption: Walking through the notebook }
+      - { file: photos/astrostat-school-7/IMG_6168.jpg, caption: Reading the plot together }
+      - { file: photos/astrostat-school-7/IMG_5950.jpg, caption: Following along from the back }
+      - { file: photos/astrostat-school-7/IMG_6049.jpg, caption: The notebook on every desk }
+      - { file: photos/astrostat-school-7/IMG_6303.jpg, caption: Working through an exercise }
+      - { file: photos/astrostat-school-7/IMG_6098.jpg, caption: The classroom through the glass }
+      - { file: photos/astrostat-school-7/IMG_6091.jpg, caption: Field kit }
+      - { file: photos/astrostat-school-7/IMG_5845.jpg, caption: Between sessions }
+      - { file: photos/astrostat-school-7/IMG_6305.jpg, caption: Last session of the day }
+      - { file: photos/astrostat-school-7/IMG_6792.jpg, caption: The Rome 2026 cohort }
+      # IMG_6249-2.jpg is a pixel-identical re-export of IMG_6249.jpg and is
+      # left out on purpose. Delete the file, or list it, as you prefer.
+
+  - id: astrostat-school-6
+    event: AstroStat School · Sharjah
+    tab: "Sharjah · 2025"
+    place: University of Sharjah, UAE
+    date: 10–14 Nov 2025
+    video:
+      file: videos/astrostat-school-6/AstroStat_Sharjah_2025.MP4
+      caption: The School in action
+    photos: []
+
+  - id: astrostat-school-5
+    event: AstroStat School · Crete
+    tab: "Crete · 2025"
+    place: University of Crete, Greece
+    date: 16–20 Jun 2025
+    photos:
+      - { file: photos/astrostat-school-5/group_photo.jpg, caption: The Crete 2025 cohort }
+
+  - id: astrostat-school-2
+    event: AstroStat School · Crete
+    tab: "Crete · 2022"
+    place: University of Crete, Greece
+    date: 11–15 Jul 2022
+    photos:
+      - { file: photos/astrostat-school-2/group_pic.jpg, caption: The 2022 cohort on the Department steps }
+      - { file: photos/astrostat-school-2/GM-2022-19.jpg, caption: Certificates, handed out }
+      - { file: photos/astrostat-school-2/GM-2022-03.jpg, caption: A full lab }
+      - { file: photos/astrostat-school-2/GM-2022-02.jpg, caption: Bayes on the whiteboard }
+      - { file: photos/astrostat-school-2/GM-2022-11.jpg, caption: Mid-lecture }
+      - { file: photos/astrostat-school-2/GM-2022-10.jpg, caption: The room, working }
+      - { file: photos/astrostat-school-2/GM-2022-07.jpg, caption: Over the shoulder }
+      - { file: photos/astrostat-school-2/GM-2022-13.jpg, caption: Talking through a result }
+      - { file: photos/astrostat-school-2/GM-2022-14.jpg, caption: Heads down }
+      - { file: photos/astrostat-school-2/GM-2022-15.jpg, caption: The back half of the lab }
+      - { file: photos/astrostat-school-2/GM-2022-16.jpg, caption: Long bench, long session }
+      - { file: photos/astrostat-school-2/GM-2022-12.jpg, caption: Whiteboard and screen }
+      - { file: photos/astrostat-school-2/GM-2022-08.jpg, caption: Making a point }
+      - { file: photos/astrostat-school-2/GM-2022-17.jpg, caption: At the board }
+      - { file: photos/astrostat-school-2/GM-2022-01.jpg, caption: First morning }
+      - { file: photos/astrostat-school-2/GM-2022-09.jpg, caption: Between sessions }
+      - { file: photos/astrostat-school-2/GM-2022-06.jpg, caption: A corner plot on screen }
+      - { file: photos/astrostat-school-2/GM-2022-00.jpg, caption: Badges, ready }
+      - { file: photos/astrostat-school-2/GM-2022-04.jpg, caption: Arrivals }
+
+  - id: astrostat-school-1
+    event: AstroStat School · Crete — founding edition
+    tab: "Crete · 2019"
+    place: University of Crete, Greece
+    date: 18–21 Jun 2019
+    photos:
+      - { file: photos/astrostat-school-1/001.jpg, caption: Certificates in the air — the first cohort }
+      - { file: photos/astrostat-school-1/panoramic.jpg, caption: The teaching lab at the University of Crete }
+      - { file: photos/astrostat-school-1/002.jpg, caption: A likelihood surface, explained }
+      - { file: photos/astrostat-school-1/010.jpg, caption: Why deep learning, and when }
+      - { file: photos/astrostat-school-1/007.jpg, caption: Two instructors, one notebook }
+      - { file: photos/astrostat-school-1/006.jpg, caption: Walking through the exercise }
+      - { file: photos/astrostat-school-1/005.jpg, caption: Morning session }
+      - { file: photos/astrostat-school-1/009.jpg, caption: Working it out together }
+      - { file: photos/astrostat-school-1/008.jpg, caption: Hands-on at the terminals }
+      - { file: photos/astrostat-school-1/011.jpg, caption: Stuck, briefly }
+      - { file: photos/astrostat-school-1/004.jpg, caption: Pair debugging }
+      - { file: photos/astrostat-school-1/003.jpg, caption: The notebook, mid-run }
+      - { file: photos/astrostat-school-1/012.jpg, caption: Signing the certificates }
+
+press:
+  - date: 2025-07-16
+    outlet: Neakriti
+    kind: article
+    title: Crete at the centre of global astrostatistics
+    title_original: Η Κρήτη στο επίκεντρο της παγκόσμιας Αστροστατιστικής
+    url: https://www.neakriti.gr/kriti/2128440_i-kriti-sto-epikentro-tis-pagkosmias-astrostatistikis-polos-elxis-therino-sholeio-poy
+    lang: el
+    note: The Cretan newspaper and broadcaster Neakriti covers the 2025 Crete edition and the School's record since 2019 — more than 500 applications in total, from over 150 research institutions across 40 countries. The accompanying segment was filmed in the teaching lab for its own station, Crete TV.
+    youtube: zrNrJTgg-K0

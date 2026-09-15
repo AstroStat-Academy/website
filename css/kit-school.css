@@ -165,6 +165,13 @@
   .skx-video { position:relative; border:1px solid rgba(251,246,236,.2); min-height:236px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; overflow:hidden; background:repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 11px, rgba(255,255,255,0) 11px 22px), radial-gradient(ellipse 72% 70% at 50% 44%, rgba(4,101,173,.16), rgba(0,0,0,0) 72%), #000; }
   .skx-play { position:relative; z-index:2; width:0; height:0; border-style:solid; border-width:12px 0 12px 21px; border-color:transparent transparent transparent rgba(143,205,247,.85); }
   .skx-vcap { position:relative; z-index:2; font-family:ui-monospace,monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:rgba(251,246,236,.5); }
+  /* with a real recording in the frame the player leads and the label sits
+     above it, instead of the glyph being centred in empty space */
+  .skx-video.has-media { justify-content:flex-start; padding:34px 14px 14px; gap:11px; }
+  /* Same framing rule as the Gallery's player (.gl-media): a 16/10 window with
+     object-fit:cover, so the recording reads identically on both pages. */
+  .skx-vmedia { width:100%; aspect-ratio:16 / 10; object-fit:cover; display:block;
+    background:#000; position:relative; z-index:2; }
   .skx-vtop { position:absolute; top:13px; left:15px; z-index:2; font-family:ui-monospace,monospace; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:rgba(59,155,224,.7); }
 
   /* curriculum — three-column syllabus board */

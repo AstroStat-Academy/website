@@ -3,6 +3,7 @@ import React from 'react';
 import { Corners, SiteNav, SiteFooter, Rail } from '../components/SiteChrome.jsx';
 import { PH_CTX, HeroPanel } from '../components/ServiceHero.jsx';
 import { schools, participants } from '../data/schools.js';
+import { eventFor } from '../data/media.js';
 import { WORLD_LAND } from '../data/world-land.js';
 /* Schools overview. Data comes from assets/schools/data via the data module.
    Edition links lead to the individual schools' external websites. */
@@ -283,6 +284,30 @@ function MissionSection() {
   );
 }
 
+/* The recording itself lives in assets/media/media.yml, with the rest of the
+   Gallery's material — this section borrows it rather than keeping a second
+   copy of the path. Until a file is on record the frame keeps its play-glyph
+   placeholder, so the layout is the same either way. */
+function MethodVideo() {
+  const ev = eventFor('astrostat-school-6');
+  const v = ev && ev.video;
+  const cap = v
+    ? (ev.tab || ev.event) + ' — ' + (v.caption || 'the School in action')
+    : 'Sharjah 2025 — the School in action';
+  return (
+    <figure className={'skx-video' + (v ? ' has-media' : '')} style={{ margin: 0 }}>
+      <span className="as-c as-tl"></span><span className="as-c as-tr"></span>
+      <span className="as-c as-bl"></span><span className="as-c as-br"></span>
+      <span className="skx-vtop">Field recording · 06</span>
+      {v
+        ? <video className="skx-vmedia" controls preload="metadata"
+            poster={v.poster || undefined} src={v.src} />
+        : <span className="skx-play"></span>}
+      <figcaption className="skx-vcap">{cap}</figcaption>
+    </figure>
+  );
+}
+
 function MethodSection() {
   return (
     <Rail n="04" label="Method" variant="matrix">
@@ -296,13 +321,7 @@ function MethodSection() {
           <div className="skx-mrow"><span className="mk">Ethos</span><span className="mv">Hand-in-hand<span className="dot">·</span>no one left behind</span></div>
           <div className="skx-mrow"><span className="mk">Exchange</span><span className="mv">Teacher–student<span className="dot">·</span>and student–student interaction</span></div>
         </div>
-        <figure className="skx-video" style={{ margin: 0 }}>
-          <span className="as-c as-tl"></span><span className="as-c as-tr"></span>
-          <span className="as-c as-bl"></span><span className="as-c as-br"></span>
-          <span className="skx-vtop">Field recording · 06</span>
-          <span className="skx-play"></span>
-          <figcaption className="skx-vcap">Sharjah 2025 — the School in action</figcaption>
-        </figure>
+        <MethodVideo />
       </div>
     </Rail>
   );

@@ -1,0 +1,180 @@
+/* AstroStat Academy — UI kit: gallery page.
+   Two blocks: 01 our own event media, 02 press coverage published elsewhere.
+   Models the Schools archive rows and video figure, but owns its own classes
+   so the two pages can move independently. Part of the styles.css closure.
+   Do not restyle per page: edit the rule here and every page follows.
+   Mono is declared as ui-monospace,monospace to match every other kit — the
+   --font-mono token puts JetBrains Mono ahead of the system face, which would
+   render this page in a different mono from the rest of the site. */
+
+  .gl-page { display:flex; flex-direction:column; gap:20px; }
+
+  /* ============ block frame ============ */
+  .gl-tier { margin:0; }
+  .gl-tier-hd { display:flex; align-items:center; gap:12px; flex-wrap:wrap; min-height:48px;
+    padding:0 18px; border-bottom:1px solid rgba(var(--bone-rgb),.22); }
+  .gl-tier-hd .t { font-size:15px; font-weight:var(--weight-semibold); letter-spacing:-.01em; color:var(--fg1); }
+  .gl-tier .as-rail:first-of-type { border-top:0; }
+
+  /* ============ shared ============ */
+  .gl-empty { font-family:ui-monospace,monospace; font-size:var(--font-ui); letter-spacing:.04em;
+    color:var(--fg4); margin:0; padding:14px 0; }
+
+  .gl-ds { display:flex; align-items:baseline; gap:8px; }
+  .gl-ds-yr { font-family:ui-monospace,monospace; font-size:var(--font-lede); font-weight:var(--weight-semibold);
+    letter-spacing:-.01em; color:rgba(var(--bone-rgb),.82); line-height:1; }
+  .gl-ds-dm { font-family:ui-monospace,monospace; font-size:var(--font-ui); letter-spacing:.04em;
+    color:var(--fg4); white-space:nowrap; }
+
+  /* ============ 01 · event photos and videos ============ */
+
+  /* ---- event selector ---- */
+  .gl-pick { display:flex; align-items:center; gap:12px; margin:0 0 16px; flex-wrap:wrap; }
+  /* The mono section labels take the toolkit's rail-label accents (the same
+     pair as "Where we're headed" / "Why it matters" on Home, .as-rail-idx .l)
+     rather than the raw --blue/--red, which are too dark to read at 9px. */
+  .gl-pick-l { font-family:ui-monospace,monospace; font-size:9px; letter-spacing:.18em;
+    text-transform:uppercase; color:#3b9be0; }
+  .gl-pick-f { position:relative; display:inline-flex; align-items:center; }
+  .gl-pick-s { appearance:none; -webkit-appearance:none;
+    font-family:ui-monospace,monospace; font-size:var(--font-ui); letter-spacing:.1em;
+    text-transform:uppercase; font-weight:var(--weight-semibold); color:var(--bone);
+    background:rgba(var(--blue-rgb),.14); border:1px solid rgba(var(--blue-rgb),.7);
+    border-radius:2px; padding:9px 34px 9px 14px; cursor:pointer; min-width:230px;
+    transition:background var(--dur-fast), border-color var(--dur-fast); }
+  .gl-pick-s:hover { background:rgba(var(--blue-rgb),.22); border-color:var(--blue); }
+  .gl-pick-s:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  /* the dropdown list itself is drawn by the OS — give it a readable pair */
+  .gl-pick-s option { background:var(--ink); color:var(--bone);
+    font-family:ui-monospace,monospace; text-transform:none; letter-spacing:normal; }
+  .gl-pick-c { position:absolute; right:13px; pointer-events:none; font-size:10px;
+    color:rgba(var(--bone-rgb),.7); }
+  .gl-pick-n { font-family:ui-monospace,monospace; font-size:10px; letter-spacing:.14em;
+    color:var(--fg4); margin-left:auto; }
+
+  /* ---- edition meta ---- */
+  .gl-ev-hd { display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+    padding-bottom:10px; border-bottom:1px solid rgba(var(--bone-rgb),.14); }
+  .gl-ev-pl { font-family:ui-monospace,monospace; font-size:var(--font-ui); letter-spacing:.1em;
+    text-transform:uppercase; color:var(--fg3); }
+
+  /* ---- two columns: one video, one contact sheet ---- */
+  .gl-two { margin-top:18px; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:20px; align-items:start; }
+  .gl-col { min-width:0; display:flex; flex-direction:column; gap:10px; }
+  .gl-col-hd { display:flex; align-items:center; gap:12px; min-height:18px; }
+  /* keyed to the column, not to its position, so the two can be reordered */
+  .gl-col-hd .k { font-family:ui-monospace,monospace; font-size:9px; letter-spacing:.18em;
+    text-transform:uppercase; color:#3b9be0; }
+  .gl-col-photos .gl-col-hd .k { color:#c8607a; }
+
+  .gl-count { font-family:ui-monospace,monospace; font-size:10px; letter-spacing:.14em;
+    color:var(--fg4); margin-left:auto; }
+
+  /* The frame is the same dark hatch for both columns, so a video and a still
+     read as two views of one edition rather than two components. */
+  .gl-frame { position:relative; display:flex; flex-direction:column; gap:10px;
+    border:1px solid rgba(var(--bone-rgb),.2); padding:13px; text-decoration:none; color:inherit;
+    transition:border-color var(--dur-fast) var(--ease-standard),
+               background var(--dur-fast) var(--ease-standard);
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 11px, rgba(255,255,255,0) 11px 22px),
+      radial-gradient(ellipse 72% 70% at 50% 44%, rgba(var(--blue-rgb),.16), rgba(0,0,0,0) 72%),
+      var(--ink); }
+  .gl-frame.gl-frame-v { margin:0; }
+  a.gl-frame:hover { border-color:rgba(var(--blue-rgb),.55); background:rgba(var(--blue-rgb),.08); }
+
+  .gl-stage { position:relative; }
+  .gl-shot { display:block; text-decoration:none; }
+  .gl-media { display:block; width:100%; aspect-ratio:16 / 10; object-fit:cover;
+    background:var(--ink); }
+
+  /* Paging sits on the picture: a tall, generous target at each edge, held
+     back to a whisper until the pointer is over the frame. */
+  .gl-arrow { position:absolute; top:50%; transform:translateY(-50%);
+    width:46px; height:clamp(64px, 46%, 120px); display:flex; align-items:center;
+    justify-content:center; padding:0; cursor:pointer;
+    font-family:ui-monospace,monospace; font-size:30px; line-height:1; color:var(--bone);
+    background:rgba(0,0,0,.42); border:1px solid rgba(var(--bone-rgb),.28);
+    opacity:.45; transition:opacity var(--dur-fast) var(--ease-standard),
+      background var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard); }
+  .gl-arrow.prev { left:0; }
+  .gl-arrow.next { right:0; }
+  .gl-stage:hover .gl-arrow { opacity:.8; }
+  .gl-arrow:hover { opacity:1; background:rgba(var(--blue-rgb),.72);
+    border-color:rgba(var(--blue-rgb),.95); }
+  .gl-arrow:active { background:rgba(var(--blue-rgb),.9); }
+  .gl-arrow:focus-visible { opacity:1; outline:2px solid var(--blue); outline-offset:-2px; }
+  /* touch has no hover to reveal them, so they stay legible there */
+  @media (hover: none) {
+    .gl-arrow { opacity:.75; }
+  }
+  /* same footprint as a filled frame, so the two columns stay level */
+  .gl-frame-held { aspect-ratio:16 / 10; align-items:center; justify-content:center;
+    border-style:dashed; border-color:rgba(var(--bone-rgb),.16); }
+  .gl-held { font-family:ui-monospace,monospace; font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--fg4); text-align:center; }
+  .gl-cap { font-family:ui-monospace,monospace; font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--fg3); }
+
+  /* ---- film strip ---- */
+  .gl-strip { display:flex; gap:7px; overflow-x:auto; padding-bottom:6px;
+    scrollbar-width:thin; scrollbar-color:rgba(var(--blue-rgb),.32) rgba(var(--bone-rgb),.04); }
+  .gl-strip::-webkit-scrollbar { height:7px; }
+  .gl-strip::-webkit-scrollbar-track { background:rgba(var(--bone-rgb),.04); }
+  .gl-strip::-webkit-scrollbar-thumb { background:rgba(var(--blue-rgb),.32);
+    border:2px solid transparent; background-clip:padding-box; }
+  .gl-thumb { flex:none; width:74px; padding:0; border:1px solid rgba(var(--bone-rgb),.22);
+    background:var(--ink); cursor:pointer; line-height:0; opacity:.55;
+    transition:opacity var(--dur-fast), border-color var(--dur-fast); }
+  .gl-thumb img { width:100%; aspect-ratio:1 / 1; object-fit:cover; display:block; }
+  .gl-thumb:hover { opacity:1; }
+  .gl-thumb:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  .gl-thumb.on { opacity:1; border-color:var(--blue);
+    box-shadow:0 0 0 1px rgba(var(--blue-rgb),.4); }
+
+  /* ============ 02 · press rows ============ */
+  .gl-arows { display:grid; grid-template-columns:1fr; }
+  .gl-arow { display:flex; align-items:baseline; gap:16px; padding:14px 0;
+    border-bottom:1px solid rgba(var(--bone-rgb),.1); text-decoration:none; color:inherit; }
+  .gl-arow .ds-col { width:150px; flex:none; }
+  .gl-arow .ao { font-weight:var(--weight-semibold); font-size:var(--font-lede); flex:none; }
+  .gl-arow .at { font-size:var(--font-ui); color:var(--fg2); flex:1 1 auto; min-width:0; }
+  .gl-arow .al { font-family:ui-monospace,monospace; font-size:9px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--fg4); flex:none; margin-left:auto; }
+  .gl-arow .ax { font-family:ui-monospace,monospace; font-size:var(--font-ui); color:var(--fg4); flex:none; }
+  /* indented past the date column so it reads as a standfirst under the
+     headline, not as another row */
+  .gl-note { margin:10px 0 0 166px; max-width:62ch; font-size:var(--font-ui);
+    line-height:var(--leading-normal); color:var(--fg2); }
+
+  /* a story that came with a broadcast report carries it under its own row */
+  .gl-news + .gl-news { margin-top:0; }
+  /* inside the two-column body the player fills its column, exactly as the
+     edition video does in the events block above */
+  .gl-news-body { margin-top:14px; margin-bottom:4px; }
+  .gl-news-body .gl-note { margin:0; max-width:none; }
+  .gl-embed { position:relative; margin:0; padding:13px; width:100%;
+    border:1px solid rgba(var(--bone-rgb),.2);
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 11px, rgba(255,255,255,0) 11px 22px),
+      radial-gradient(ellipse 72% 70% at 50% 44%, rgba(var(--blue-rgb),.16), rgba(0,0,0,0) 72%),
+      var(--ink); }
+  .gl-embed iframe { display:block; width:100%; aspect-ratio:16 / 9; border:0;
+    background:var(--ink); }
+
+  .gl-arow:hover .ao,
+  .gl-arow:hover .ax,
+  .gl-arow:hover .gl-ds-yr { color:rgba(var(--blue-rgb),.95); }
+
+  @media (max-width: 900px) {
+    .gl-two { grid-template-columns:1fr; }
+  }
+  @media (max-width: 640px) {
+    .gl-ev-hd { flex-direction:column; align-items:flex-start; gap:6px; }
+    .gl-arow { flex-wrap:wrap; gap:8px 12px; }
+    .gl-arow .ds-col { width:auto; }
+    .gl-arow .al { margin-left:0; }
+    .gl-note { margin-left:0; }
+  }
