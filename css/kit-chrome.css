@@ -23,8 +23,11 @@
     .as-brand img { height:30px; }
     .as-nl { font-size:0.75rem; }
   }
-  .as-nl span { color:rgba(251,246,236,.55); cursor:default; }
-  .as-nl .on { color:#3b9be0; }
+  .as-nl a { display:inline-flex; align-items:center; padding:6px 8px;
+             border:1px solid transparent; color:var(--fg2); text-decoration:none;
+             font-weight:400; white-space:nowrap; }
+  .as-nl a[aria-current="page"] { border-color:var(--blue); }
+  .as-nl a:hover { background:rgba(var(--bone-rgb),.05); }
 
   .as-wrap { padding:14px; }
   .as-panel { position:relative; border:1px solid rgba(251,246,236,.22); }
@@ -58,8 +61,8 @@
   .ps-knob { position:absolute; top:50%; width:8px; height:8px; transform:translate(-50%,-50%); background:#0465ad; border:1px solid rgba(59,155,224,.9); }
 
   /* section rail module — left index, hairline-separated body */
-  .as-rail { display:grid; grid-template-columns:130px 1fr; border-top:1px solid rgba(251,246,236,.22); }
-  .as-rail-idx { border-right:1px solid rgba(251,246,236,.22); padding:26px 20px; }
+  .as-rail { display:grid; grid-template-columns:180px minmax(0,1fr); border-top:1px solid rgba(251,246,236,.22); }
+  .as-rail-idx { min-width:0; overflow-wrap:break-word; border-right:1px solid rgba(251,246,236,.22); padding:26px 20px; }
   .as-rail-idx .n { font-family:ui-monospace,monospace; font-size:var(--font-counter); color:rgba(251,246,236,.3); }
   .as-rail-idx .l { font-family:ui-monospace,monospace; font-size:var(--font-caption); letter-spacing:.16em; text-transform:uppercase; color:#3b9be0; margin-top:6px; }
   .as-rail-idx .l.red { color:#c8607a; }
@@ -161,7 +164,6 @@
 
   /* footer */
   .as-foot { display:flex; justify-content:space-between; align-items:center; font-family:ui-monospace,monospace; font-size:var(--font-caption); letter-spacing:.06em; color:rgba(251,246,236,.4); padding:18px 26px; border-top:1px solid rgba(251,246,236,.22); }
-  .as-foot .fl { display:flex; gap:18px; } .as-foot .fl span { cursor:default; }
 
   /* coming-soon */
   .as-soon { position:relative; overflow:hidden; min-height:560px; display:flex; align-items:center; justify-content:center; }

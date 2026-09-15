@@ -6,28 +6,6 @@
   .as-btn.as-btn.ph-cta { background:var(--ph-accent,#0465ad); border-color:var(--ph-accent,#0465ad); color:#fff; }
   .as-btn.as-btn.ph-cta:hover { filter:brightness(1.12); background:var(--ph-accent,#0465ad); }
 
-  /* console header */
-  .page-header { --ph-tint:color-mix(in srgb, var(--ph-accent) 70%, var(--bone)); }
-  .page-header .ph-split { min-height:330px; grid-template-columns:minmax(0,1.32fr) minmax(0,1fr); }
-  .page-header .ph-split-l, .page-header .ph-split-r { min-width:0; }
-  .page-header .ph-con-num { font-family:var(--font-mono); font-size:var(--font-ui); }
-  .page-header .ph-con-title { font-size:var(--font-page-title); }
-  .page-header .ph-con-lede { font-size:var(--font-page-lede); }
-  .ph-con-head { display:flex; justify-content:space-between; align-items:center; padding:14px 30px; border-bottom:1px solid rgba(251,246,236,.16); }
-  .ph-con-coord { font-family:ui-monospace,monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:rgba(251,246,236,.42); }
-  .ph-con-coord b { color:var(--ph-tint,#3b9be0); font-weight:600; }
-  .ph-con-num { position:relative; z-index:2; font-family:ui-monospace,monospace; font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:rgba(251,246,236,.4); }
-  .ph-con-num b { color:var(--ph-tint,#3b9be0); font-weight:600; }
-  .ph-con-title { position:relative; z-index:2; font-size:46px; font-weight:700; letter-spacing:-.03em; line-height:.94; margin:14px 0 0; white-space:pre-line; }
-  .ph-con-lede { position:relative; z-index:2; font-size:17px; font-weight:600; letter-spacing:-.01em; color:#fbf6ec; margin:16px 0 0; }
-  .ph-con-lede .b { color:var(--ph-tint,#3b9be0); }
-
-  /* split: left intro / right transmission card */
-  .ph-split { display:grid; grid-template-columns:1.32fr 1fr; }
-  .ph-split-l { position:relative; overflow:hidden; padding:46px 32px; display:flex; align-items:center; }
-  .ph-split-in { position:relative; z-index:2; }
-  .ph-split-r { border-left:1px solid rgba(251,246,236,.18); padding:28px; display:flex; align-items:center; }
-
   /* transmission card — framed "open channel" compose mock */
   .ph-tx { position:relative; width:100%; border:1px solid rgba(251,246,236,.24); background:rgba(0,0,0,.55); }
   .ph-tx-top { display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(251,246,236,.16); padding:11px 16px; font-family:ui-monospace,monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:rgba(251,246,236,.5); }

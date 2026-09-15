@@ -24,3 +24,9 @@ Active/current = blue. Past/legacy = red.
 
 ## People data
 `assets/people/people.yml` is the source of truth for the roster.
+
+## Page layout
+Every inner page uses `src/components/PageLayout.jsx` for the main wrapper and the
+14px header-to-content gap. Header geometry lives in
+`components/PageHeader/PageHeader.css`. Do not add per-page header margins,
+column proportions, or rail gutter overrides. Home retains its approved hero layout and is the explicit exception.

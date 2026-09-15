@@ -132,7 +132,7 @@
   @keyframes sk-ping { 0% { r:4; opacity:.85; } 80% { r:15; opacity:0; } 100% { r:15; opacity:0; } }
   @media (prefers-reduced-motion: no-preference) { .sk-ping { animation:sk-ping 2.6s ease-out infinite; } }
   .skx-head { max-width:100%; }
-  .skx-head .as-h2 { margin-top:12px; }
+  .skx-head .as-h2 { margin-top:0; }
 
   /* mission — two readouts */
   .skx-two { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:26px; }

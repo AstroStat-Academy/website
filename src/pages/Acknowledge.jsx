@@ -1,3 +1,4 @@
+import { PageLayout } from '../components/PageLayout.jsx';
 import { PageHeader } from '../../components/PageHeader/PageHeader.jsx';
 import React from 'react';
 import { SiteNav, SiteFooter, Corners, Rail } from '../components/SiteChrome.jsx';
@@ -137,14 +138,13 @@ function PageAcknowledge() {
   return (
     <div className="as-page">
       <SiteNav active="acknowledge" />
-      <main id="main-content" className="as-wrap">
-        <PageHeader section="Acknowledge us" kicker="crediting the Academy" title={'Crediting\nAstroStat Academy'} lede="If a school, hackaton or consulting engagement contributed to your research, a short acknowledgement in your paper or talk helps us keep the programme running and reach new groups." aside={acknowledgement} />
-        <div className="as-panel page-content"><Corners />
-          <Rail n="06" label="Credit" variant="glyph">
+      <PageLayout header={<PageHeader section="Acknowledge us" kicker="crediting the Academy" title={'Crediting\nAstroStat Academy'} lede={<>Helped your research? <span className="b">Acknowledge</span> us in your work.</>} aside={acknowledgement} />}>
+        <div className="as-panel"><Corners />
+          <Rail n="06" label="Credit" variant="matrix">
             <CreditedPapers />
           </Rail>
         </div>
-      </main>
+      </PageLayout>
       <SiteFooter />
     </div>
   );

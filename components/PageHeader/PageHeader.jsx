@@ -7,7 +7,7 @@ export function PageHeader({
   section, kicker, title, lede, accent = 'blue', variant,
   channel = '// AstroStat Academy', status, aside = null, children,
 }) {
-  // The existing home wordmark is the only explicit alternative layout.
+  // Home retains its approved wordmark and interactive hero layout.
   if (variant === 'home') return (
     <div className="as-hero-l">
       <div className="as-tagline">{kicker}<span className="as-cur"></span></div>

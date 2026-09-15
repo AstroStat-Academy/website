@@ -27,9 +27,38 @@ councellors:
   - andreas-tersenov
   - giorgos-vernardos
 
-lecturers: []
+lecturers:
+  - jeff-andrews
+  - maria-koutoulaki
 
-TAs: []
+TAs:
+  - noora-alameri
+  - munya-alkhalifa
+  - aisha-alowais
+  - maryam-alqasimi
+  - diego-alvarez-ortega
+  - dmitri-blinov
+  - charalampos-daoutis
+  - myrto-falalaki
+  - erika-korb
+  - avinash-kumar
+  - elias-kyritsis
+  - arnab-lahiry
+  - cristina-maria-lofaro
+  - nikolaos-loudas
+  - abdollah-masoud
+  - kyle-rocha
+  - raphael-skalidis
+  - alessandro-vadala
+
+guests:
+  - grigorios-tsagkatakis
+  - eleni-vardoulaki
+
+partners:
+  - carolina-casadio
+  - davide-martizzi
+  - andreas-zezas
 
 advisors:
   - nikolas-vasilas

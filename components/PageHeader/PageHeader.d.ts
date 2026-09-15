@@ -9,11 +9,11 @@ export interface PageHeaderProps {
   kicker?: string;
   /** display title; \n renders as a line break */
   title: string;
-  /** one-line subtitle */
+  /** Subtitle with highlighted text; uses the shared 80% measure. */
   lede?: React.ReactNode;
   /** accent family. Default "blue" */
   accent?: 'blue' | 'red' | 'teal';
-  /** Omit for the standard card. Reserved for the existing home wordmark. */
+  /** Reserved for Home's approved wordmark layout. */
   variant?: 'home';
   /** Channel label. Defaults to "// AstroStat Academy". */
   channel?: React.ReactNode;

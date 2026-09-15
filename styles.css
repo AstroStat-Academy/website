@@ -7,3 +7,5 @@
 @import url('css/kit-school.css');
 @import url('css/kit-hero.css');
 @import url('css/kit-terminal.css');
+
+@import url('components/PageHeader/PageHeader.css');

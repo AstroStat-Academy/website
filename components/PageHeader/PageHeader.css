@@ -1,0 +1,40 @@
+/* Canonical Hackathons header. Inner pages share this geometry; Home retains its approved hero. */
+:root {
+  --page-columns: minmax(0, 1.32fr) minmax(0, 1fr);
+  --page-gap: 14px;
+}
+.page-header { --ph-tint: color-mix(in srgb, var(--ph-accent) 70%, var(--bone)); }
+.page-header .ph-con-head {
+  display: flex; justify-content: space-between; align-items: center;
+  min-height: 48px; padding: 14px 30px;
+  border-bottom: 1px solid rgba(var(--bone-rgb), .16);
+}
+.page-header .ph-con-coord { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: .16em; text-transform: uppercase; color: var(--fg4); }
+.page-header .ph-con-coord b { color: var(--ph-tint); font-weight: 600; }
+.page-header .ph-split { display: grid; grid-template-columns: var(--page-columns); min-height: 330px; }
+.page-header .ph-split-l { position: relative; overflow: hidden; min-width: 0; padding: 46px 32px; }
+.page-header .ph-split-in { position: relative; z-index: 2; width: 100%; min-width: 0; }
+.page-header .ph-split-r { min-width: 0; border-left: 1px solid rgba(var(--bone-rgb), .18); padding: 28px; display: flex; align-items: center; }
+.page-header .ph-con-num { font-family: var(--font-mono); font-size: var(--font-ui); letter-spacing: .2em; text-transform: uppercase; color: var(--fg4); }
+.page-header .ph-con-num b { color: var(--ph-tint); font-weight: 600; }
+.page-header .ph-con-title { font-family: var(--font-sans); font-size: var(--font-page-title); font-weight: 700; letter-spacing: -.03em; line-height: .94; min-height: 1.88em; margin: 14px 0 0; white-space: pre-line; }
+.page-header .ph-con-lede { font-family: var(--font-sans); font-size: var(--font-page-lede); font-weight: 600; letter-spacing: -.01em; color: var(--bone); margin: 16px 0 0; }
+.page-header .ph-con-lede, .page-header .as-about { width: 80%; max-width: 100%; overflow-wrap: break-word; }
+.page-header .ph-con-lede .b { color: var(--ph-tint); }
+.page-header .ph-tx { min-width: 0; }
+.page-header .ph-tx-foot { flex-wrap: wrap; }
+.page-header .ph-tx-mail { overflow-wrap: anywhere; }
+.as-hero-l > .as-lede, .as-hero-l > .as-about { width: 80%; max-width: 100%; overflow-wrap: break-word; }
+@media (max-width: 1100px) {
+  .page-header .ph-con-num { line-height: 1.3; min-height: 2.6em; }
+  .page-header .ph-con-title { min-height: 2.82em; }
+}
+@media (max-width: 768px) {
+  .page-header .ph-con-head { flex-wrap: wrap; gap: 12px; min-height: 98px; padding: 18px 20px; }
+  .page-header .ph-con-title { min-height: 3.76em; }
+  .page-header .ph-split { grid-template-columns: minmax(0, 1fr); }
+  .page-header .ph-split-l { padding: 32px 20px; }
+  .page-header .ph-split-r { padding: 20px; border-left: 0; border-top: 1px solid rgba(var(--bone-rgb), .18); }
+  .page-header .ph-split-r:empty { display: none; }
+  .page-header .ph-con-lede, .page-header .as-about, .as-hero-l > .as-lede, .as-hero-l > .as-about { width: 100%; }
+}

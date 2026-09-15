@@ -90,6 +90,13 @@ come directly from the supplied YAML. Fonts currently load from Google Fonts.
   People leaves it empty; Acknowledge supplies the credit text and copy button.
   Place page content below the header. Only the existing home wordmark uses
   `variant="home"`.
+- Inner pages use `src/components/PageLayout.jsx`: it owns the shared 14px gap
+  between the header and first content block. Header styling lives alongside
+  the component in `components/PageHeader/PageHeader.css`. People uses the
+  same column proportions and standard Rail gutters; its terminal stays sticky.
+- With the local server running, verify all header alignments using
+  `node tests/layout/page-layout.mjs`. Set `TEST_BASE_URL` if using another port.
+  The check covers desktop, tablet and phone widths and preserves Home's hero.
 - Shared CSS retains the original cascade. Website-only responsive rules live
   in `src/styles/site.css` so the design canvas stays unchanged.
 - Follow `AGENTS.md` for tokens, typography and roster rules. Existing off-palette
@@ -154,23 +161,3 @@ The initial snapshot contains 21 matches, fetched on 2026-09-15.
 Run `npm test` and `npm run build`. The historical Playwright configuration is
 retained, but its original browser test sources are absent from this checkout.
 
-## Original design reference
-
-The old prototypes and design-system material are preserved together in
-[archive/design-reference.tar.gz](archive/design-reference.tar.gz). This includes
-`site/Site Overview.html`, the exploration scripts, preview cards, historical
-notes, generated design artifacts, and the old `deploy/api/papers.js` integration.
-
-The archive includes snapshots of shared styles and active assets needed by the
-original overview. Its `MANIFEST.json` records SHA-256 file hashes, and
-`ARCHIVE-README.md` explains its contents and limitations.
-
-To view it, extract the package into a separate folder and serve the extracted
-`astrostat-design-reference/` directory with a static server. Open
-`site/Site%20Overview.html`. CDN React/Babel and fonts still require network access.
-The former `dev:design` command has been removed because its source files are
-now archived.
-
-Obsolete exports, UI kits, scratch uploads and thumbnails were deleted. Links
-inside historical reference pages to those deleted files may no longer work.
-The archive is excluded from the website build.

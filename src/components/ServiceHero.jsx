@@ -1,3 +1,4 @@
+import { PageLayout } from './PageLayout.jsx';
 import { PageHeader } from '../../components/PageHeader/PageHeader.jsx';
 import React from 'react';
 import { SiteNav, SiteFooter } from './SiteChrome.jsx';
@@ -59,7 +60,7 @@ const PH_CTX = {
     cta: 'Start a conversation',
   },
   hackatons: {
-    active: 'hackatons', accent: 'red',
+    active: 'hackatons', accent: 'blue',
     eyebrow: 'Hackatons',
     title: 'Collaborative\ndata hackatons',
     lede: <>Focused sprints where <span className="b">data scientists</span> tackle a shared dataset side by side — ideal for team building.</>,
@@ -103,7 +104,7 @@ function HeroConsole({ ctx }) {
   return (
     <div className="as-page">
       <SiteNav active={c.active} />
-      <main id="main-content" className="as-wrap"><HeroPanel ctx={c} /></main>
+      <PageLayout header={<HeroPanel ctx={c} />} />
       <SiteFooter />
     </div>
   );

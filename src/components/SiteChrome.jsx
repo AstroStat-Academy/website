@@ -26,8 +26,9 @@ function SiteNav({ active = 'home' }) {
 function SiteFooter() {
   return (
     <footer className="as-foot">
+      {/* no link list: the top nav is present on every page and never
+          scrolls out of reach, so repeating it here bought nothing */}
       <span>© AstroStat Academy</span>
-      <nav className="fl" aria-label="Footer navigation"><a href="/schools/">Schools</a><a href="/people/">People</a><a href="/consulting/">Consulting</a></nav>
       <span>astrostat.academy</span>
     </footer>
   );

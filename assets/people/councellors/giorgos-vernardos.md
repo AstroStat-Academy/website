@@ -3,6 +3,12 @@ name: Prof. Giorgos Vernardos
 affiliation: Lehman College, CUNY
 title: Secretary
 photo: giorgos-vernardos.png
+service:
+  - { ed: 8, role: lecturer }
+  - { ed: 7, role: lecturer }
+  - { ed: 5, role: lecturer }
+standing: council
+founder: yes
 ---
 His research focuses on data-intensive problems in astrophysics, using gravitational lensing to study black hole physics, dark matter, and cosmology.
 

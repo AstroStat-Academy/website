@@ -1,3 +1,4 @@
+import { PageLayout } from '../components/PageLayout.jsx';
 import React from 'react';
 import { Corners, SiteNav, SiteFooter, Rail } from '../components/SiteChrome.jsx';
 import { PH_CTX, HeroPanel } from '../components/ServiceHero.jsx';
@@ -62,26 +63,85 @@ function deriveSchools() {
    else the institute's country), mapped to approximate centroids so
    they can be plotted on the globe. Counts drive the marker size. */
 const COUNTRY_COORDS = {
-  Greece: [39.0, 22.0], Italy: [42.8, 12.8], Germany: [51.0, 10.0], UAE: [24.0, 54.0],
-  Spain: [40.2, -3.7], France: [46.6, 2.5], India: [22.0, 79.0], Estonia: [58.6, 25.0],
-  Croatia: [45.1, 15.5], Chile: [-35.0, -71.0], Russia: [56.0, 45.0], UK: [54.0, -2.5],
-  Jordan: [31.2, 36.5], Oman: [21.0, 57.0], Czechia: [49.8, 15.5], USA: [39.5, -98.0],
-  SouthAfrica: [-29.0, 24.0], Poland: [52.0, 19.0], Belgium: [50.6, 4.6], Mexico: [23.5, -102.0],
-  Syria: [35.0, 38.0], Pakistan: [30.0, 70.0], Egypt: [26.8, 30.0], Algeria: [28.0, 3.0],
-  Serbia: [44.0, 20.9], Israel: [31.5, 34.9], Ireland: [53.2, -8.0], Finland: [64.0, 26.0],
-  Netherlands: [52.2, 5.3], Portugal: [39.5, -8.0], Switzerland: [46.8, 8.2], Romania: [45.9, 25.0],
-  Djibouti: [11.8, 42.6], SaudiArabia: [24.0, 45.0], 'Saudi Arabia': [24.0, 45.0], Iraq: [33.0, 44.0],
-  Tunisia: [34.0, 9.5],
+  Afghanistan: [33.9, 66.0], Albania: [41.1, 20.1], Algeria: [28.0, 3.0], Angola: [-12.3, 17.8],
+  Argentina: [-35.0, -65.0], Armenia: [40.3, 45.0], Australia: [-25.0, 134.0], Austria: [47.6, 14.1],
+  Azerbaijan: [40.3, 47.8], Bangladesh: [24.0, 90.2], Belarus: [53.7, 28.0], Belgium: [50.6, 4.6],
+  Belize: [17.2, -88.7], Benin: [9.6, 2.3], Bhutan: [27.5, 90.4], Bolivia: [-16.8, -64.7],
+  BosniaHerzegovina: [44.1, 17.8], Botswana: [-22.2, 23.8], Brazil: [-10.0, -52.0], Brunei: [4.5, 114.7],
+  Bulgaria: [42.7, 25.3], BurkinaFaso: [12.3, -1.6], Burundi: [-3.4, 29.9], Cambodia: [12.6, 104.9],
+  Cameroon: [5.7, 12.7], Canada: [56.0, -106.0], CentralAfricanRepublic: [6.6, 20.9], Chad: [15.4, 18.7],
+  Chile: [-35.0, -71.0], China: [35.0, 103.0], Colombia: [4.0, -73.0], Congo: [-0.8, 15.5],
+  CostaRica: [9.9, -84.0], Croatia: [45.1, 15.5], Cuba: [21.8, -78.5], Cyprus: [35.0, 33.2],
+  Czechia: [49.8, 15.5], DRCongo: [-2.9, 23.6], Denmark: [56.1, 9.4], Djibouti: [11.8, 42.6],
+  DominicanRepublic: [18.8, -70.4], Ecuador: [-1.4, -78.4], Egypt: [26.8, 30.0], ElSalvador: [13.8, -88.9],
+  EquatorialGuinea: [1.6, 10.5], Eritrea: [15.4, 38.8], Estonia: [58.6, 25.0], Eswatini: [-26.5, 31.5],
+  Ethiopia: [9.1, 39.8], Fiji: [-17.8, 178.0], Finland: [64.0, 26.0], France: [46.6, 2.5],
+  Gabon: [-0.7, 11.8], Gambia: [13.4, -15.4], Georgia: [42.2, 43.5], Germany: [51.0, 10.0],
+  Ghana: [7.9, -1.2], Greece: [39.0, 22.0], Greenland: [72.0, -42.0], Guatemala: [15.3, -90.3],
+  Guinea: [10.5, -11.0], GuineaBissau: [12.0, -15.0], Guyana: [5.2, -58.9], Haiti: [18.9, -72.3],
+  Honduras: [14.8, -86.6], Hungary: [47.0, 19.4], Iceland: [64.9, -18.6], India: [22.0, 79.0],
+  Indonesia: [-7.3, 110.0], Iran: [32.5, 54.0], Iraq: [33.0, 44.0], Ireland: [53.2, -8.0],
+  Israel: [31.5, 34.9], Italy: [42.8, 12.8], IvoryCoast: [7.6, -5.5], Jamaica: [18.1, -77.3],
+  Japan: [36.2, 138.3], Jordan: [31.2, 36.5], Kazakhstan: [48.0, 67.0], Kenya: [0.5, 37.9],
+  Kosovo: [42.6, 20.9], Kuwait: [29.4, 47.6], Kyrgyzstan: [41.4, 74.7], Laos: [19.0, 103.5],
+  Latvia: [56.9, 24.9], Lebanon: [33.9, 35.9], Lesotho: [-29.6, 28.2], Liberia: [6.5, -9.4],
+  Libya: [27.0, 17.5], Lithuania: [55.3, 23.9], Luxembourg: [49.8, 6.1], Madagascar: [-19.4, 46.7],
+  Malawi: [-13.3, 34.0], Malaysia: [3.8, 102.0], Mali: [17.6, -3.5], Mauritania: [20.3, -10.5],
+  Mexico: [23.5, -102.0], Moldova: [47.2, 28.5], Mongolia: [46.9, 103.8], Montenegro: [42.8, 19.3],
+  Morocco: [31.8, -7.1], Mozambique: [-17.3, 35.5], Myanmar: [21.0, 96.0], Namibia: [-22.0, 17.2],
+  Nepal: [28.3, 84.1], Netherlands: [52.2, 5.3], NewZealand: [-43.5, 171.5], Nicaragua: [12.9, -85.2],
+  Niger: [17.6, 9.4], Nigeria: [9.1, 8.7], NorthKorea: [40.0, 127.0], NorthMacedonia: [41.6, 21.7],
+  Norway: [61.5, 9.0], Oman: [21.0, 57.0], Pakistan: [30.0, 70.0], Panama: [8.5, -80.1],
+  PapuaNewGuinea: [-6.5, 144.5], Paraguay: [-23.4, -58.4], Peru: [-9.2, -75.0], Philippines: [16.0, 121.0],
+  Poland: [52.0, 19.0], Portugal: [39.5, -8.0], PuertoRico: [18.2, -66.5], Qatar: [25.3, 51.2],
+  Romania: [45.9, 25.0], Russia: [56.0, 45.0], Rwanda: [-1.9, 29.9], SaudiArabia: [24.0, 45.0],
+  Senegal: [14.5, -14.8], Serbia: [44.0, 20.9], SierraLeone: [8.5, -11.8], Slovakia: [48.7, 19.7],
+  Slovenia: [46.1, 14.8], Somalia: [5.2, 46.2], SouthAfrica: [-29.0, 24.0], SouthKorea: [36.5, 127.8],
+  SouthSudan: [7.3, 30.3], Spain: [40.2, -3.7], SriLanka: [7.6, 80.7], Sudan: [15.6, 30.2],
+  Suriname: [4.1, -56.0], Sweden: [62.0, 15.0], Switzerland: [46.8, 8.2], Syria: [35.0, 38.0],
+  Taiwan: [23.7, 121.0], Tajikistan: [38.9, 71.3], Tanzania: [-6.4, 34.9], Thailand: [15.5, 101.0],
+  TimorLeste: [-8.8, 125.9], Togo: [8.6, 0.9], TrinidadTobago: [10.4, -61.3], Tunisia: [34.0, 9.5],
+  Turkey: [39.0, 35.2], Turkmenistan: [39.0, 59.0], UAE: [24.0, 54.0], UK: [54.0, -2.5],
+  USA: [39.5, -98.0], Uganda: [1.4, 32.3], Ukraine: [49.0, 31.5], Uruguay: [-32.8, -56.0],
+  Uzbekistan: [41.5, 64.6], Venezuela: [7.1, -66.0], Vietnam: [16.0, 107.5], Yemen: [15.6, 47.5],
+  Zambia: [-13.5, 27.9], Zimbabwe: [-19.0, 29.8],
 };
-const COUNTRY_ALIAS = { 'United States of America': 'USA' };
+/* Spellings that appear in participants.csv (or are otherwise common) but
+   differ from the keys above. Everything else is matched case- and
+   punctuation-insensitively by normalise(), so "Saudi Arabia", "saudi-arabia"
+   and "SaudiArabia" all resolve without needing an entry here. */
+const COUNTRY_ALIAS = {
+  'united states of america': 'USA', 'united states': 'USA', 'us': 'USA', 'usa': 'USA',
+  'united kingdom': 'UK', 'great britain': 'UK', 'england': 'UK', 'scotland': 'UK', 'wales': 'UK',
+  'czech republic': 'Czechia', 'holland': 'Netherlands', 'united arab emirates': 'UAE',
+  'republic of korea': 'SouthKorea', 'korea': 'SouthKorea',
+  "cote d'ivoire": 'IvoryCoast', 'cote divoire': 'IvoryCoast',
+  'democratic republic of the congo': 'DRCongo', 'dr congo': 'DRCongo', 'drc': 'DRCongo',
+  'republic of the congo': 'Congo', 'swaziland': 'Eswatini', 'macedonia': 'NorthMacedonia',
+  'burma': 'Myanmar', 'east timor': 'TimorLeste', 'turkiye': 'Turkey',
+  'russian federation': 'Russia', 'south korea': 'SouthKorea', 'north korea': 'NorthKorea',
+};
+
+/* Strip case, spaces and punctuation so CSV spelling variants collapse onto
+   one key. Built once from COUNTRY_COORDS. */
+const normalise = s => String(s).toLowerCase().replace(/[^a-z]/g, '');
+const COUNTRY_LOOKUP = new Map(
+  Object.keys(COUNTRY_COORDS).map(k => [normalise(k), k]));
+function resolveCountry(raw) {
+  const n = normalise(raw);
+  const aliased = COUNTRY_ALIAS[raw.toLowerCase().trim()] || COUNTRY_ALIAS[n];
+  if (aliased) return aliased;
+  return COUNTRY_LOOKUP.get(n) || null;
+}
 function deriveAlumniOrigins() {
   
   const counts = {};
   participants.forEach(p => {
     if (String(p.accepted).toUpperCase() !== 'TRUE') return;
-    let c = p.country2 || p.country;
-    if (!c) return;
-    c = COUNTRY_ALIAS[c] || c;
+    const raw = p.country2 || p.country;
+    if (!raw) return;
+    const c = resolveCountry(raw);
+    if (!c) { if (import.meta.env.DEV) console.warn('[globe] no centroid for country:', raw); return; }
     counts[c] = (counts[c] || 0) + 1;
   });
   return Object.entries(counts).map(([name, count]) => {
@@ -120,10 +180,9 @@ function alumniCountryRings() {
    Content ported from astrostat.academy, organised below the planisphere. */
 
 
-function SectionHead({ eyebrow, accent, title, lead }) {
+function SectionHead({ title, lead }) {
   return (
     <div className="skx-head">
-      <span className={'as-eyebrow' + (accent ? ' ' + accent : '')}>{eyebrow}</span>
       <h2 className="as-h2">{title}</h2>
       {lead ? <p className="as-p">{lead}</p> : null}
     </div>
@@ -207,7 +266,6 @@ function MissionSection() {
   return (
     <Rail n="03" label="Fronts" variant="matrix">
       <SectionHead
-        eyebrow="How we operate"
         title="We operate on two fronts" />
       <div className="skx-two" style={{ marginTop: 22 }}>
         <div className="skx-mission">
@@ -229,7 +287,6 @@ function MethodSection() {
   return (
     <Rail n="04" label="Method" variant="matrix">
       <SectionHead
-        eyebrow="The School · Method"
         title="Theory, then your own keyboard"
         lead={<>Our lectures are a mix of theory and hands-on applications, usually via Python notebooks. This successful recipe provides the necessary variety to keep the interest alive and the students engaged.<br /><br />Our teaching philosophy is to go hand-in-hand with the students so that no one is left behind! We encourage both teacher–student and student–student interactions.</>} />
       <div className="skx-method">
@@ -267,7 +324,6 @@ function CurriculumSection() {
   return (
     <Rail n="05" label="Curriculum" variant="matrix">
       <SectionHead
-        eyebrow="Curriculum"
         title="What we cover"
         lead="Every schedule balances core foundations — the fundamentals every researcher must master — with seasonal, state-of-the-art topics, plus a horizon of subjects we're preparing for future editions." />
       <div className="skx-syllabus">
@@ -282,14 +338,13 @@ function CurriculumSection() {
 
 const ATTEND_STATS = [
   { v: '≈32', l: 'Number of participants, median' },
-  { v: '650+', l: 'Applications to date' },
-  { v: '200+', l: 'Students taught' },
+  { v: '700+', l: 'Applications to date' },
+  { v: '225+', l: 'Students taught' },
 ];
 function AttendantsSection() {
   return (
     <Rail n="06" label="Attendants" variant="matrix">
       <SectionHead
-        eyebrow="Who attends"
         title="Open to all"
         lead={<>Our ideal attendee is an astrophysics PhD candidate — but we welcome everyone from BSc students to professors, and from Computer Science to Signal Processing. After all, everybody needs a hand with statistics.<br /><br />At every event we like to keep the number of attendants constrained in order to maximise the interactions between students and teachers.<br /><br />This mix benefits everyone: students see the techniques applied across domains, while teachers meet a wider range of needs that keeps them current with the latest in Machine Learning.</>} />
       <div className="skx-stats">
@@ -307,8 +362,7 @@ function SchoolsHead() {
   const stats = meta.stats || [];
   return (
     <div className="sk-head">
-      <span className="as-eyebrow">{meta.eyebrow || 'Schools · Editions'}</span>
-      <h2 className="as-h1pg" style={{ marginTop: 12 }}>{meta.title || 'The AstroStat School'}</h2>
+      <h2 className="as-h1pg" style={{ marginTop: 0 }}>{meta.title || 'The AstroStat School'}</h2>
       <p className="as-p">{meta.blurb}</p>
       <div className="sk-lead">
         {stats.map((s, i) => s.prefix
@@ -324,7 +378,7 @@ function FeaturedHero() {
   const topics = LATEST.topics || [];
   return (
     <a className="sk-hero" href={LATEST.url} target="_blank" rel="noopener noreferrer">
-      <div className="tag">{LATEST.upcoming ? 'Next edition' : 'Latest edition · № ' + String(LATEST.ed).padStart(2, '0')}</div>
+      <div className="tag">{LATEST.upcoming ? 'Latest edition' : 'Latest edition · № ' + String(LATEST.ed).padStart(2, '0')}</div>
       <div className="cy">{LATEST.city} {LATEST.year}</div>
       <div className="meta">{LATEST.venue} · {LATEST.country} · {LATEST.date}</div>
       {topics.length
@@ -556,8 +610,7 @@ function Schools() {
   return (
     <div className="as-page">
       <SiteNav active="schools" />
-      <main id="main-content" className="as-wrap">
-        <div style={{ marginBottom: 14 }}><HeroPanel ctx={PH_CTX.schools} /></div>
+      <PageLayout header={<HeroPanel ctx={PH_CTX.schools} />}>
         <div className="as-panel"><Corners />
           <Rail n="02" label="Editions" variant="matrix">
             <SchoolsHead />
@@ -585,7 +638,7 @@ function Schools() {
           <CurriculumSection />
           <AttendantsSection />
         </div>
-      </main>
+      </PageLayout>
       <SiteFooter />
     </div>
   );
