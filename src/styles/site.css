@@ -116,3 +116,52 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-
 .sk-edition-image { position: relative; display: block; flex: none; isolation: isolate; }
 .sk-edition-image .sk-edition-thumb { filter: grayscale(1); }
 .sk-edition-image::after { content: ""; position: absolute; inset: 0; background: var(--blue); opacity: .55; mix-blend-mode: color; pointer-events: none; }
+
+/* Keep final content visible while stopping decorative motion and transitions. */
+html[data-motion="static"] *,
+html[data-motion="static"] *::before,
+html[data-motion="static"] *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+html[data-motion="static"] .crt-sweep,
+html[data-motion="static"] .crt-flick,
+html[data-motion="static"] .tphoto-hold { display: none; }
+
+@media (max-width: 768px) {
+  .as-home-figure { width: 100%; }
+  .as-ctrl { flex-wrap: wrap; }
+  .as-nl { width: 100%; }
+  .as-nl a, .as-btn, .hwc-mini button, .sk-book-footer button { min-height: 44px; }
+  .as-nl a { display: inline-flex; align-items: center; }
+  .as-brand { max-width: 100%; }
+  .as-rail-body, .gl-col, .sk-d2-left { min-width: 0; }
+  .as-page p, .as-page h2 { overflow-wrap: break-word; }
+  .gl-pick { flex-wrap: wrap; }
+  .gl-pick-f { min-width: 0; max-width: 100%; }
+  .gl-pick-s { width: 100%; font-size: var(--text-base); }
+}
+
+.ps-range { flex: 1; min-width: 0; min-height: 44px; margin: 0; accent-color: var(--blue); cursor: pointer; }
+input:focus-visible, select:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+
+/* The globe's HUD needs its own space when the panel cannot fit it beside the map. */
+.sk-world-panel { container-type: inline-size; }
+@container (max-width: 900px) {
+  .sk-sky { zoom: 1; min-width: 0; padding: 16px 12px; }
+  .sk-sky-fig { flex-direction: column; align-items: stretch; gap: 16px; }
+  .sk-ctrl { position: static; min-width: 0; padding: 12px; display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; }
+  .sk-ctrl-h { flex-basis: 100%; padding-bottom: 10px; font-size: var(--text-2xs); }
+  .sk-ctrl-row { flex: 1 1 auto; }
+  .sk-ctrl-row .lbl, .sk-rate-b { font-size: var(--text-2xs); }
+  .sk-rate-b { min-width: 44px; min-height: 44px; }
+  .sk-sky-top, .sk-sky-bot { flex-wrap: wrap; gap: 8px 16px; line-height: 1.5; }
+  .sk-sky-bot { margin-top: 16px; }
+}
+
+@media (max-width: 768px) {
+  .ack-quote { padding-top: 60px; }
+}
