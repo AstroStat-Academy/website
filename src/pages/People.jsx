@@ -1,3 +1,4 @@
+import { useFrozenMotion } from '../motion.js';
 import { PageLayout } from '../components/PageLayout.jsx';
 import React from 'react';
 import { SiteNav, SiteFooter, Rail, Corners } from '../components/SiteChrome.jsx';
@@ -311,12 +312,14 @@ function ServiceRecord({ p }) {
 
 /* ── dossier (boot → file) ────────────────────────────────────────────── */
 function Dossier({ p, big, power, closable }) {
-  const [phase, setPhase] = React.useState('boot');
+  const frozen = useFrozenMotion();
+  const [phase, setPhase] = React.useState(frozen ? 'show' : 'boot');
   React.useEffect(() => {
+    if (frozen) { setPhase('show'); return; }
     setPhase('boot');
     const t = setTimeout(() => setPhase('show'), 620);
     return () => clearTimeout(t);
-  }, [p.id]);
+  }, [p.id, frozen]);
 
   const bootLines = [
     `> QUERY PERSONNEL :: ${tpSurname(p.name)}`,

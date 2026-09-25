@@ -1,3 +1,4 @@
+import { useFrozenMotion } from '../motion.js';
 import React from 'react';
 /* Shared effects for the full-site directions.
    CodeRainBG  — configurable falling Greek/maths glyph rain.
@@ -12,6 +13,7 @@ function hexToRgb(hex) {
 }
 
 function CodeRainBG({ color = '#8c0527', colorToken, alpha = 0.5, font = 16, frame = 110 }) {
+  const frozen = useFrozenMotion();
   const ref = React.useRef(null);
   React.useEffect(() => {
     const canvas = ref.current, ctx = canvas.getContext('2d');
@@ -37,10 +39,10 @@ function CodeRainBG({ color = '#8c0527', colorToken, alpha = 0.5, font = 16, fra
     init();
     // Pre-roll a few frames so glyphs are visible immediately, then animate.
     for (let i = 0; i < 40; i++) tick();
-    const id = setInterval(tick, frame);
+    const id = frozen ? null : setInterval(tick, frame);
     const ro = new ResizeObserver(() => { init(); for (let i = 0; i < 40; i++) tick(); }); ro.observe(canvas.parentElement);
     return () => { clearInterval(id); ro.disconnect(); };
-  }, [color, colorToken, alpha, font, frame]);
+  }, [color, colorToken, alpha, font, frame, frozen]);
   return <canvas ref={ref} aria-hidden="true"
     style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
 }
@@ -56,6 +58,7 @@ function HeroWidget({ accent = '#0465ad', data = '#8c0527', w = 440, h = 190, to
   const [iMode, setIMode] = React.useState('ts');
   const mode = cMode ?? iMode;
   const setMode = onMode ?? setIMode;
+  const frozen = useFrozenMotion();
   const ref = React.useRef(null);
   const st = React.useRef({ alpha: 2, beta: 2, phi: TIME_SERIES_CONTROLS.phi.initial, noise: TIME_SERIES_CONTROLS.noise.initial, drag: 'none', series: [] });
   // Controlled params: external sliders write here without re-running the effect.
@@ -66,7 +69,7 @@ function HeroWidget({ accent = '#0465ad', data = '#8c0527', w = 440, h = 190, to
 
   React.useEffect(() => {
     const canvas = ref.current, ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, frozen ? 1 : 2);
     canvas.width = w * dpr; canvas.height = h * dpr;
     canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -86,7 +89,7 @@ function HeroWidget({ accent = '#0465ad', data = '#8c0527', w = 440, h = 190, to
         // Ease the *displayed* α/β toward their targets so the shape morphs slowly
         // when dragged or slid, instead of snapping. Smaller ease = slower glide.
         if (st.current.dAlpha == null) { st.current.dAlpha = st.current.alpha; st.current.dBeta = st.current.beta; }
-        const ease = 0.16;
+        const ease = frozen ? 1 : 0.16;
         st.current.dAlpha += (st.current.alpha - st.current.dAlpha) * ease;
         st.current.dBeta += (st.current.beta - st.current.dBeta) * ease;
         // Beta(α, β) density over [0,1] — the histogram x-axis.
@@ -149,11 +152,10 @@ function HeroWidget({ accent = '#0465ad', data = '#8c0527', w = 440, h = 190, to
         ctx.fillStyle = `rgba(${aRGB},0.9)`; ctx.beginPath(); ctx.arc(PW - 2, ly, 4, 0, Math.PI * 2); ctx.fill();
       }
     };
-    draw(performance.now());
-    if (onReadout) onReadout(st.current.alpha, st.current.beta);
-    const drawId = setInterval(() => draw(performance.now()), 70);
+    draw(frozen ? 0 : performance.now());
+    const drawId = frozen ? null : setInterval(() => draw(performance.now()), 70);
 
-    const pos = (e) => { const r = canvas.getBoundingClientRect(); return (e.clientX - r.left); };
+    const pos = (e) => { const r = canvas.getBoundingClientRect(); return (e.clientX - r.left) * w / r.width; };
     const params = () => { const { alpha, beta } = st.current, s = alpha + beta;
       return { mean: alpha / s, sd: Math.sqrt((alpha * beta) / (s * s * (s + 1))), s }; };
     const down = (e) => { if (mode !== 'hist' || hideGrips) return; const x = pos(e), { mean, sd } = params();
@@ -169,15 +171,16 @@ function HeroWidget({ accent = '#0465ad', data = '#8c0527', w = 440, h = 190, to
       const alpha = Math.max(0.4, Math.min(8, mean * s)), beta = Math.max(0.4, Math.min(8, (1 - mean) * s));
       st.current.alpha = alpha; st.current.beta = beta;
       if (onReadout) onReadout(alpha, beta);
+      if (frozen) draw(0);
       canvas.style.cursor = 'grabbing'; };
     const up = () => { st.current.drag = 'none'; canvas.style.cursor = (mode === 'hist' && !hideGrips) ? 'grab' : 'default'; };
     canvas.addEventListener('pointerdown', down); canvas.addEventListener('pointermove', move); canvas.addEventListener('pointerup', up);
     return () => { clearInterval(drawId); canvas.removeEventListener('pointerdown', down); canvas.removeEventListener('pointermove', move); canvas.removeEventListener('pointerup', up); };
-  }, [mode, accent, data, w, h]);
+  }, [mode, accent, data, w, h, frozen, cAlpha, cBeta, cPhi, cNoise]);
 
   return (
     <div style={{ position: 'relative', width: w, maxWidth: '100%' }}>
-      <canvas ref={ref} style={{ cursor: (mode === 'hist' && !hideGrips) ? 'grab' : 'default', touchAction: 'none', display: 'block' }} />
+      <canvas ref={ref} style={{ cursor: (mode === 'hist' && !hideGrips) ? 'grab' : 'default', touchAction: mode === 'hist' && !hideGrips ? 'none' : 'pan-y', display: 'block' }} />
       {!hideToggle && (
       <div className={'hw-toggle hw-toggle-' + toggleStyle}>
         <button className={mode === 'ts' ? 'on' : ''} onClick={() => setMode('ts')} title="Time series" aria-label="Time-series view">〜</button>
@@ -190,27 +193,13 @@ function HeroWidget({ accent = '#0465ad', data = '#8c0527', w = 440, h = 190, to
 
 /* Small draggable parameter slider (μ, σ …) — instrument styled, label-light. */
 function ParamSlider({ label, value, min, max, onChange }) {
-  const ref = React.useRef(null);
-  const frac = Math.max(0, Math.min(1, (value - min) / (max - min)));
-  const setFromX = (clientX) => {
-    const r = ref.current.getBoundingClientRect();
-    const f = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
-    onChange(min + f * (max - min));
-  };
-  const down = (e) => {
-    setFromX(e.clientX);
-    const mv = (ev) => setFromX(ev.clientX);
-    const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); };
-    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
-  };
   return (
-    <div className="ps">
+    <label className="ps">
       <span className="ps-l">{label}</span>
-      <div className="ps-track" ref={ref} onPointerDown={down}>
-        <div className="ps-fill" style={{ width: (frac * 100) + '%' }}></div>
-        <div className="ps-knob" style={{ left: (frac * 100) + '%' }}></div>
-      </div>
-    </div>
+      <input className="ps-range" type="range" aria-label={label}
+        min={min} max={max} step={(max - min) / 100} value={value}
+        onChange={event => onChange(Number(event.target.value))} />
+    </label>
   );
 }
 
@@ -228,6 +217,7 @@ function HeroControls({ mode, onMode }) {
    blather, typed line by line with a blinking caret, then looping.
    Used in the home page's Problem band. */
 function AstroTerminal({ accent = '#c8607a', w = 380, h = 210, fs = 'clamp(8px, 1.15vw, 12px)' }) {
+  const frozen = useFrozenMotion();
   const SCRIPT = [
     { t: 'in', s: '$ astro-llm "is p significant?"' },
     { t: 'sys', s: '▸ loading posterior weights … ok' },
@@ -242,15 +232,16 @@ function AstroTerminal({ accent = '#c8607a', w = 380, h = 210, fs = 'clamp(8px, 
   const [ln, setLn] = React.useState(0);
   const [ch, setCh] = React.useState(0);
   React.useEffect(() => {
+    if (frozen) return;
     const cur = SCRIPT[ln];
     if (!cur) { const r = setTimeout(() => { setLn(0); setCh(0); }, 2200); return () => clearTimeout(r); }
     if (ch < cur.s.length) { const id = setTimeout(() => setCh(ch + 1), 26); return () => clearTimeout(id); }
     const id = setTimeout(() => { setLn(ln + 1); setCh(0); }, cur.t === 'in' ? 420 : 240);
     return () => clearTimeout(id);
-  }, [ln, ch]);
+  }, [ln, ch, frozen]);
   const colorFor = (t) => t === 'in' ? '#fbf6ec' : t === 'ok' ? '#3fb9b9' : t === 'warn' ? accent : t === 'sys' ? 'rgba(251,246,236,.45)' : 'rgba(251,246,236,.72)';
-  const shown = SCRIPT.slice(0, ln);
-  const typing = SCRIPT[ln];
+  const shown = SCRIPT.slice(0, frozen ? SCRIPT.length : ln);
+  const typing = frozen ? null : SCRIPT[ln];
   return (
     <div style={{ width: w, maxWidth: '100%', height: h, border: '1px solid rgba(251,246,236,.24)', background: '#040404', fontFamily: 'ui-monospace,monospace', fontSize: fs, lineHeight: 1.55, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 10px', borderBottom: '1px solid rgba(251,246,236,.16)' }}>

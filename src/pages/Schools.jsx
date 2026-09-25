@@ -1,3 +1,4 @@
+import { useFrozenMotion } from '../motion.js';
 import { PageLayout } from '../components/PageLayout.jsx';
 import React from 'react';
 import { Corners, SiteNav, SiteFooter, Rail } from '../components/SiteChrome.jsx';
@@ -204,8 +205,7 @@ function SkillSpectrum({ lo = 0.25, hi = 0.62 } = {}) {
   };
   const N = 40;
 
-  const reduce = typeof window !== 'undefined' && window.matchMedia &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = useFrozenMotion();
   const [level, setLevel] = React.useState(reduce ? hi : lo);
   React.useEffect(() => {
     if (reduce) return;
@@ -401,7 +401,10 @@ const BOOK_LESSON = 'https://astrostat-academy.github.io/astrostat-school-7/Hypo
 
 function BookPreview() {
   const videoRef = React.useRef(null);
-  const [paused, setPaused] = React.useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const frozen = useFrozenMotion();
+  const [manualPaused, setPaused] = React.useState(null);
+  const paused = manualPaused ?? frozen;
+  React.useEffect(() => { setPaused(null); }, [frozen]);
   React.useEffect(() => {
     const video = videoRef.current;
     const observer = new IntersectionObserver(([entry]) => {
@@ -410,7 +413,7 @@ function BookPreview() {
     }, { threshold: 0.2 });
     observer.observe(video);
     if (paused) video.pause();
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); video.pause(); };
   }, [paused]);
   return (
     <section className="sk-book-preview" aria-label="Course book preview">
@@ -418,7 +421,7 @@ function BookPreview() {
         <source src="/assets/schools/previews/hypothesis-testing.webm" type="video/webm" />
       </video>
       <div className="sk-book-footer">
-        <button type="button" onClick={() => setPaused(value => !value)} aria-label={paused ? 'Play lesson preview' : 'Pause lesson preview'}>{paused ? 'Play' : 'Pause'}</button>
+        <button type="button" onClick={() => setPaused(!paused)} aria-label={paused ? 'Play lesson preview' : 'Pause lesson preview'}>{paused ? 'Play' : 'Pause'}</button>
         <a href={BOOK_LESSON} target="_blank" rel="noopener noreferrer" aria-label="Open Hypothesis Testing lesson">Open this lecture ↗</a>
       </div>
     </section>
@@ -460,7 +463,7 @@ function FeaturedHero() {
 function Globe({ W = 980, H = 560, speed = 5, showSites = true, showLand = true, showAlumni = false }) {
   const R = Math.min(W * 0.26, H * 0.46);
   const cx = W * 0.33, cy = H / 2;
-  const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = useFrozenMotion();
   const [rot, setRot] = React.useState(-25);
   React.useEffect(() => {
     if (reduce || !speed) return;
@@ -658,7 +661,7 @@ function SkyPanel() {
             </span>
           </div>
           <div className="sk-ctrl-row">
-            <span className="lbl">Past Alumni Origins</span>
+            <span className="lbl">Past Alumni</span>
             <span className="sk-rate-seg" role="group" aria-label="Show alumni origins">
               <button type="button" className={'sk-rate-b' + (alumni ? ' on' : '')} aria-pressed={alumni} onClick={() => chooseAlumni(true)}>On</button>
               <button type="button" className={'sk-rate-b' + (!alumni ? ' on' : '')} aria-pressed={!alumni} onClick={() => chooseAlumni(false)}>Off</button>

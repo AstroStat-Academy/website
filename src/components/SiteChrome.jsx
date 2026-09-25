@@ -1,3 +1,4 @@
+import { useFrozenMotion } from '../motion.js';
 import React from 'react';
 import { routes } from '../routes.js';
 /* AstroStat Academy — full-site kit (Instrument Panel style).
@@ -38,12 +39,14 @@ function SiteFooter() {
 /* Scanning LED matrix — a cols×rows grid with one cell lit, sweeping on a loop
    with a short fading trail. phase desyncs each instance. */
 function RailMatrix({ accent, cols = 8, rows = 2, phase = 0, speed = 150 }) {
+  const frozen = useFrozenMotion();
   const total = cols * rows;
   const [t, setT] = React.useState(phase);
   React.useEffect(() => {
+    if (frozen) return;
     const id = setInterval(() => setT(v => v + 1), speed);
     return () => clearInterval(id);
-  }, [speed]);
+  }, [speed, frozen]);
   const active = t % total;
   const color = accent === 'red' ? '#c8607a' : '#3b9be0';
   const cells = [];
