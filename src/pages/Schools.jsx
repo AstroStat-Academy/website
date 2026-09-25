@@ -363,6 +363,8 @@ const ATTEND_STATS = [
 function AttendantsSection() {
   return (
     <Rail n="06" label="Attendants" variant="matrix">
+      <div className="sk-attendants-layout">
+      <div className="sk-attendants-copy">
       <SectionHead
         title="Open to all"
         lead={<>Our ideal attendee is an astrophysics PhD candidate — but we welcome everyone from BSc students to professors, and from Computer Science to Signal Processing. After all, everybody needs a hand with statistics.<br /><br />At every event we like to keep the number of attendants constrained in order to maximise the interactions between students and teachers.<br /><br />This mix benefits everyone: students see the techniques applied across domains, while teachers meet a wider range of needs that keeps them current with the latest in Machine Learning.</>} />
@@ -372,6 +374,9 @@ function AttendantsSection() {
         ))}
       </div>
       <p className="skx-fine">We deliberately cap each cohort near thirty — small enough to maximise student–teacher interaction, broad enough to keep the room interdisciplinary and the instructors current.</p>
+      </div>
+      <div className="sk-world-panel"><SkyPanel /></div>
+      </div>
     </Rail>
   );
 }
@@ -392,11 +397,53 @@ function SchoolsHead() {
   );
 }
 
+const BOOK_LESSON = 'https://astrostat-academy.github.io/astrostat-school-7/Hypothesis_Testing/Hypothesis_Testing.html';
+
+function BookPreview() {
+  const videoRef = React.useRef(null);
+  const [paused, setPaused] = React.useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  React.useEffect(() => {
+    const video = videoRef.current;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !paused) video.play().catch(() => {});
+      else video.pause();
+    }, { threshold: 0.2 });
+    observer.observe(video);
+    if (paused) video.pause();
+    return () => observer.disconnect();
+  }, [paused]);
+  return (
+    <section className="sk-book-preview" aria-label="Course book preview">
+      <video ref={videoRef} muted loop playsInline preload="metadata" poster="/assets/schools/previews/hypothesis-testing.png" aria-label="Recorded tour across lectures followed by continuous scrolling through Hypothesis Testing">
+        <source src="/assets/schools/previews/hypothesis-testing.webm" type="video/webm" />
+      </video>
+      <div className="sk-book-footer">
+        <button type="button" onClick={() => setPaused(value => !value)} aria-label={paused ? 'Play lesson preview' : 'Pause lesson preview'}>{paused ? 'Play' : 'Pause'}</button>
+        <a href={BOOK_LESSON} target="_blank" rel="noopener noreferrer" aria-label="Open Hypothesis Testing lesson">Open this lecture ↗</a>
+      </div>
+    </section>
+  );
+}
+
+function EditionMaterials({ edition }) {
+  const links = Object.entries(edition.materials || {}).filter(([kind, url]) => ['github', 'gitbook'].includes(kind) && url);
+  if (!links.length) return null;
+  return (
+    <div className="sk-materials" role="group" aria-label={`${edition.city} ${yearOf(edition.date)} materials`}>
+      <span className="sk-materials-label">Materials</span>
+      {links.map(([kind, url]) => (
+        <a key={kind} href={url} target="_blank" rel="noopener noreferrer">{kind === 'github' ? 'GitHub' : 'GitBook'} <span aria-hidden="true">↗</span></a>
+      ))}
+    </div>
+  );
+}
+
 function FeaturedHero() {
   const { LATEST } = deriveSchools();
   const topics = LATEST.topics || [];
   return (
-    <a className="sk-hero" href={LATEST.url} target="_blank" rel="noopener noreferrer">
+    <div className="sk-featured sk-hero">
+    <a className="sk-featured-link" href={LATEST.url} target="_blank" rel="noopener noreferrer">
       <div className="tag">{LATEST.upcoming ? 'Latest edition' : 'Latest edition · № ' + String(LATEST.ed).padStart(2, '0')}</div>
       <div className="cy">{LATEST.city} {LATEST.year}</div>
       <div className="meta">{LATEST.venue} · {LATEST.country} · {LATEST.date}</div>
@@ -405,6 +452,8 @@ function FeaturedHero() {
         : null}
       <div className="go">{LATEST.upcoming ? 'Visit the edition ↗' : 'View the edition ↗'}</div>
     </a>
+    <EditionMaterials edition={LATEST} />
+    </div>
   );
 }
 
@@ -638,18 +687,24 @@ function Schools() {
               <div className="sk-d2-left">
                 <div className="sk-arch" style={{ marginTop: 0 }}>
                   <h4>Past editions</h4>
-                  <div className="sk-arows one">
+                  <div className="sk-arows one" tabIndex={0} role="region" aria-label="Past school editions">
                     {PAST.map(s => (
-                      <a key={s.ed} className="sk-arow" href={s.url} target="_blank" rel="noopener noreferrer">
-                        <span className="ds-col"><DateStamp date={s.date} /></span>
-                        <span className="ac">{s.city}</span>
-                        <span className="ax">↗</span>
+                      <div key={s.ed} className="sk-edition-row">
+                      <a className="sk-arow" href={s.url} target="_blank" rel="noopener noreferrer">
+                        {s.thumbnail && <span className="sk-edition-image"><img className="sk-edition-thumb" src={s.thumbnail} alt="" width="88" height="60" loading="lazy" decoding="async" /></span>}
+                        <span className="sk-edition-copy">
+                          <span className="ac">{s.city}</span>
+                          <DateStamp date={s.date} />
+                        </span>
+                        <span className="ax" aria-hidden="true">↗</span>
                       </a>
+                      <EditionMaterials edition={s} />
+                      </div>
                     ))}
                   </div>
                 </div>
               </div>
-              <div className="sk-d2-right"><SkyPanel /></div>
+              <div className="sk-d2-right"><BookPreview /></div>
             </div>
           </Rail>
           <MissionSection />

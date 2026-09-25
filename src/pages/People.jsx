@@ -8,8 +8,8 @@ import { schools } from '../data/schools.js';
 /* ── data ─────────────────────────────────────────────────────────────── */
 const TP_BASE = '/assets/people';
 const TP_ROLE = {
-  councellors: 'Council',
-  advisors:    'Advisory board',
+  councellors: 'Councellor',
+  advisors:    'Advisor',
   lecturers:   'Lecturer',
   TAs:         'Teaching assistant',
   guests:      'Invited',
@@ -365,7 +365,7 @@ function Dossier({ p, big, power, closable }) {
                       </>
                     /* Maintained file: the role is current, so it stays under
                        the name and the fields carry no caveat. */
-                    : <div className="dsr-role">{p.role}{p.title ? ` · ${p.title}` : ''}</div>}
+                    : <div className="dsr-role">{p.role}{!TP_BOARD_GROUPS.includes(p.roleKey) && p.title ? ` · ${p.title}` : ''}</div>}
                   <Field label="AFFILIATION" value={p.inst} />
                   <Field label="FIELD OF INTEREST" value={p.bio} />
                   <ServiceRecord p={p} />
@@ -429,14 +429,13 @@ function RosterRow({ p, n, selId, onSelect }) {
       <span className="tp-idx">{String(n).padStart(2, '0')}</span>
       <div style={{ minWidth: 0, flex: 1 }}>
         <div className="tp-nm">{p.name}</div>
-        {/* Board members are identified by the post they hold in the Academy —
-            Chair, Secretary, Treasurer — which is what the reader is looking
-            for. An edition count is the right line only for a collaborator,
-            whose record is a history of appearances rather than a post. */}
+        {/* Board members show their group role; collaborators show appearances. */}
         <div className="tp-af">
-          {TP_BOARD_GROUPS.includes(p.roleKey) || p.editions === 0
-            ? (p.title || p.role)
-            : `${p.editions} edition${p.editions > 1 ? 's' : ''}`}
+          {TP_BOARD_GROUPS.includes(p.roleKey)
+            ? p.role
+            : p.editions === 0
+              ? (p.title || p.role)
+              : `${p.editions} edition${p.editions > 1 ? 's' : ''}`}
         </div>
       </div>
       {p.editions > 0

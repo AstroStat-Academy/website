@@ -19,6 +19,8 @@
 #     city      host city            country   host country
 #     venue     hosting institution  date      actual dates ("16–20 Jun 2025")
 #     lat, lon  globe coordinates    url       link to that edition's site
+#     thumbnail local image from the edition website
+#     materials optional github / gitbook links to edition teaching materials
 #     topics    optional list of programme topics
 #     upcoming  optional · true while the programme is TBA
 #     founding  optional · true for the first-ever edition
@@ -52,6 +54,10 @@ editions:
     lat: 41.90
     lon: 12.50
     url: https://astrostat-academy.github.io/website-school-7/
+    thumbnail: /assets/schools/thumbnails/edition-8.webp
+    materials:
+      github: https://github.com/AstroStat-Academy/astrostat-school-7
+      gitbook: https://astrostat-academy.github.io/astrostat-school-7/
     upcoming: true
 
   # ── PAST EDITIONS (newest first) ────────────────────────────────
@@ -63,6 +69,10 @@ editions:
     lat: 40.71
     lon: -74.01
     url: https://astrostat-academy.github.io/website-school-8/
+    thumbnail: /assets/schools/thumbnails/edition-7.webp
+    materials:
+      github: https://github.com/AstroStat-Academy/astrostat-school-8
+      gitbook: https://astrostat-academy.github.io/astrostat-school-8/
     topics:
       - Classical & Bayesian
       - Deep Learning
@@ -79,6 +89,7 @@ editions:
     lat: 25.35
     lon: 55.41
     url: https://www.sharjah.ac.ae/ssah/astrostat2025
+    thumbnail: /assets/schools/thumbnails/edition-6.webp
 
   - ed: 5
     city: Crete
@@ -88,6 +99,9 @@ editions:
     lat: 35.34
     lon: 25.13
     url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2025/
+    thumbnail: /assets/schools/thumbnails/edition-5.webp
+    materials:
+      github: https://github.com/astrostatistics-in-crete/2025_summer_school
 
   - ed: 4
     city: Crete
@@ -97,6 +111,9 @@ editions:
     lat: 35.34
     lon: 25.13
     url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2024/
+    thumbnail: /assets/schools/thumbnails/edition-4.webp
+    materials:
+      github: https://github.com/astrostatistics-in-crete/2024_summer_school
 
   - ed: 3
     city: Crete
@@ -106,6 +123,9 @@ editions:
     lat: 35.34
     lon: 25.13
     url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2023/
+    thumbnail: /assets/schools/thumbnails/edition-3.webp
+    materials:
+      github: https://github.com/astrostatistics-in-crete/2023_summer_school
 
   - ed: 2
     city: Crete
@@ -115,6 +135,9 @@ editions:
     lat: 35.34
     lon: 25.13
     url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2022/
+    thumbnail: /assets/schools/thumbnails/edition-2.webp
+    materials:
+      github: https://github.com/astrostatistics-in-crete/2022_summer_school
 
   - ed: 1
     city: Crete
@@ -125,3 +148,6 @@ editions:
     lon: 25.13
     founding: true
     url: https://astro.physics.uoc.gr/Conferences/Astrostatistics_School_Crete_2019/
+    thumbnail: /assets/schools/thumbnails/edition-1.webp
+    materials:
+      github: https://github.com/astrostatistics-in-crete/2019_summer_school
