@@ -1,26 +1,26 @@
 import { useSyncExternalStore } from 'react';
 
-// Hardware hints are coarse: unknown touch devices take the static path.
-export function shouldFreezeMotion({ reduced = false, saveData = false, cores, memory, coarse = false }) {
-  return reduced || saveData || (cores != null && cores <= 4) ||
-    (memory != null && memory <= 4) || (coarse && (cores == null || memory == null));
+// Four CPU threads or 4 GB of RAM are common on usable desktops.
+export function shouldFreezeMotion({ reduced = false, saveData = false, cores, memory, mobile = false }) {
+  return reduced || saveData || mobile ||
+    (cores != null && cores <= 2) || (memory != null && memory <= 2);
 }
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-const coarse = window.matchMedia('(any-pointer: coarse)');
+const mobile = window.matchMedia('(max-width: 768px), (max-width: 1024px) and (pointer: coarse)');
 const connection = navigator.connection;
 const listeners = new Set();
 let frozen;
 function update() {
   frozen = document.hidden || shouldFreezeMotion({
-    reduced: reduced.matches, coarse: coarse.matches,
+    reduced: reduced.matches, mobile: mobile.matches,
     saveData: connection?.saveData, cores: navigator.hardwareConcurrency, memory: navigator.deviceMemory,
   });
   document.documentElement.dataset.motion = frozen ? 'static' : 'animated';
   listeners.forEach(listener => listener());
 }
 reduced.addEventListener('change', update);
-coarse.addEventListener('change', update);
+mobile.addEventListener('change', update);
 connection?.addEventListener?.('change', update);
 document.addEventListener('visibilitychange', update);
 update();
