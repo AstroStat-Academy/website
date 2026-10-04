@@ -14,11 +14,33 @@ function Corners() {
 }
 
 function SiteNav({ active = 'home' }) {
+  const [open, setOpen] = React.useState(false);
+  const toggle = React.useRef(null);
+  const navId = React.useId();
+  React.useEffect(() => {
+    const mobile = window.matchMedia('(max-width: 768px)');
+    const reset = () => setOpen(false);
+    mobile.addEventListener('change', reset);
+    return () => mobile.removeEventListener('change', reset);
+  }, []);
+  const onKeyDown = event => {
+    if (event.key === 'Escape' && open) {
+      setOpen(false);
+      toggle.current?.focus();
+    }
+  };
   return (
-    <header className="as-nav">
+    <header className="as-nav" onKeyDown={onKeyDown}>
       <a className="as-brand" href="/" aria-label="AstroStat Academy home"><img src="/assets/logo-bone.svg" alt="" />AstroStat Academy</a>
-      <nav className="as-nl" aria-label="Main navigation">
-        {routes.map(n => <a key={n.id} href={n.path} className={n.id === active ? 'on' : ''} aria-current={n.id === active ? 'page' : undefined}>{n.label}</a>)}
+      <button ref={toggle} type="button" className="as-menu-toggle" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls={navId} onClick={() => setOpen(value => !value)}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d={open ? 'M6 6l12 12M6 18L18 6' : 'M4 6h16M4 12h16M4 18h16'} />
+        </svg>
+      </button>
+      <nav id={navId} className={'as-nl' + (open ? ' is-open' : '')} aria-label="Main navigation">
+        {routes.map(n => <a key={n.id} href={n.path} className={n.id === active ? 'on' : ''} aria-label={n.id === 'home' ? 'Home' : undefined} aria-current={n.id === active ? 'page' : undefined} onClick={() => setOpen(false)}>
+          {n.id === 'home' ? <svg className="as-home-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M3 11l9-8 9 8M5 9v12h5v-7h4v7h5V9" /></svg> : n.label}
+        </a>)}
       </nav>
     </header>
   );

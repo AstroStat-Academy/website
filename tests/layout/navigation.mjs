@@ -6,12 +6,36 @@ const routes = ['/', '/schools/', '/hackathons/', '/consulting/', '/people/', '/
 const browser = await chromium.launch({ headless: true });
 try {
   const page = await browser.newPage();
-  for (const width of [1440, 1280, 1024, 768, 390]) {
+  for (const width of [1440, 1280, 1024, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     let baseline;
     for (const route of routes) {
       await page.goto(baseURL + route);
-      await page.locator('.as-nl a').first().waitFor();
+      const menu = page.locator('nav.as-nl');
+      if (width <= 768) {
+        const toggle = page.locator('.as-menu-toggle');
+        await toggle.waitFor();
+        assert.equal(await toggle.getAttribute('aria-label'), 'Open menu');
+        assert.equal(await menu.isVisible(), false);
+        assert.equal(await toggle.getAttribute('aria-controls'), await menu.getAttribute('id'));
+        const toggleBox = await toggle.boundingBox();
+        assert.ok(toggleBox.width >= 44 && toggleBox.height >= 44);
+        await toggle.click();
+        assert.equal(await menu.isVisible(), true);
+        assert.equal(await toggle.getAttribute('aria-expanded'), 'true');
+        assert.equal(await toggle.getAttribute('aria-label'), 'Close menu');
+        await menu.getByRole('link', { name: 'Home', exact: true }).focus();
+        await page.keyboard.press('Escape');
+        assert.equal(await menu.isVisible(), false);
+        assert.equal(await toggle.evaluate(el => el === document.activeElement), true);
+        assert.equal(await toggle.getAttribute('aria-expanded'), 'false');
+        await page.keyboard.press('Enter');
+        assert.equal(await menu.isVisible(), true);
+      } else {
+        assert.equal(await page.locator('.as-menu-toggle').isVisible(), false);
+      }
+      await menu.getByRole('link', { name: 'Home', exact: true }).waitFor();
+      assert.equal(await menu.getByRole('link', { name: 'Home', exact: true }).locator('svg').count(), 1);
       await page.evaluate(() => document.fonts.ready);
       const links = await page.locator('.as-nl a').evaluateAll(elements => elements.map(element => {
         const box = element.getBoundingClientRect();
@@ -36,7 +60,21 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'No horizontal overflow');
     }
   }
-  console.log('Navigation positions and selected boxes match across all seven pages at five viewport sizes.');
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto(baseURL + '/');
+  const mobileToggle = page.locator('.as-menu-toggle');
+  const mobileMenu = page.locator('nav.as-nl');
+  await mobileToggle.focus();
+  await page.keyboard.press('Space');
+  assert.equal(await mobileMenu.isVisible(), true);
+  await mobileMenu.getByRole('link', { name: 'Schools' }).click();
+  assert.equal(new URL(page.url()).pathname, '/schools/');
+  assert.equal(await page.locator('nav.as-nl').isVisible(), false);
+  await page.locator('.as-menu-toggle').click();
+  await page.setViewportSize({ width: 1024, height: 900 });
+  assert.equal(await page.locator('.as-menu-toggle').isVisible(), false);
+  assert.equal(await page.locator('.as-menu-toggle').getAttribute('aria-expanded'), 'false');
+  console.log('Navigation positions, mobile disclosure, keyboard controls, link selection, and breakpoint reset passed.');
 } finally {
   await browser.close();
 }

@@ -463,15 +463,19 @@ function FeaturedHero() {
 function Globe({ W = 980, H = 560, speed = 5, showSites = true, showLand = true, showAlumni = false }) {
   const R = Math.min(W * 0.26, H * 0.46);
   const cx = W * 0.33, cy = H / 2;
-  const reduce = useFrozenMotion();
   const [rot, setRot] = React.useState(-25);
   React.useEffect(() => {
-    if (reduce || !speed) return;
+    if (!speed) return;
     let raf, last = performance.now();
     const tick = t => { const dt = Math.min(0.05, (t - last) / 1000); last = t; setRot(r => (r + dt * speed) % 360); raf = requestAnimationFrame(tick); };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [reduce, speed]);
+    const syncVisibility = () => {
+      cancelAnimationFrame(raf);
+      if (!document.hidden) { last = performance.now(); raf = requestAnimationFrame(tick); }
+    };
+    syncVisibility();
+    document.addEventListener('visibilitychange', syncVisibility);
+    return () => { cancelAnimationFrame(raf); document.removeEventListener('visibilitychange', syncVisibility); };
+  }, [speed]);
 
   const lat0 = 22 * Math.PI / 180, lon0 = rot * Math.PI / 180;
   const sL0 = Math.sin(lat0), cL0 = Math.cos(lat0);
@@ -548,7 +552,7 @@ function Globe({ W = 980, H = 560, speed = 5, showSites = true, showLand = true,
   });
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Rotating celestial coordinate globe">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Celestial coordinate globe">
       <defs>
         <radialGradient id="gl-atm" cx="50%" cy="50%" r="50%">
           <stop offset="60%" stopColor="rgba(59,155,224,0)" />
@@ -609,10 +613,15 @@ function SpinIcon({ type }) {
 }
 
 function SkyPanel() {
-  const [rate, setRate] = React.useState(() => {
+  const frozen = useFrozenMotion();
+  // Explicit playback applies only while the current motion setting is active.
+  const [selectedRate, setRate] = React.useState(null);
+  React.useEffect(() => { setRate(null); }, [frozen]);
+  const [savedRate] = React.useState(() => {
     try { const s = localStorage.getItem('sk-rate'); if (s !== null) return Number(s); } catch (e) { /* ignore */ }
     return 5;
   });
+  const rate = selectedRate ?? (frozen ? 0 : savedRate);
   const [sites, setSites] = React.useState(() => {
     try { const s = localStorage.getItem('sk-sites'); if (s !== null) return s === '1'; } catch (e) { /* ignore */ }
     return true;
